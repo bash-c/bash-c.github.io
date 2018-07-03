@@ -13,6 +13,10 @@
   </url>
   
   <url>
+    <loc>0x01f.github.io/about/</loc>
+  </url>
+  
+  <url>
     <loc>0x01f.github.io/categories/</loc>
     <priority>0</priority>
   </url>
