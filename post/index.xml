@@ -49,14 +49,5 @@ payload:
 通过两次rop，实现get shell</description>
     </item>
     
-    <item>
-      <title>About</title>
-      <link>0x01f.github.io/post/about/</link>
-      <pubDate>Tue, 03 Jul 2018 11:33:29 +0800</pubDate>
-      
-      <guid>0x01f.github.io/post/about/</guid>
-      <description> title content </description>
-    </item>
-    
   </channel>
 </rss>
