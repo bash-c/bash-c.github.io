@@ -6,10 +6,22 @@
     <description>Recent content in Posts on M4x&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 03 Jul 2018 12:01:48 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
     
 	<atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Pin In CTF</title>
+      <link>http://example.org/post/pin-in-ctf/</link>
+      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
+      
+      <guid>http://example.org/post/pin-in-ctf/</guid>
+      <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序
+什么是插桩(instrument) 通俗的来说，插桩就是在已有的源代码/二进制程序中插入某些代码以便于自己分析，比如在调试时使用 printf 打印变量值就属于在源代码级别的插桩。而intel pin就是在二进制程序级别（没有源代码）插桩的一款工具
+pin 和 pintool pin 的安装，pintool 的编译 pin 的安装很简单，这里以 64 位的 Linux 为例来说明，从 官网 上下载 pin 组件后，解压即可，在解压后的文件夹内有编译好的二进制程序 pin
+pin-3.6-gcc-linux ls doc extlicense extras ia32 intel64 LICENSE pin README redist.txt source pin-3.6-gcc-linux file pin pin: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, BuildID[sha1]=7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped pin-3.6-gcc-linux .</description>
+    </item>
     
     <item>
       <title>Hackme.Inndy的部分writeup</title>
