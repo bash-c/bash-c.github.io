@@ -5,7 +5,7 @@
     <link>0x01f.github.io/</link>
     <description>Recent content on M4x&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en</language>
     <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
     
 	<atom:link href="0x01f.github.io/index.xml" rel="self" type="application/rss+xml" />
@@ -38,16 +38,15 @@ pin-3.6-gcc-linux ls doc extlicense extras ia32 intel64 LICENSE pin README redis
 送分题，nc连接，cat flag即可
 0x01 homework 根据题目提示，是数组越界的漏洞，第一次遇到这种漏洞觉得利用方式很巧妙。通过搜索字符串发现了get shell的函数call_me_maybe, run_program函数中定义了一个大小为10的数组，漏洞出现在edit number的选项里，当我们输入的index大于10时，程序是不会报错的，而是会继续朝着高地址edit数据，因此只需要edit run_program栈中的ret为call_me_maybe, 这样当我们退出run_program函数时，程序就会返回到call_me_maybe函数来get_shell，原理图如下：
  有两点需要注意：
-  因为edit number中修改的数据是通过%d输入的，因此需要以整形的方式输入call_me_maybe函数的地址
- 修改ret的地址之后，还需要再输入一次0来退出run_program的循环来出发ret
-  payload：
+  因为edit number中修改的数据是通过%d输入的，因此需要以整形的方式输入call_me_maybe函数的地址 修改ret的地址之后，还需要再输入一次0来退出run_program的循环来出发ret  payload：
 0x02 ROP 刚看这道题的时候觉得无从下手，程序中既没有可以利用的函数，通过file命令查看是静态链接的也不能利用libc中的函数。后来注意到下一题提到了ROPgadget这个工具，才想到可以直接利用ROPgadget直接拼凑出ROP链，如下：
 这样就只需要我们通过缓冲区溢出的漏洞返回到ROPgadget构造的ropchain就可以了
 payload:
-0x03 ROP2 本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在syscall这个可以实现系统调用的函数，如syscall(4, 1, &amp;amp;v4, 42)即相当于write(1, &amp;amp;v4, 42)，syscall(3, 0, &amp;amp;v1, 1024)即相当于read(0, &amp;amp;v1, 1024)，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在/usr/include/x86_64-linux-gnu/asm/unistd_32.h中，可以看到execve的调用号为11，因此如果我们构造syscall(11, &amp;laquo;/bin/sh&amp;raquo;, 0, 0)就相当于执行了execve(&amp;laquo;/bin/sh&amp;raquo;, 0, 0)即可get shell
+0x03 ROP2 本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在syscall这个可以实现系统调用的函数，如syscall(4, 1, &amp;amp;v4, 42)即相当于write(1, &amp;amp;v4, 42)，syscall(3, 0, &amp;amp;v1, 1024)即相当于read(0, &amp;amp;v1, 1024)，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在/usr/include/x86_64-linux-gnu/asm/unistd_32.h中，可以看到execve的调用号为11，因此如果我们构造syscall(11, &amp;ldquo;/bin/sh&amp;rdquo;, 0, 0)就相当于执行了execve(&amp;ldquo;/bin/sh&amp;rdquo;, 0, 0)即可get shell
  介绍一个小trick，如下图，可以看出v4是提示字符串的开头，但因为IDA没有正确识别变量的类型，把提示字符串分成了v4~v15多个变量，v4的地址为bp-0x33，v15为bp-0x9，因此字符串长度为0x33 - 0x9 = 42
 这时我们在v4上y一下，然后在弹出来的窗口上填入我们推断出来的数据类型char v4[42]，再点OK，这时IDA就能正确的识别出来v4的数据类型了，如下图：
- payload1:</description>
+ payload1:
+通过两次rop，实现get shell</description>
     </item>
     
     <item>

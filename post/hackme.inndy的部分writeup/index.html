@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -11,9 +11,9 @@
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400|Old+Standard+TT:400' rel='stylesheet' type='text/css'>
 
-    <link rel="icon" type="image/png" href="/favicon_16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="/favicon_32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/favicon_128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="0x01f.github.io/favicon_16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="0x01f.github.io/favicon_32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="0x01f.github.io/favicon_128x128.png" sizes="128x128">
 
     <title>
       
@@ -390,8 +390,14 @@
 
   <body>
     <section id=nav>
-      <h1><a href="/"></a></h1>
+      <h1><a href="0x01f.github.io/">M4x&#39;s Blog</a></h1>
       <ul>
+        
+          <li><a href="https://github.com/davidhampgonsalves/hugo-black-and-light-theme">About</a></li>
+        
+          <li><a href="http://www.cnblogs.com/WangAoBo/">Old Blog Link</a></li>
+        
+          <li><a href="https://github.com/davidhampgonsalves/hugo-black-and-light-theme">Projects</a></li>
         
       </ul>
     </section>
@@ -440,9 +446,8 @@
 </blockquote>
 
 <ol>
-<li>因为edit number中修改的数据是通过<strong>%d</strong>输入的，因此需要以整形的方式输入<strong>call_me_maybe</strong>函数的地址<br /></li>
-<li>修改ret的地址之后，还需要再输入一次0来退出<strong>run_program</strong>的循环来出发ret<br />
-<br /></li>
+<li>因为edit number中修改的数据是通过<strong>%d</strong>输入的，因此需要以整形的方式输入<strong>call_me_maybe</strong>函数的地址</li>
+<li>修改ret的地址之后，还需要再输入一次0来退出<strong>run_program</strong>的循环来出发ret</li>
 </ol>
 
 <p><strong>payload：</strong></p>
@@ -463,7 +468,7 @@
 
 <h3 id="0x03-rop2">0x03 ROP2</h3>
 
-<p>本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在<strong>syscall</strong>这个可以实现系统调用的函数，如<strong>syscall(4, 1, &amp;v4, 42)</strong>即相当于<strong>write(1, &amp;v4, 42)</strong>，<strong>syscall(3, 0, &amp;v1, 1024)</strong>即相当于<strong>read(0, &amp;v1, 1024)</strong>，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在<strong>/usr/include/x86_64-linux-gnu/asm/unistd_32.h</strong>中，可以看到execve的调用号为11，因此如果我们构造<strong>syscall(11, &laquo;/bin/sh&raquo;, 0, 0)</strong>就相当于执行了<strong>execve(&laquo;/bin/sh&raquo;, 0, 0)</strong>即可get shell</p>
+<p>本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在<strong>syscall</strong>这个可以实现系统调用的函数，如<strong>syscall(4, 1, &amp;v4, 42)</strong>即相当于<strong>write(1, &amp;v4, 42)</strong>，<strong>syscall(3, 0, &amp;v1, 1024)</strong>即相当于<strong>read(0, &amp;v1, 1024)</strong>，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在<strong>/usr/include/x86_64-linux-gnu/asm/unistd_32.h</strong>中，可以看到execve的调用号为11，因此如果我们构造<strong>syscall(11, &ldquo;/bin/sh&rdquo;, 0, 0)</strong>就相当于执行了<strong>execve(&ldquo;/bin/sh&rdquo;, 0, 0)</strong>即可get shell</p>
 
 <blockquote>
 <p>介绍一个小trick，如下图，可以看出v4是提示字符串的开头，但因为IDA没有正确识别变量的类型，把提示字符串分成了v4~v15多个变量，v4的地址为bp-0x33，v15为bp-0x9，因此字符串长度为0x33 - 0x9 = 42</p>
@@ -487,7 +492,7 @@
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fkq2t89z2ij30rl06zmy7.jpg" alt="" /></p>
 
-<p>需要注意，对于execve的第一个参数&raquo;/bin/sh&raquo;，我们可以用先写入一个固定地址（如bss段）的方式迂回传参。</p>
+<p>需要注意，对于execve的第一个参数&rdquo;/bin/sh&rdquo;，我们可以用先写入一个固定地址（如bss段）的方式迂回传参。</p>
 
 <h3 id="0x04-toooomuch">0x04 toooomuch</h3>
 
@@ -511,14 +516,14 @@
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fkq3sgwpojj30d6038743.jpg" alt="" /></p>
 
-<p>并且可以通过while循环多次利用，很经典的利用方式，先泄露出system_got中的system函数真实地址，再覆写printf_got为system_addr，之后通过fgets读入&raquo;/bin/sh&raquo;时，printf(&laquo;/bin/sh&raquo;)已经相当于system(&laquo;/bin/sh&raquo;)，即可get shell</p>
+<p>并且可以通过while循环多次利用，很经典的利用方式，先泄露出system_got中的system函数真实地址，再覆写printf_got为system_addr，之后通过fgets读入&rdquo;/bin/sh&rdquo;时，printf(&ldquo;/bin/sh&rdquo;)已经相当于system(&ldquo;/bin/sh&rdquo;)，即可get shell</p>
 
 <p><strong>payload:</strong></p>
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fkq3w63laqj30gi070js5.jpg" alt="" /></p>
 
 <blockquote>
-<p>需要注意如果leak的payload是<strong>p32(system_got) + &laquo;%7$s&raquo;</strong>的形式，那么泄露出的system_addr是从第4位到第8位（p32(system_got))占据了前4位，另外如果p32(system_got)中有\x00等bad char截断printf的话，可以调整payload形式为<strong>%8$s + p32(system_got)</strong></p>
+<p>需要注意如果leak的payload是<strong>p32(system_got) + &ldquo;%7$s&rdquo;</strong>的形式，那么泄露出的system_addr是从第4位到第8位（p32(system_got))占据了前4位，另外如果p32(system_got)中有\x00等bad char截断printf的话，可以调整payload形式为<strong>%8$s + p32(system_got)</strong></p>
 </blockquote>
 
 <h3 id="0x07-echo2">0x07 echo2</h3>
@@ -526,9 +531,8 @@
 <p>很明显这一题也是格式化字符串的漏洞,与上一题的不同在于:</p>
 
 <ol>
-<li>64位,这意味着fmtstr_payload函数极有可能因为\x00不能用<br /></li>
-<li>开启了PIE,也就是说got表等地址都是随机的,但因为elf中各个部分的偏移是固定的,因此可以通过泄露elf基址的方法来确定其他部分的真实地址<br />
-<br /></li>
+<li>64位,这意味着fmtstr_payload函数极有可能因为\x00不能用</li>
+<li>开启了PIE,也就是说got表等地址都是随机的,但因为elf中各个部分的偏移是固定的,因此可以通过泄露elf基址的方法来确定其他部分的真实地址</li>
 </ol>
 
 <p>通过调试看出可以利用%41\$p和%43$p泄露main地址与__libc_start_main的地址(0x23 + 6, 0x25 + 6):</p>
@@ -668,8 +672,7 @@
 <p><strong>关于这个题有两点值得一提：</strong></p>
 
 <ol>
-<li>刚打开文件使用F5时报错<br />
-<br /></li>
+<li>刚打开文件使用F5时报错</li>
 </ol>
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnzicish9aj30b404laa0.jpg" alt="" /></p>
@@ -758,7 +761,7 @@
 
 <h3 id="0x0e-very-overflow">0x0E very_overflow</h3>
 
-<p>这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为128*(sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&laquo;/bin/sh&raquo;)或者one_gadget都可以求解</p>
+<p>这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为128*(sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&ldquo;/bin/sh&rdquo;)或者one_gadget都可以求解</p>
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnzjfuveuaj30ti0bh0zy.jpg" alt="" /></p>
 
@@ -928,10 +931,9 @@ public static void Main()
 <p>该题的约束条件有如下几个:</p>
 
 <ul>
-<li>0~5位为&raquo;FLAG{&raquo;<br /></li>
-<li>最后一位(31)为&raquo;}&raquo;<br /></li>
-<li>6~30位需在&raquo;ABCDEFGHIJKLMNOPQRSTUVWXYZ{} &laquo;内<br />
-<br /></li>
+<li>0~5位为&rdquo;FLAG{&rdquo;</li>
+<li>最后一位(31)为&rdquo;}&rdquo;</li>
+<li>6~30位需在&rdquo;ABCDEFGHIJKLMNOPQRSTUVWXYZ{} &ldquo;内</li>
 </ul>
 
 <p>因此可以写出z3的代码如下:</p>
@@ -1501,8 +1503,8 @@ json.dump({ key: globals()[key] for key in &quot;Mmxyzpq&quot; }, open('crypted'
 <p>有两点需要注意：</p>
 
 <ol>
-<li>用BitVec声明变量时，首先要估算中间变量的范围，确保运算过程中数据不会溢出(如该题中使用了较大的265位)，但为了运行速度也不能过大<br /></li>
-<li>大整数的比较大小建议使用UGT/ULT代替&gt;/&lt;<br /></li>
+<li>用BitVec声明变量时，首先要估算中间变量的范围，确保运算过程中数据不会溢出(如该题中使用了较大的265位)，但为了运行速度也不能过大</li>
+<li>大整数的比较大小建议使用UGT/ULT代替&gt;/&lt;</li>
 </ol>
 </blockquote>
 
