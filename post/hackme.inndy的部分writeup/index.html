@@ -40,7 +40,7 @@
 
   body {
     font-family:'Open Sans', 'Myriad Pro', Myriad, sans-serif;
-    font-size:17px;
+    font-size:22px;
     line-height:160%;
     color:#1d1313;
     max-width:700px;
@@ -75,7 +75,7 @@
   }
 
   code {
-    font-size: 12px;
+    font-size: 24px;
     padding: 4px;
   }
 
@@ -397,13 +397,15 @@
       <h1><a href="0x01f.github.io/">M4x&#39;s Blog</a></h1>
       <ul>
         
-          <li><a href="https://github.com/0x01f">About</a></li>
+          <li><a href="https:/github.com/0x01f">About</a></li>
         
           <li><a href="https://0x01f.github.io">Archives</a></li>
         
           <li><a href="https://github.com/0x01f">Github</a></li>
         
           <li><a href="http://www.cnblogs.com/WangAoBo/">Old Blog Link</a></li>
+        
+          <li><a href="https://github.com/0x01f">Works</a></li>
         
       </ul>
     </section>
@@ -425,7 +427,7 @@
 <p>原文链接：<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html">http://www.cnblogs.com/WangAoBo/p/7706719.html</a></p>
 </blockquote>
 
-<p>推荐一下<a href="https://hackme.inndy.tw/scoreboard/，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题目（主要是pwn和re），以后会跟着解题进度的推进逐步更新，同时遵循inndy师傅的规矩，只放思路，不放flag。">https://hackme.inndy.tw/scoreboard/，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题目（主要是pwn和re），以后会跟着解题进度的推进逐步更新，同时遵循inndy师傅的规矩，只放思路，不放flag。</a></p>
+<p>推荐一下<a href="https://hackme.inndy.tw/scoreboard/">hackme.inndy</a>，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题目（主要是pwn和re），以后会跟着解题进度的推进逐步更新，同时遵循inndy师傅的规矩，只放思路，不放flag。</p>
 
 <blockquote>
 <p><del>zwhubuntu师傅的部分题解：<a href="http://wxzwhubuntu.club:8088/index.php/2017/06/14/inndy/">http://wxzwhubuntu.club:8088/index.php/2017/06/14/inndy/</a></del></p>
@@ -437,7 +439,7 @@
 
 <h2 id="pwn">pwn</h2>
 
-<p>###0x00 catflag</p>
+<h3 id="0x00-catflag">0x00 catflag</h3>
 
 <p>送分题，nc连接，cat flag即可</p>
 
@@ -449,12 +451,12 @@
 
 <blockquote>
 <p>有两点需要注意：</p>
-</blockquote>
 
 <ol>
 <li>因为edit number中修改的数据是通过<strong>%d</strong>输入的，因此需要以整形的方式输入<strong>call_me_maybe</strong>函数的地址</li>
 <li>修改ret的地址之后，还需要再输入一次0来退出<strong>run_program</strong>的循环来出发ret</li>
 </ol>
+</blockquote>
 
 <p><strong>payload：</strong></p>
 
