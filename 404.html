@@ -353,6 +353,17 @@
     }
   }
 
+  new Valine({
+    el: '#vcomments' ,
+    appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+    appKey: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+    notify:false,
+    verify:false,
+    avatar:'mm'
+    placeholder: 'just go go',
+    path:window.location.pathname,
+});
+
   @media (max-width: 400px) {
     body {
       padding-left:20px;
@@ -411,6 +422,14 @@
         
       </ul>
     </section>
+  <div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE'
+        })
+    </script>
 
   <section id=not-found>
     <a href=/>404</a>
