@@ -847,7 +847,7 @@
 
 <h3 id="0x10-mailer">0x10 mailer</h3>
 
-<p>很明显,gets那里能够arbitrary overflow, 直接修改top_chunk,使用house of force修改got即可, 没什么好说的</p>
+<p>很明显,gets那里能够arbitrary overflow, 又没开NX保护, 直接利用arbitrary overflow修改top_chunk,使用house of force修改got到shellcode的地址即可, 没什么好说的</p>
 
 <h3 id="0x11-tictactoe-1">0x11 tictactoe-1</h3>
 
