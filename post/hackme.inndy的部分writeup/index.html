@@ -831,14 +831,19 @@
  |....           |
  |data           |
  ++--------------+
- 如上图,题目希望我们在notepad\_open(chunk1)时,退出时使用chunk1的show\_func_ptr或者destory\_fun\_ptr函数指针,但因为没有检测输入为负,我们可以在前一个chunk(chunk0)中的data中写好evil\_func的地址,控制输入,输入合理的负数执行该函数,这样只要合理的控制,我们就有了执行任意函数的能力
+ 如上图,题目希望我们在notepad_open(chunk1)时,退出时使用chunk1的show_func_ptr或者destory_fun_ptr函数指针,但因为没有检测输入为负,我们可以在前一个chunk(chunk0)中的data中写好evil_func的地址,控制输入,输入合理的负数执行该函数,这样只要合理的控制,我们就有了执行任意函数的能力
 </code></pre>
 
 <p>我的做法分为以下几步:
-1. 先通过该漏洞free一个chunk,造成uaf
-2. 再利用该漏洞puts freed_chunk来leak libc
-3. gets读入$0\0/sh\0
-4. 执行system(&ldquo;$0&rdquo;)</p>
+1. 先通过该漏洞 free 一个 chunk,造成 uaf</p>
+
+<ol>
+<li><p>再利用该漏洞 puts freed_chunk 来 leak libc</p></li>
+
+<li><p>gets读入 $0\0/sh\0</p></li>
+
+<li><p>执行 system(&ldquo;$0&rdquo;)</p></li>
+</ol>
 
 <h3 id="0x10-mailer">0x10 mailer</h3>
 
