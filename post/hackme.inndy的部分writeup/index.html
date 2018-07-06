@@ -434,13 +434,13 @@
   <h1> Hackme.Inndy的部分writeup </h1>
 
   <div id=sub-header>
-    July 2018 · 33 minute read
+    July 2018 · 34 minute read
   </div>
 
   <div class="entry-content">
     
 
-<h1 id="hackme-inndy-tw的一些writeup-6月3日更新">hackme.inndy.tw的一些Writeup（6月3日更新）</h1>
+<h1 id="hackme-inndy-tw的一些writeup-7月6日更新">hackme.inndy.tw的一些Writeup（7月6日更新）</h1>
 
 <blockquote>
 <p><del>原文链接：<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html">http://www.cnblogs.com/WangAoBo/p/7706719.html</a></del>
@@ -1463,7 +1463,94 @@ if __name__ == &quot;__main__&quot;:
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fm5rja85s1j30dt02z753.jpg" alt="" /></p>
 
-<h3 id="0x0a-mov">0x0A mov</h3>
+<h3 id="0x0a-unpackme">0x0A unpackme</h3>
+
+<p>这道题目挺有意思, 需要对PE程序的结构有一些了解, 从题干已经可以知道这是一个加壳的程序,下载下来后 <code>upx -d</code> 脱壳失败,看来应该是壳的某些关键信息被改掉了,我们拿一个同样的 PE32(GUI) 程序加壳,比较一下文件结构,先用 <code>strings/rabin2 -zzqq</code> 比较两个binary的字符串,可以发现 <code>unpackme.exe</code> 中有很明显的人工修改过的字符串,如 <code>CTF0</code>, <code>CTF1</code>, <code>CTF2</code>, <code>CTF?</code>, <code>!The flag is not FLAG{Hello,DOS section}</code> 等.
+放到 010editor 中使用 exe templete 分析,通过对比可以发现如假 FLAG 所说, section head被修改了,将 unpackme.exe 中的信息修改回来:</p>
+
+<pre><code>CTF0 -&gt; UPX0
+CTF1 -&gt; UPX1
+CTF2 -&gt; .rsrc
+CTF? -&gt; UPX!
+!The flag is not FLAG{Hello,DOS section} -&gt; !This program cannot be run in DOS mode.
+</code></pre>
+
+<p>修改之后,就可以 upx -d 脱壳了,放入IDA中分析,可以看出关键代码如下:</p>
+
+<pre><code class="language-C">    v4 = GetParent(hWnd);
+    v5 = GetDlgItemTextA(v4, 101, &amp;String, 63);
+    if ( v5 )
+    {
+      phProv = 0;
+      phHash = 0;
+      if ( !CryptAcquireContextA(&amp;phProv, 0, 0, 1u, 0xF0000000)
+        || !CryptCreateHash(phProv, 0x8003u, 0, 0, &amp;phHash)
+        || !CryptHashData(phHash, (const BYTE *)&amp;String, v5, 0)
+        || !CryptGetHashParam(phHash, 2u, (BYTE *)pbData, &amp;pdwDataLen, 0) )
+      {
+        ExitProcess(1u);
+      }
+      CryptDestroyHash(phHash);
+      CryptReleaseContext(phProv, 0);
+      v7 = pbData;
+      v8 = &amp;unk_4128A0;
+      v9 = 12;
+      while ( *(_DWORD *)v7 == *v8 )
+      {
+        v7 += 4;
+        ++v8;
+        v10 = v9 &lt; 4;
+        v9 -= 4;
+        if ( v10 )
+        {
+          v11 = String;
+          v12 = 0;
+          v13 = 3;
+          v14 = 2;
+          do
+          {
+            Text[v12] = v11 ^ data[v12] ^ pbData[v12 &amp; 0xF];
+            Text[v12 + 1] = v11 ^ data[v12 + 1] ^ pbData[((_BYTE)v14 - 1) &amp; 0xF];
+            v15 = data[v14] ^ pbData[v14 &amp; 0xF];
+            v14 += 4;
+            Text[v13 - 1] = v11 ^ v15;
+            v16 = data[v13] ^ pbData[v13 &amp; 0xF];
+            v13 += 4;
+            Text[v12 + 3] = v11 ^ v16;
+            v12 += 4;
+          }
+          while ( v14 &lt; 0x22 );
+          if ( v12 &lt; 0x80 )
+          {
+            Text[v12] = 0;
+            MessageBoxA(hWnd, Text, aFlagIs, 0x40u);
+            ExitProcess(0);
+          }
+          __report_rangecheckfailure();
+          __debugbreak();
+          JUMPOUT(*(_DWORD *)algn_40BDCF);
+        }
+      }
+      MessageBoxA(hWnd, aWrongAnswer, aHackmectf_2, 0x10u);
+    }
+</code></pre>
+
+<p>可以看出,只需满足 <code>v8 = &amp;unk_4128A0;</code> 一句即可,后边的逻辑完全不用管,经过查API的文档,可以知道只需 <code>MD5(input) == &amp;unk_4128A0</code> 即可, 而这个 hash 又能查出来</p>
+
+<pre><code>该数据已破解成功!
+密文: 34AF0D074B17F44D1BB939765B02776F
+明文: how[space]do[space]you[space]turn[space]this[space]on
+数据来源: admin
+用时:00:00:00.1911904
+</code></pre>
+
+<p>根据程序逻辑,在输入框中输入 <code>how do you turn this on</code> 就会弹出 flag, 但输入 flag 后又发现 check Password 按钮是灰色的不能点, 这个好办, 根据查阅 API 发现 EnableWIndow 函数做了限制, 当 EnableWindow 函数的第二个参数是 0 时, 控件无响应, 将次参数 patch 为 1 即可, 这时输入 <code>how do you turn this on</code> 就能弹 flag 了</p>
+
+<blockquote>
+<p>多说一句, 这道题用 wine 模拟可以减少很多不必要的麻烦, 具体可以看这道题的 <a href="https://www.cnblogs.com/WangAoBo/p/iscc2018_leftleftrightright-writeup.html">writeup</a></p>
+</blockquote>
+
+<h3 id="0x0b-mov">0x0B mov</h3>
 
 <p>这个题前前后后做了好几个月，后来发现是我想麻烦了，先说一下我做这道题的历程</p>
 
