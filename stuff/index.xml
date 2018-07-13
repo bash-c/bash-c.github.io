@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stuffs on M4x&#39;s Blog</title>
+    <link>0x01f.github.io/stuff/</link>
+    <description>Recent content in Stuffs on M4x&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    
+	<atom:link href="0x01f.github.io/stuff/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Aboutme</title>
+      <link>0x01f.github.io/stuff/aboutme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>0x01f.github.io/stuff/aboutme/</guid>
+      <description> Intrests: CTF pwn/reverse/crypto games, fuzz, python/shell/(javascript), Linux, cool and challenging stuff Distro: latest Deepin, considering Manjaro Vim or Emacs: Vim Tabs or spaces: spaces  </description>
+    </item>
+    
+    <item>
+      <title>Myworks</title>
+      <link>0x01f.github.io/stuff/myworks/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>0x01f.github.io/stuff/myworks/</guid>
+      <description> one of core contributors of ctf-wiki/ctf-tools/ctf-challenges main_arena_offset: a shell script to get main_arena offset quickly in CTF games. modified Pwngdb: 融合了 pwndbg 和 Pwngdb的一些功能, 修改了其中一些冲突  </description>
+    </item>
+    
+  </channel>
+</rss>

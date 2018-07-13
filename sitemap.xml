@@ -18,6 +18,10 @@
   </url>
   
   <url>
+    <loc>0x01f.github.io/stuff/aboutme/</loc>
+  </url>
+  
+  <url>
     <loc>0x01f.github.io/categories/</loc>
     <priority>0</priority>
   </url>
@@ -29,8 +33,17 @@
   </url>
   
   <url>
+    <loc>0x01f.github.io/stuff/myworks/</loc>
+  </url>
+  
+  <url>
     <loc>0x01f.github.io/post/</loc>
     <lastmod>2018-07-13T12:05:10+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>0x01f.github.io/stuff/</loc>
     <priority>0</priority>
   </url>
   
