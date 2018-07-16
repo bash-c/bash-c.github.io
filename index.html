@@ -1,127 +1,187 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
-  <head>
-	<meta name="generator" content="Hugo 0.25.1" />
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="author" content="Marlon Cabrera Oliveira">
-    <meta name="description" content="Hugo theme using tachyons.io & geomicons.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic|PT+Mono&amp;subset=latin,cyrillic">
-    <link rel="stylesheet" href="/css/tachyons.css">
-    <style>
-        .geomicon { width: 1.5em; height: 1.5em; color: #405660; }
-        body{ font-family:'PT Sans', sans-serif; }
-    </style>
-  </head>
-  <body>
-      <header class="tc pal bb b-near-white">
-    <h1 class="f6 thin i link-child"><a href="/">M4x's Blog</a></h1>
-        <nav>
-          <ul class="list pln">
-            <li class="dib prm"><a href="/post"><span class="js-geomicon geomicon" data-icon="compose"></span>Home</a></li>
-            <li class="dib prm"><a href="/stuff/myworks"><span class="js-geomicon geomicon" data-icon="play"></span>Works</a></li>
-            <li class="dib prm"><a href="/stuff/aboutme"><span class="js-geomicon geomicon" data-icon="user"></span>About</a></li>
-            <li class="dib prm"><a href="http://www.cnblogs.com/WangAoBo/"><span class="js-geomicon geomicon" data-icon="link"></span>Old Blog Link</a></li>
-          </ul>
-        </nav>
-        </header>
 
+<head>
+  <title>M4x&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="" />
+  <meta name="generator" content="Hugo 0.44" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://0x01f.github.io/css/styles.css" />
+</head>
 
-    <main class="pax">
-      <h1 class="ttu fw4 f6 lt-silver">Posts</h1>
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://0x01f.github.io/">M4x&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+          
+        <li><a href="https://github.com/0x01f"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
            
-                
-                <h2><a href="/post/hitcon-training-writeup/">HITCON-Training-Writeup</a></h2>
-                <article >
-    <header>
-      <div>Fri, Jul 13, 2018 </div>
+      </ul>
+      
+      <p><em>在学 CTF bin/fuzz/python/shell</em></p>
+      
     </header>
 
-    HITCON-Training-Writeup  原文链接M4x@10.0.0.55
-项目地址M4x&rsquo;s github，欢迎 star~
-更新时间5月16
- 复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.com/scwuaptx/HITCON-Training
-Outline  Basic Knowledge  Introduction Reverse Engineering  Static Analysis Dynamic Analysis  Exploitation Useful Tool  IDA PRO GDB Pwntool  lab 1 - sysmagic Section Compile,linking,assmbler Execution how program get run Segment x86 assembly Calling convention lab 2 - open/read/write shellcoding  Stack Overflow  Buffer Overflow Return to Text/Shellcode lab 3 - ret2shellcode Protection ASLR/DEP/PIE/StackGuard Lazy binding Return to Library lab 4 - ret2lib  Return Oriented Programming  ROP lab 5 - simple rop Using ROP bypass ASLR ret2plt Stack migration lab 6 - migration  Format String Attack  Format String Read from arbitrary memory lab 7 - crack Write to arbitrary memory lab 8 - craxme Advanced Trick EBP chain lab 9 - playfmt  x64 Binary Exploitation  x64 assembly ROP Format string Attack  Heap exploitation  Glibc memory allocator overview Vulnerablility on heap Use after free  lab 10 - hacknote  Heap overflow  house of force lab 11 - 1 - bamboobox1 unlink lab 11 - 2 - bamboobox2   Advanced heap exploitation  Fastbin attack lab 12 - babysecretgarden Shrink the chunk Extend the chunk lab 13 - heapcreator Unsortbin attack lab 14 - magicheap  C++ Exploitation  Name Mangling Vtable fucntion table Vector &amp; String New &amp; delete Copy constructor &amp; assignment operator lab 15 - zoo   Writeup lab1-sysmagic 一个很简单的逆向题，看 get_flag 函数的逻辑逆回来即可，直接逆向的方法就不说了
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/aboutme/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/myworks/">
+                <i class="fa-li fa  fa-lg"></i><span>works</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<section id="home">
+        <ul>
+          
+          <li class="first">
+            <h1><a href="https://0x01f.github.io/post/hitcon-training-writeup/" title="HITCON-Training-Writeup">HITCON-Training-Writeup</a></h1> 
+            <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-07-13T12:05:10&#43;08:00">Jul 13, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>21 min read</li>
+    </ul>
+</aside>
+            <p>HITCON-Training-Writeup  原文链接M4x@10.0.0.55
+项目地址M4x&rsquo;s github，欢迎 star~</p>
+            
+            <a href="https://0x01f.github.io/post/hitcon-training-writeup/">Read more&hellip;</a>
+            
+          </li>
+          
+          <li >
+            <h1><a href="https://0x01f.github.io/post/pin-in-ctf/" title="Pin In CTF">Pin In CTF</a></h1> 
+            <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-07-03T12:16:10&#43;08:00">Jul 3, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>9 min read</li>
+    </ul>
+</aside>
+            <p>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</p>
+            
+            <a href="https://0x01f.github.io/post/pin-in-ctf/">Read more&hellip;</a>
+            
+          </li>
+          
+          <li >
+            <h1><a href="https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/" title="Hackme.Inndy的部分writeup">Hackme.Inndy的部分writeup</a></h1> 
+            <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-07-03T12:01:48&#43;08:00">Jul 3, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>37 min read</li>
+    </ul>
+</aside>
+            <p>hackme.inndy.tw的一些Writeup（7月6日更新）  原文链接：http://www.cnblogs.com/WangAoBo/p/7706719.html 原文链接：0x01f.github.io/post/hackme.inndy的部分writeup/</p>
+            
+            <a href="https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/">Read more&hellip;</a>
+            
+          </li>
+          
+          <li >
+            <h1><a href="https://0x01f.github.io/post/aboutme/" title="About">About</a></h1> 
+            <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="0001-01-01T00:00:00Z">Jan 1, 0001</time>
+        </li>
+        
+        
+
+        
+
+        <li>1 min read</li>
+    </ul>
+</aside>
+            <p> Intrests:  CTF pwn/reverse/crypto games fuzz python/shell/(javascript) Linux cool and challenging stuff  Distro: latest Deepin, considering Manjaro Vim or Emacs: Vim Tabs or spaces: spaces Relationship status: In love  </p>
+            
+          </li>
+          
+          <li >
+            <h1><a href="https://0x01f.github.io/post/myworks/" title="works">works</a></h1> 
+            <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="0001-01-01T00:00:00Z">Jan 1, 0001</time>
+        </li>
+        
+        
+
+        
+
+        <li>1 min read</li>
+    </ul>
+</aside>
+            <p>one of core contributors of ctf-wiki/ctf-tools/ctf-challenges main_arena_offset: a shell script to get main_arena offset quickly in CTF games.</p>
+            
+            <a href="https://0x01f.github.io/post/myworks/">Read more&hellip;</a>
+            
+          </li>
+          
+        </ul>
+      </section>
+
+
+
+</main>
     <footer>
-        <a href='/post/hitcon-training-writeup/'><nobr>Read more →</nobr></a>
+        <h6>Copyright &copy; 2018 - M4x | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://0x01f.github.io/index.xml">Subscribe</a></h6>
     </footer>
-</article>
+</div>
+<script src="https://0x01f.github.io/js/scripts.js"></script>
+</body>
 
-                
-            
-                
-                <h2><a href="/post/pin-in-ctf/">Pin In CTF</a></h2>
-                <article >
-    <header>
-      <div>Tue, Jul 3, 2018 </div>
-    </header>
-
-    intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序
-什么是插桩(instrument) 通俗的来说，插桩就是在已有的源代码/二进制程序中插入某些代码以便于自己分析，比如在调试时使用 printf 打印变量值就属于在源代码级别的插桩。而intel pin就是在二进制程序级别（没有源代码）插桩的一款工具
-pin 和 pintool pin 的安装，pintool 的编译 pin 的安装很简单，这里以 64 位的 Linux 为例来说明，从 官网 上下载 pin 组件后，解压即可，在解压后的文件夹内有编译好的二进制程序 pin
-pin-3.6-gcc-linux ls doc extlicense extras ia32 intel64 LICENSE pin README redist.txt source pin-3.6-gcc-linux file pin pin: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, BuildID[sha1]=7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped pin-3.6-gcc-linux .
-    <footer>
-        <a href='/post/pin-in-ctf/'><nobr>Read more →</nobr></a>
-    </footer>
-</article>
-
-                
-            
-                
-                <h2><a href="/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/">Hackme.Inndy的部分writeup</a></h2>
-                <article >
-    <header>
-      <div>Tue, Jul 3, 2018 </div>
-    </header>
-
-    hackme.inndy.tw的一些Writeup（7月6日更新）  原文链接：http://www.cnblogs.com/WangAoBo/p/7706719.html 原文链接：0x01f.github.io/post/hackme.inndy的部分writeup/
- 推荐一下hackme.inndy，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题目（主要是pwn和re），以后会跟着解题进度的推进逐步更新，同时遵循inndy师傅的规矩，只放思路，不放flag。
- zwhubuntu师傅的部分题解：http://wxzwhubuntu.club:8088/index.php/2017/06/14/inndy/
-聂师傅的部分题解: http://blog.csdn.net/niexinming
-如果看了解题思路仍有问题，可以在我的github找到完整的脚本：pwn，reverse，欢迎star和follow
- pwn 0x00 catflag 送分题，nc连接，cat flag即可
-0x01 homework 根据题目提示，是数组越界的漏洞，第一次遇到这种漏洞觉得利用方式很巧妙。通过搜索字符串发现了get shell的函数call_me_maybe, run_program函数中定义了一个大小为10的数组，漏洞出现在edit number的选项里，当我们输入的index大于10时，程序是不会报错的，而是会继续朝着高地址edit数据，因此只需要edit run_program栈中的ret为call_me_maybe, 这样当我们退出run_program函数时，程序就会返回到call_me_maybe函数来get_shell，原理图如下：
- 有两点需要注意：
- 因为edit number中修改的数据是通过%d输入的，因此需要以整形的方式输入call_me_maybe函数的地址 修改ret的地址之后，还需要再输入一次0来退出run_program的循环来出发ret   payload：
-0x02 ROP 刚看这道题的时候觉得无从下手，程序中既没有可以利用的函数，通过file命令查看是静态链接的也不能利用libc中的函数。后来注意到下一题提到了ROPgadget这个工具，才想到可以直接利用ROPgadget直接拼凑出ROP链，如下：
-这样就只需要我们通过缓冲区溢出的漏洞返回到ROPgadget构造的ropchain就可以了
-payload:
-0x03 ROP2 本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在syscall这个可以实现系统调用的函数，如syscall(4, 1, &amp;v4, 42)即相当于write(1, &amp;v4, 42)，syscall(3, 0, &amp;v1, 1024)即相当于read(0, &amp;v1, 1024)，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在/usr/include/x86_64-linux-gnu/asm/unistd_32.h中，可以看到execve的调用号为11，因此如果我们构造syscall(11, &ldquo;/bin/sh&rdquo;, 0, 0)就相当于执行了execve(&ldquo;/bin/sh&rdquo;, 0, 0)即可get shell
- 介绍一个小trick，如下图，可以看出v4是提示字符串的开头，但因为IDA没有正确识别变量的类型，把提示字符串分成了v4~v15多个变量，v4的地址为bp-0x33，v15为bp-0x9，因此字符串长度为0x33 - 0x9 = 42
-这时我们在v4上y一下，然后在弹出来的窗口上填入我们推断出来的数据类型char v4[42]，再点OK，这时IDA就能正确的识别出来v4的数据类型了，如下图：
- payload1:
-通过两次rop，实现get shell
-    <footer>
-        <a href='/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/'><nobr>Read more →</nobr></a>
-    </footer>
-</article>
-
-                
-            
-                
-            
-                
-            
-    </main>
-
-<footer class="tc center bt b--near-white pvx phm pax-m phxl-l pvx-l">
-        <small class="f5 mw7 db center phm lh-copy">
-		  <nav>
-			  <ul class="list pln">
-				  <li class="dib prm"><a href="https://www.github.com/0x01f"><span class="js-geomicon geomicon blue" data-icon="github"></span></a></li>
-                  
-			  </ul>
-			  </nav>
-              Copyright-  2018
-        </small>
-    </footer>
-    <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js.gz"></script>
-    <script>
-        var icons = document.querySelectorAll('.geomicon');
-        Geomicons.inject(icons);
-    </script>
-  </body>
 </html>
-

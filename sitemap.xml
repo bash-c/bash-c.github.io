@@ -3,53 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/post/hitcon-training-writeup/</loc>
+    <loc>https://0x01f.github.io/post/</loc>
     <lastmod>2018-07-13T12:05:10+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/pin-in-ctf/</loc>
+    <loc>https://0x01f.github.io/post/hitcon-training-writeup/</loc>
+    <lastmod>2018-07-13T12:05:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://0x01f.github.io/post/pin-in-ctf/</loc>
     <lastmod>2018-07-03T12:16:10+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/</loc>
+    <loc>https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/</loc>
     <lastmod>2018-07-03T12:01:48+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/stuff/aboutme/</loc>
+    <loc>https://0x01f.github.io/post/aboutme/</loc>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>https://0x01f.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>https://0x01f.github.io/</loc>
     <lastmod>2018-07-13T12:05:10+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/stuff/myworks/</loc>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2018-07-13T12:05:10+08:00</lastmod>
+    <loc>https://0x01f.github.io/tags/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>/stuff/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <priority>0</priority>
+    <loc>https://0x01f.github.io/post/myworks/</loc>
   </url>
   
 </urlset>

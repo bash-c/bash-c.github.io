@@ -1,38 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="author" content="Marlon Cabrera Oliveira">
-    <meta name="description" content="Hugo theme using tachyons.io & geomicons.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic|PT+Mono&amp;subset=latin,cyrillic">
-    <link rel="stylesheet" href="/css/tachyons.css">
-    <style>
-        .geomicon { width: 1.5em; height: 1.5em; color: #405660; }
-        body{ font-family:'PT Sans', sans-serif; }
-    </style>
-  </head>
-  <body>
-      <header class="tc pal bb b-near-white">
-    <h1 class="f6 thin i link-child"><a href="/">M4x's Blog</a></h1>
-        <nav>
-          <ul class="list pln">
-            <li class="dib prm"><a href="/post"><span class="js-geomicon geomicon" data-icon="compose"></span>Home</a></li>
-            <li class="dib prm"><a href="/stuff/myworks"><span class="js-geomicon geomicon" data-icon="play"></span>Works</a></li>
-            <li class="dib prm"><a href="/stuff/aboutme"><span class="js-geomicon geomicon" data-icon="user"></span>About</a></li>
-            <li class="dib prm"><a href="http://www.cnblogs.com/WangAoBo/"><span class="js-geomicon geomicon" data-icon="link"></span>Old Blog Link</a></li>
-          </ul>
-        </nav>
-        </header>
+
+<head>
+  <title>M4x&#39;s Blog</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="" />
+  <meta name="generator" content="Hugo 0.44" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://0x01f.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://0x01f.github.io/">M4x&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+          
+        <li><a href="https://github.com/0x01f"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+           
+      </ul>
+      
+      <p><em>在学 CTF bin/fuzz/python/shell</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/aboutme/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/myworks/">
+                <i class="fa-li fa  fa-lg"></i><span>works</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
 
 
-  <main class="pal">
+
+
+<article>
 
     <h1>Pin In CTF</h1>
-    <h2>Jul 3, 2018</h2>
-      
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-07-03T12:16:10&#43;08:00">Jul 3, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>9 min read</li>
+    </ul>
+</aside>
+    
+
+    
 
 <h1 id="intel-pin">intel pin</h1>
 
@@ -49,32 +99,26 @@
 <h3 id="pin-的安装-pintool-的编译">pin 的安装，pintool 的编译</h3>
 
 <p>pin 的安装很简单，这里以 64 位的 Linux 为例来说明，从 <a href="https://software.intel.com/en-us/articles/pin-a-binary-instrumentation-tool-downloads">官网</a> 上下载 pin 组件后，解压即可，在解压后的文件夹内有编译好的二进制程序 pin</p>
-
-<pre><code class="language-bash">pin-3.6-gcc-linux ls
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pin-3.6-gcc-linux ls
 doc  extlicense  extras  ia32  intel64  LICENSE  pin  README  redist.txt  source
 pin-3.6-gcc-linux file pin 
-pin: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, BuildID[sha1]=7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped
+pin: ELF <span style="color:#ae81ff">32</span>-bit LSB executable, Intel <span style="color:#ae81ff">80386</span>, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>SYSV<span style="color:#f92672">)</span>, statically linked, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped
 pin-3.6-gcc-linux ./pin 
 E: Missing application name
 Pin: pin-3.6-97554-31f0a167d
-Copyright (c) 2003-2017, Intel Corporation. All rights reserved.
+Copyright <span style="color:#f92672">(</span>c<span style="color:#f92672">)</span> <span style="color:#ae81ff">2003</span>-2017, Intel Corporation. All rights reserved.
 
-Usage: pin [OPTION] [-t &lt;tool&gt; [&lt;toolargs&gt;]] -- &lt;command line&gt;
-Use -help for a description of options
-</code></pre>
-
+Usage: pin <span style="color:#f92672">[</span>OPTION<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>-t &lt;tool&gt; <span style="color:#f92672">[</span>&lt;toolargs&gt;<span style="color:#f92672">]]</span> -- &lt;command line&gt;
+Use -help <span style="color:#66d9ef">for</span> a description of options</code></pre></div>
 <p>在 <strong>source/tools/ManualExamples</strong> 中有一些现成的 pintool 可以使用，基本涵盖了各个模块的用法，这里以 inscount0 这个 pintool 为例介绍 pin 的使用方法</p>
-
-<pre><code class="language-bash">pin-3.6-gcc-linux cd source/tools/ManualExamples
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pin-3.6-gcc-linux cd source/tools/ManualExamples
 ManualExamples file inscount0.cpp
 inscount0.cpp: C source, ASCII text
-ManualExamples make obj-intel64/inscount0.so TARGET=intel64
-g++ -Wall -Werror -Wno-unknown-pragmas -D__PIN__=1 -DPIN_CRT=1 -fno-stack-protector -fno-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -DTARGET_IA32E -DHOST_IA32E -fPIC -DTARGET_LINUX -fabi-version=2  -I../../../source/include/pin -I../../../source/include/pin/gen -isystem /home/m4x/pin-3.6-gcc-linux/extras/stlport/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/libstdc++/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/arch-x86_64 -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi/asm-x86 -I../../../extras/components/include -I../../../extras/xed-intel64/include/xed -I../../../source/tools/InstLib -O3 -fomit-frame-pointer -fno-strict-aliasing   -c -o obj-intel64/inscount0.o inscount0.cpp
-g++ -shared -Wl,--hash-style=sysv ../../../intel64/runtime/pincrt/crtbeginS.o -Wl,-Bsymbolic -Wl,--version-script=../../../source/include/pin/pintool.ver -fabi-version=2    -o obj-intel64/inscount0.so obj-intel64/inscount0.o  -L../../../intel64/runtime/pincrt -L../../../intel64/lib -L../../../intel64/lib-ext -L../../../extras/xed-intel64/lib -lpin -lxed ../../../intel64/runtime/pincrt/crtendS.o -lpin3dwarf  -ldl-dynamic -nostdlib -lstlport-dynamic -lm-dynamic -lc-dynamic -lunwind-dynamic
+ManualExamples make obj-intel64/inscount0.so TARGET<span style="color:#f92672">=</span>intel64
+g++ -Wall -Werror -Wno-unknown-pragmas -D__PIN__<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> -DPIN_CRT<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> -fno-stack-protector -fno-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -DTARGET_IA32E -DHOST_IA32E -fPIC -DTARGET_LINUX -fabi-version<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>  -I../../../source/include/pin -I../../../source/include/pin/gen -isystem /home/m4x/pin-3.6-gcc-linux/extras/stlport/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/libstdc++/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/arch-x86_64 -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi/asm-x86 -I../../../extras/components/include -I../../../extras/xed-intel64/include/xed -I../../../source/tools/InstLib -O3 -fomit-frame-pointer -fno-strict-aliasing   -c -o obj-intel64/inscount0.o inscount0.cpp
+g++ -shared -Wl,--hash-style<span style="color:#f92672">=</span>sysv ../../../intel64/runtime/pincrt/crtbeginS.o -Wl,-Bsymbolic -Wl,--version-script<span style="color:#f92672">=</span>../../../source/include/pin/pintool.ver -fabi-version<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>    -o obj-intel64/inscount0.so obj-intel64/inscount0.o  -L../../../intel64/runtime/pincrt -L../../../intel64/lib -L../../../intel64/lib-ext -L../../../extras/xed-intel64/lib -lpin -lxed ../../../intel64/runtime/pincrt/crtendS.o -lpin3dwarf  -ldl-dynamic -nostdlib -lstlport-dynamic -lm-dynamic -lc-dynamic -lunwind-dynamic
 ManualExamples file obj-intel64/inscount0.so 
-obj-intel64/inscount0.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=3baa29dd54235acaab02edc94bf9ac377dd7b0e5, not stripped
-</code></pre>
-
+obj-intel64/inscount0.so: ELF <span style="color:#ae81ff">64</span>-bit LSB shared object, x86-64, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>SYSV<span style="color:#f92672">)</span>, dynamically linked, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>3baa29dd54235acaab02edc94bf9ac377dd7b0e5, not stripped</code></pre></div>
 <p>此时在 obj-intel64 下编译生成了 inscount0.so，这个 so 即为一种 pintool，功能为记录程序执行的指令的条数；</p>
 
 <blockquote>
@@ -84,26 +128,16 @@ obj-intel64/inscount0.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)
 </blockquote>
 
 <p>类似的，要编译 32 位的 pintool 可以使用</p>
-
-<pre><code class="language-bash">make obj-ia32/inscount0.so
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make obj-ia32/inscount0.so</code></pre></div>
 <p>编译 ManualExamples 中的所有 pintool 可以使用</p>
-
-<pre><code class="language-bash">make all TAEGET=intel64
-make all TAEGET=ia32
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make all TAEGET<span style="color:#f92672">=</span>intel64
+make all TAEGET<span style="color:#f92672">=</span>ia32</code></pre></div>
 <h3 id="pin-的使用">pin 的使用</h3>
 
 <p>pin 的基本命令格式如下</p>
-
-<pre><code class="language-bash">pin -t your_pintool -- your_binary &lt;arg&gt; 
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pin -t your_pintool -- your_binary &lt;arg&gt; </code></pre></div>
 <p>以刚刚编译的 inscount0 这个 pintool 为例</p>
-
-<pre><code class="language-bash">ManualExamples ../../../pin -t ./obj-intel64/inscount0.so -- /bin/ls -a
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ManualExamples ../../../pin -t ./obj-intel64/inscount0.so -- /bin/ls -a
 .		       inscount2.cpp	  obj-intel64
 ..		       inscount.out	  pinatrace.cpp
 buffer_linux.cpp       inscount_tls.cpp   pin.log
@@ -123,120 +157,109 @@ imageload.cpp	       myMalloctrace.cpp  test-packed
 inscount0.cpp	       nonstatica.cpp	  tracer.cpp
 inscount1.cpp	       obj-ia32		  w_malloctrace.cpp
 ManualExamples cat inscount.out 
-Count 813449
-</code></pre>
-
+Count <span style="color:#ae81ff">813449</span></code></pre></div>
 <p>inscount 默认结果保存在 inscount.out 这个文件中，在上例中，即此时 <strong>ls -a</strong> 这条命令共执行了 813449 条指令</p>
 
 <h3 id="pintool-的分析">pintool 的分析</h3>
 
 <p>同样以 inscount0 为例分析，查看 inscount0.cpp 的内容</p>
-
-<pre><code class="language-C++">#include &lt;iostream&gt;
-#include &lt;fstream&gt;
-#include &quot;pin.H&quot;
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;fstream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;pin.H&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
 ofstream OutFile;
 
-// The running count of instructions is kept here
-// make it static to help the compiler optimize docount
-static UINT64 icount = 0;
+<span style="color:#75715e">// The running count of instructions is kept here
+</span><span style="color:#75715e">// make it static to help the compiler optimize docount
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> UINT64 icount <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 
-// This function is called before every instruction is executed
-VOID docount() { icount++; }
+<span style="color:#75715e">// This function is called before every instruction is executed
+</span><span style="color:#75715e"></span>VOID <span style="color:#a6e22e">docount</span>() { icount<span style="color:#f92672">++</span>; }
     
-// Pin calls this function every time a new instruction is encountered
-VOID Instruction(INS ins, VOID *v)
+<span style="color:#75715e">// Pin calls this function every time a new instruction is encountered
+</span><span style="color:#75715e"></span>VOID <span style="color:#a6e22e">Instruction</span>(INS ins, VOID <span style="color:#f92672">*</span>v)
 {
-    // Insert a call to docount before every instruction, no arguments are passed
-    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
+    <span style="color:#75715e">// Insert a call to docount before every instruction, no arguments are passed
+</span><span style="color:#75715e"></span>    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
 }
 
-KNOB&lt;string&gt; KnobOutputFile(KNOB_MODE_WRITEONCE, &quot;pintool&quot;,
-    &quot;o&quot;, &quot;inscount.out&quot;, &quot;specify output file name&quot;);
+KNOB<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;</span> KnobOutputFile(KNOB_MODE_WRITEONCE, <span style="color:#e6db74">&#34;pintool&#34;</span>,
+    <span style="color:#e6db74">&#34;o&#34;</span>, <span style="color:#e6db74">&#34;inscount.out&#34;</span>, <span style="color:#e6db74">&#34;specify output file name&#34;</span>);
 
-// This function is called when the application exits
-VOID Fini(INT32 code, VOID *v)
+<span style="color:#75715e">// This function is called when the application exits
+</span><span style="color:#75715e"></span>VOID <span style="color:#a6e22e">Fini</span>(INT32 code, VOID <span style="color:#f92672">*</span>v)
 {
-    // Write to a file since cout and cerr maybe closed by the application
-    OutFile.setf(ios::showbase);
-    OutFile &lt;&lt; &quot;Count &quot; &lt;&lt; icount &lt;&lt; endl;
+    <span style="color:#75715e">// Write to a file since cout and cerr maybe closed by the application
+</span><span style="color:#75715e"></span>    OutFile.setf(ios<span style="color:#f92672">::</span>showbase);
+    OutFile <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Count &#34;</span> <span style="color:#f92672">&lt;&lt;</span> icount <span style="color:#f92672">&lt;&lt;</span> endl;
     OutFile.close();
 }
 
-/* ===================================================================== */
-/* Print Help Message                                                    */
-/* ===================================================================== */
+<span style="color:#75715e">/* ===================================================================== */</span>
+<span style="color:#75715e">/* Print Help Message                                                    */</span>
+<span style="color:#75715e">/* ===================================================================== */</span>
 
-INT32 Usage()
+INT32 <span style="color:#a6e22e">Usage</span>()
 {
-    cerr &lt;&lt; &quot;This tool counts the number of dynamic instructions executed&quot; &lt;&lt; endl;
-    cerr &lt;&lt; endl &lt;&lt; KNOB_BASE::StringKnobSummary() &lt;&lt; endl;
-    return -1;
+    cerr <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;This tool counts the number of dynamic instructions executed&#34;</span> <span style="color:#f92672">&lt;&lt;</span> endl;
+    cerr <span style="color:#f92672">&lt;&lt;</span> endl <span style="color:#f92672">&lt;&lt;</span> KNOB_BASE<span style="color:#f92672">::</span>StringKnobSummary() <span style="color:#f92672">&lt;&lt;</span> endl;
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
 }
 
-/* ===================================================================== */
-/* Main                                                                  */
-/* ===================================================================== */
-/*   argc, argv are the entire command line: pin -t &lt;toolname&gt; -- ...    */
-/* ===================================================================== */
+<span style="color:#75715e">/* ===================================================================== */</span>
+<span style="color:#75715e">/* Main                                                                  */</span>
+<span style="color:#75715e">/* ===================================================================== */</span>
+<span style="color:#75715e">/*   argc, argv are the entire command line: pin -t &lt;toolname&gt; -- ...    */</span>
+<span style="color:#75715e">/* ===================================================================== */</span>
 
-int main(int argc, char * argv[])
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> argv[])
 {
-    // Initialize pin
-    if (PIN_Init(argc, argv)) return Usage();
+    <span style="color:#75715e">// Initialize pin
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (PIN_Init(argc, argv)) <span style="color:#66d9ef">return</span> Usage();
 
     OutFile.open(KnobOutputFile.Value().c_str());
 
-    // Register Instruction to be called to instrument instructions
-    INS_AddInstrumentFunction(Instruction, 0);
+    <span style="color:#75715e">// Register Instruction to be called to instrument instructions
+</span><span style="color:#75715e"></span>    INS_AddInstrumentFunction(Instruction, <span style="color:#ae81ff">0</span>);
 
-    // Register Fini to be called when the application exits
-    PIN_AddFiniFunction(Fini, 0);
+    <span style="color:#75715e">// Register Fini to be called when the application exits
+</span><span style="color:#75715e"></span>    PIN_AddFiniFunction(Fini, <span style="color:#ae81ff">0</span>);
     
-    // Start the program, never returns
-    PIN_StartProgram();
+    <span style="color:#75715e">// Start the program, never returns
+</span><span style="color:#75715e"></span>    PIN_StartProgram();
     
-    return 0;
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
 }
-</code></pre>
-
+</code></pre></div>
 <p>从 main 开始，首先调用了 PIN_init（53 行）进行初始化，然后使用 INS_AddInstrumenFunction 注册了一个插桩函数(58行)，根据 intel pin 的 <a href="https://software.intel.com/sites/landingpage/pintool/docs/97619/Pin/html/">用户手册</a></p>
-
-<pre><code class="language-C">PIN_CALLBACK LEVEL_PINCLIENT::INS_AddInstrumentFunction	(	INS_INSTRUMENT_CALLBACK 	fun,
-VOID * 	val 
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">PIN_CALLBACK LEVEL_PINCLIENT<span style="color:#f92672">::</span>INS_AddInstrumentFunction	(	INS_INSTRUMENT_CALLBACK 	fun,
+VOID <span style="color:#f92672">*</span> 	val 
 )		
 Add a function used to instrument at instruction granularity
 
 Parameters:
-fun	Instrumentation function for instructions
+fun	Instrumentation function <span style="color:#66d9ef">for</span> instructions
 val	passed as the second argument to the instrumentation function
 Returns:
-PIN_CALLBACK A handle to a callback that can be used to further modify this callback's properties
+PIN_CALLBACK A handle to a callback that can be used to further modify this callback<span style="color:#960050;background-color:#1e0010">&#39;</span>s properties
 Note:
 The pin client lock is obtained during the call of this API.
 Availability:
 Mode: JIT
-O/S: Linux, Windows &amp; OS X*
-CPU: All
-</code></pre>
-
+O<span style="color:#f92672">/</span>S: Linux, Windows <span style="color:#f92672">&amp;</span> OS X<span style="color:#f92672">*</span>
+CPU: All</code></pre></div>
 <p>在这里该函数的作用是在指令粒度插入 Instruction 函数，即在每条指令执行前，都会进入 Instruction 这个函数中，其第2个参数为一个额外传递给 Instruction 的参数，即对应 <code>VOID *v</code> 这个参数，这里没有使用。而 Instruction 接受的第一个参数为 <code>INS</code> 结构，用来表示一条指令</p>
 
 <p>而我们再看 Instruction 这个函数</p>
-
-<pre><code class="language-C">VOID Instruction(INS ins, VOID *v)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">VOID <span style="color:#a6e22e">Instruction</span>(INS ins, VOID <span style="color:#f92672">*</span>v)
 {
-    // Insert a call to docount before every instruction, no arguments are passed
-    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
-}
-</code></pre>
-
+    <span style="color:#75715e">// Insert a call to docount before every instruction, no arguments are passed
+</span><span style="color:#75715e"></span>    INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)docount, IARG_END);
+}</code></pre></div>
 <p>在 Instruction 函数内部又使用 INS_InsertCall 注册了一个函数 docount，即在每条指令前实际插入了 docount 这个函数。需要注意的是 INS_InsertCall 试一个便餐函数，前三个参数分别为指令(ins)，插入的实际(IPOINT_BEFORE，表示在指令运行之前插入 docount 函数)，函数指针(docount，转化为了 AFUNPTR 类型)，之后的参数为传递给 docount 函数的参数，以 IARG_END 结尾</p>
 
 <p>而 docount 函数（12 行）的作用就很明显了，每次将一个全局变量加 1，因此此时 /bin/ls -a 运行的模式如下:</p>
-
-<pre><code class="language-assembly">...
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">...
 icount++;
 sub $0xff, %edx
 icount++;
@@ -247,9 +270,7 @@ icount++;
 mov $0x1, %edi
 icount++;
 add $0x10, %eax
-...
-</code></pre>
-
+...</code></pre></div>
 <p>所以 inscount0 的用途就很明显了，每条指令前都调用 docount 函数将全局变量 icount 自增，最后通过PIN_AddFiniFunction 函数注册的 Fini 函数(25行)将结果写到一个文件中。</p>
 
 <p>当这些函数都定义完后，就可以使用 PIN_StartProgram 来启动程序了</p>
@@ -263,63 +284,57 @@ add $0x10, %eax
 <h3 id="ndh2k13-crackme-500">NDH2K13-crackme-500</h3>
 
 <p>首先用常规方法对 crackme 文件进行分析</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span style="color:#f92672">[</span>master<span style="color:#f92672">]</span> file crackme 
+crackme: ELF <span style="color:#ae81ff">64</span>-bit LSB executable, x86-64, invalid version <span style="color:#f92672">(</span>SYSV<span style="color:#f92672">)</span>, <span style="color:#66d9ef">for</span> GNU/Linux <span style="color:#ae81ff">2</span>.6.9, statically linked, corrupted section header size
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master<span style="color:#f92672">]</span> nm ./crackme 
 
-<pre><code class="language-bash">NDH2k13-crackme-500 [master] file crackme 
-crackme: ELF 64-bit LSB executable, x86-64, invalid version (SYSV), for GNU/Linux 2.6.9, statically linked, corrupted section header size
-NDH2k13-crackme-500 [master] nm ./crackme 
-
-nm: out of memory allocating 109524665216 bytes after a total of 0 bytes
-NDH2k13-crackme-500 [master] objdump -d ./crackme -M intel
+nm: out of memory allocating <span style="color:#ae81ff">109524665216</span> bytes after a total of <span style="color:#ae81ff">0</span> bytes
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master<span style="color:#f92672">]</span> objdump -d ./crackme -M intel
 objdump: ./crackme: 不可识别的文件格式
-NDH2k13-crackme-500 [master] ./crackme 
-Jonathan Salwan loves you &lt;3
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master<span style="color:#f92672">]</span> ./crackme 
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: test
-Bad password
-</code></pre>
-
+Bad password</code></pre></div>
 <p>发现 section header 受到了损坏，用 IDA 打开时也有很多报错，这时我们尝试使用 intel pin 来求解这道题目，先使用最常见的统计指令条数的方法</p>
-
-<pre><code class="language-bash">NDH2k13-crackme-500 [master] ~/pin-3.6-gcc-linux/pin -t ./inscount0.so -- ./crackme &lt;&lt;&lt; &quot;a&quot; &gt;&gt; /dev/null; cat inscount.out 
-Count 160345
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;a&quot; 
-Jonathan Salwan loves you &lt;3
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span style="color:#f92672">[</span>master<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./inscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;a&#34;</span> &gt;&gt; /dev/null; cat inscount.out 
+Count <span style="color:#ae81ff">160345</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;a&#34;</span> 
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 163218
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;aa&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">163218</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;aa&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 166014
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;aaa&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">166014</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;aaa&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 168810
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;aaaa&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">168810</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;aaaa&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 171606
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;aaaaa&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">171606</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;aaaaa&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 174402
-NDH2k13-crackme-500 [master●] bpython
-bpython version 0.17.1 on top of Python 2.7.13+ /usr/bin/python2
-&gt;&gt;&gt; 174402 - 171606 == 171606 - 168810 == 168810 - 166014 == 166014 - 163218
+Count: <span style="color:#ae81ff">174402</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> bpython
+bpython version <span style="color:#ae81ff">0</span>.17.1 on top of Python <span style="color:#ae81ff">2</span>.7.13+ /usr/bin/python2
+&gt;&gt;&gt; <span style="color:#ae81ff">174402</span> - 171606 <span style="color:#f92672">==</span> <span style="color:#ae81ff">171606</span> - 168810 <span style="color:#f92672">==</span> <span style="color:#ae81ff">168810</span> - 166014 <span style="color:#f92672">==</span> <span style="color:#ae81ff">166014</span> - <span style="color:#ae81ff">163218</span>
 True
-&gt;&gt;&gt; 
-</code></pre>
-
+&gt;&gt;&gt; </code></pre></div>
 <p>此时我们发现了一个很有趣的特性，输入长度每次增加 1 时，指令条数也是以等差的规模递增的</p>
 
 <blockquote>
@@ -327,199 +342,181 @@ True
 </blockquote>
 
 <p>我们写一个简单的脚本查看输入长度递增时，指令条数的变化规律</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">NDH2k13<span style="color:#f92672">-</span>crackme<span style="color:#f92672">-</span><span style="color:#ae81ff">500</span> [master<span style="color:#960050;background-color:#1e0010">●</span>] cat guessLen<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 
-<pre><code class="language-python">NDH2k13-crackme-500 [master●] cat guessLen.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+<span style="color:#f92672">from</span> subprocess <span style="color:#f92672">import</span> Popen, PIPE
+<span style="color:#f92672">from</span> sys <span style="color:#f92672">import</span> argv
+<span style="color:#f92672">import</span> string
 
-from subprocess import Popen, PIPE
-from sys import argv
-import string
+pinPath <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/home/m4x/pin-3.6-gcc-linux/pin&#34;</span>
+pinInit <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> tool, elf: Popen([pinPath, <span style="color:#e6db74">&#39;-t&#39;</span>, tool, <span style="color:#e6db74">&#39;--&#39;</span>, elf], stdin <span style="color:#f92672">=</span> PIPE, stdout <span style="color:#f92672">=</span> PIPE)
+pinWrite <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> cont: pin<span style="color:#f92672">.</span>stdin<span style="color:#f92672">.</span>write(cont)
+pinRead <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> : pin<span style="color:#f92672">.</span>communicate()[<span style="color:#ae81ff">0</span>]
 
-pinPath = &quot;/home/m4x/pin-3.6-gcc-linux/pin&quot;
-pinInit = lambda tool, elf: Popen([pinPath, '-t', tool, '--', elf], stdin = PIPE, stdout = PIPE)
-pinWrite = lambda cont: pin.stdin.write(cont)
-pinRead = lambda : pin.communicate()[0]
-
-if __name__ == &quot;__main__&quot;:
-    last = 0
-    for i in xrange(1, 30):
-        pin = pinInit(&quot;./myInscount0.so&quot;, &quot;./crackme&quot;)
-        pinWrite(&quot;a&quot; * i + '\n')
-        now = int(pinRead().split(&quot;Count: &quot;)[1])
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    last <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> xrange(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">30</span>):
+        pin <span style="color:#f92672">=</span> pinInit(<span style="color:#e6db74">&#34;./myInscount0.so&#34;</span>, <span style="color:#e6db74">&#34;./crackme&#34;</span>)
+        pinWrite(<span style="color:#e6db74">&#34;a&#34;</span> <span style="color:#f92672">*</span> i <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+        now <span style="color:#f92672">=</span> int(pinRead()<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;Count: &#34;</span>)[<span style="color:#ae81ff">1</span>])
         
-        print &quot;inputLen({:2d}) -&gt; ins({}) -&gt; delta({})&quot;.format(i, now, now - last)
-        last = now
-</code></pre>
-
+        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;inputLen({:2d}) -&gt; ins({}) -&gt; delta({})&#34;</span><span style="color:#f92672">.</span>format(i, now, now <span style="color:#f92672">-</span> last)
+        last <span style="color:#f92672">=</span> now</code></pre></div>
 <p>在我电脑上运行结果如下：</p>
-
-<pre><code class="language-python">NDH2k13-crackme-500 [master●] python guessLen.py 
-inputLen( 1) -&gt; ins(160307) -&gt; delta(160307)
-inputLen( 2) -&gt; ins(163103) -&gt; delta(2796)
-inputLen( 3) -&gt; ins(165899) -&gt; delta(2796)
-inputLen( 4) -&gt; ins(168695) -&gt; delta(2796)
-inputLen( 5) -&gt; ins(171491) -&gt; delta(2796)
-inputLen( 6) -&gt; ins(174287) -&gt; delta(2796)
-inputLen( 7) -&gt; ins(177083) -&gt; delta(2796)
-inputLen( 8) -&gt; ins(182804) -&gt; delta(5721)
-inputLen( 9) -&gt; ins(182676) -&gt; delta(-128)
-inputLen(10) -&gt; ins(185472) -&gt; delta(2796)
-inputLen(11) -&gt; ins(188268) -&gt; delta(2796)
-inputLen(12) -&gt; ins(191064) -&gt; delta(2796)
-inputLen(13) -&gt; ins(193860) -&gt; delta(2796)
-inputLen(14) -&gt; ins(196656) -&gt; delta(2796)
-inputLen(15) -&gt; ins(199452) -&gt; delta(2796)
-inputLen(16) -&gt; ins(202248) -&gt; delta(2796)
-inputLen(17) -&gt; ins(205044) -&gt; delta(2796)
-inputLen(18) -&gt; ins(207840) -&gt; delta(2796)
-inputLen(19) -&gt; ins(210636) -&gt; delta(2796)
-inputLen(20) -&gt; ins(213432) -&gt; delta(2796)
-inputLen(21) -&gt; ins(216228) -&gt; delta(2796)
-inputLen(22) -&gt; ins(219024) -&gt; delta(2796)
-inputLen(23) -&gt; ins(221820) -&gt; delta(2796)
-inputLen(24) -&gt; ins(224616) -&gt; delta(2796)
-inputLen(25) -&gt; ins(227412) -&gt; delta(2796)
-inputLen(26) -&gt; ins(230208) -&gt; delta(2796)
-inputLen(27) -&gt; ins(244188) -&gt; delta(13980)
-inputLen(28) -&gt; ins(244188) -&gt; delta(0)
-inputLen(29) -&gt; ins(244188) -&gt; delta(0)
-</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">NDH2k13<span style="color:#f92672">-</span>crackme<span style="color:#f92672">-</span><span style="color:#ae81ff">500</span> [master<span style="color:#960050;background-color:#1e0010">●</span>] python guessLen<span style="color:#f92672">.</span>py 
+inputLen( <span style="color:#ae81ff">1</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">160307</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">160307</span>)
+inputLen( <span style="color:#ae81ff">2</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">163103</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">3</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">165899</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">4</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">168695</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">5</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">171491</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">6</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">174287</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">7</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">177083</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen( <span style="color:#ae81ff">8</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">182804</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">5721</span>)
+inputLen( <span style="color:#ae81ff">9</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">182676</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#f92672">-</span><span style="color:#ae81ff">128</span>)
+inputLen(<span style="color:#ae81ff">10</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">185472</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">11</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">188268</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">12</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">191064</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">13</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">193860</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">14</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">196656</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">15</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">199452</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">16</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">202248</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">17</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">205044</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">18</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">207840</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">19</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">210636</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">20</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">213432</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">21</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">216228</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">22</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">219024</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">23</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">221820</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">24</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">224616</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">25</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">227412</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">26</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">230208</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">2796</span>)
+inputLen(<span style="color:#ae81ff">27</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">244188</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">13980</span>)
+inputLen(<span style="color:#ae81ff">28</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">244188</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">0</span>)
+inputLen(<span style="color:#ae81ff">29</span>) <span style="color:#f92672">-&gt;</span> ins(<span style="color:#ae81ff">244188</span>) <span style="color:#f92672">-&gt;</span> delta(<span style="color:#ae81ff">0</span>)</code></pre></div>
 <p>可以发现，在输入长度 &lt;8 时，指令条数是递增的，但长度为 8 与长度为 7 比较发生了突变，这个时候我们就可以大胆的推测当输入长度为 8 时，程序的运行流程有了较大的变化，正确的 flag 长度即为 8</p>
 
 <p>我们以输入长度是 8 为前提，再查看不同输入下指令条数的变化规律</p>
-
-<pre><code class="language-bash">NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;&gt;???????&quot;
-Jonathan Salwan loves you &lt;3
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;&gt;???????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 185714
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;????????&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">185714</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;????????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 185714
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;@???????&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">185714</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;@???????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 185714
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;A???????&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">185714</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;A???????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 189752
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;B???????&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">189752</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;B???????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 185714
-NDH2k13-crackme-500 [master●] ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme &lt;&lt;&lt; &quot;C???????&quot;
-Jonathan Salwan loves you &lt;3
+Count: <span style="color:#ae81ff">185714</span>
+NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount0.so -- ./crackme <span style="color:#f92672">&lt;&lt;&lt;</span> <span style="color:#e6db74">&#34;C???????&#34;</span>
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: Bad password
-Count: 185714
-</code></pre>
-
+Count: <span style="color:#ae81ff">185714</span></code></pre></div>
 <p>可以发现，输入以 ASCII码 顺序递增时，第一位为 A 时指令条数发生了变化，此时我们在进一步推测正确的 flag 第一位即为 A</p>
 
 <p>再写一个脚本逐位爆破</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">NDH2k13<span style="color:#f92672">-</span>crackme<span style="color:#f92672">-</span><span style="color:#ae81ff">500</span> [master<span style="color:#960050;background-color:#1e0010">●</span>] cat guessPWD<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 
-<pre><code class="language-python">NDH2k13-crackme-500 [master●] cat guessPWD.py 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+<span style="color:#f92672">from</span> subprocess <span style="color:#f92672">import</span> Popen, PIPE
+<span style="color:#f92672">from</span> sys <span style="color:#f92672">import</span> argv
+<span style="color:#f92672">import</span> string
+<span style="color:#f92672">import</span> pdb
 
-from subprocess import Popen, PIPE
-from sys import argv
-import string
-import pdb
+pinPath <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/home/m4x/pin-3.6-gcc-linux/pin&#34;</span>
+pinInit <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> tool, elf: Popen([pinPath, <span style="color:#e6db74">&#39;-t&#39;</span>, tool, <span style="color:#e6db74">&#39;--&#39;</span>, elf], stdin <span style="color:#f92672">=</span> PIPE, stdout <span style="color:#f92672">=</span> PIPE)
+pinWrite <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> cont: pin<span style="color:#f92672">.</span>stdin<span style="color:#f92672">.</span>write(cont)
+pinRead <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> : pin<span style="color:#f92672">.</span>communicate()[<span style="color:#ae81ff">0</span>]
 
-pinPath = &quot;/home/m4x/pin-3.6-gcc-linux/pin&quot;
-pinInit = lambda tool, elf: Popen([pinPath, '-t', tool, '--', elf], stdin = PIPE, stdout = PIPE)
-pinWrite = lambda cont: pin.stdin.write(cont)
-pinRead = lambda : pin.communicate()[0]
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    last <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#75715e">#  dic = map(chr, xrange(0x20, 0x80))</span>
+    dic <span style="color:#f92672">=</span> string<span style="color:#f92672">.</span>ascii_letters <span style="color:#f92672">+</span> string<span style="color:#f92672">.</span>digits <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;+_ &#34;</span>
+    pwd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;?&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span>
+    dicIdx <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+    pwdIdx <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 
-if __name__ == &quot;__main__&quot;:
-    last = 0
-    #  dic = map(chr, xrange(0x20, 0x80))
-    dic = string.ascii_letters + string.digits + &quot;+_ &quot;
-    pwd = '?' * 8
-    dicIdx = 0
-    pwdIdx = 0
+    <span style="color:#66d9ef">while</span> True:
+        pwd <span style="color:#f92672">=</span> pwd[: pwdIdx] <span style="color:#f92672">+</span> dic[dicIdx] <span style="color:#f92672">+</span> pwd[pwdIdx <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>: ]
+        <span style="color:#75715e">#  pdb.set_trace()</span>
+        pin <span style="color:#f92672">=</span> pinInit(<span style="color:#e6db74">&#34;./myInscount1.so&#34;</span>, <span style="color:#e6db74">&#34;./crackme&#34;</span>)
+        pinWrite(pwd <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+        now <span style="color:#f92672">=</span> int(pinRead()<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;Count: &#34;</span>)[<span style="color:#ae81ff">1</span>])
 
-    while True:
-        pwd = pwd[: pwdIdx] + dic[dicIdx] + pwd[pwdIdx + 1: ]
-        #  pdb.set_trace()
-        pin = pinInit(&quot;./myInscount1.so&quot;, &quot;./crackme&quot;)
-        pinWrite(pwd + '\n')
-        now = int(pinRead().split(&quot;Count: &quot;)[1])
+        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;input({}) -&gt; now({}) -&gt; delta({})&#34;</span><span style="color:#f92672">.</span>format(pwd, now, now <span style="color:#f92672">-</span> last)
 
-        print &quot;input({}) -&gt; now({}) -&gt; delta({})&quot;.format(pwd, now, now - last)
+        <span style="color:#66d9ef">if</span> now <span style="color:#f92672">-</span> last <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2000</span> <span style="color:#f92672">and</span> dicIdx:
+            pwdIdx <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+            dicIdx <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+            last <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+            <span style="color:#66d9ef">if</span> pwdIdx <span style="color:#f92672">&gt;=</span> len(pwd):
+                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;Found pwd: {}&#34;</span><span style="color:#f92672">.</span>format(pwd)
+                <span style="color:#66d9ef">break</span>
 
-        if now - last &gt; 2000 and dicIdx:
-            pwdIdx += 1
-            dicIdx = -1
-            last = 0
-            if pwdIdx &gt;= len(pwd):
-                print &quot;Found pwd: {}&quot;.format(pwd)
-                break
-
-        dicIdx += 1
-        last = now
-</code></pre>
-
+        dicIdx <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+        last <span style="color:#f92672">=</span> now</code></pre></div>
 <p>运行结果如下</p>
-
-<pre><code class="language-bash">NDH2k13-crackme-500 [master●] time python guessPWD.py 
-input(a???????) -&gt; now(182804) -&gt; delta(182804)
-input(b???????) -&gt; now(182804) -&gt; delta(0)
-input(c???????) -&gt; now(182804) -&gt; delta(0)
-input(d???????) -&gt; now(182804) -&gt; delta(0)
-input(e???????) -&gt; now(182804) -&gt; delta(0)
-input(f???????) -&gt; now(182804) -&gt; delta(0)
-input(g???????) -&gt; now(182804) -&gt; delta(0)
-input(h???????) -&gt; now(182804) -&gt; delta(0)
-input(i???????) -&gt; now(182804) -&gt; delta(0)
-input(j???????) -&gt; now(182804) -&gt; delta(0)
-input(k???????) -&gt; now(182804) -&gt; delta(0)
-input(l???????) -&gt; now(182804) -&gt; delta(0)
-input(m???????) -&gt; now(182804) -&gt; delta(0)
-input(n???????) -&gt; now(182804) -&gt; delta(0)
-input(o???????) -&gt; now(182804) -&gt; delta(0)
-input(p???????) -&gt; now(182804) -&gt; delta(0)
-input(q???????) -&gt; now(182804) -&gt; delta(0)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> time python guessPWD.py 
+input<span style="color:#f92672">(</span>a???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>b???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>c???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>d???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>e???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>f???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>g???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>h???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>i???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>j???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>k???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>l???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>m???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>n???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>o???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>p???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>q???????<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">182804</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
 ......
-input(AzI0wBsO) -&gt; now(211070) -&gt; delta(0)
-input(AzI0wBsP) -&gt; now(211069) -&gt; delta(-1)
-input(AzI0wBsQ) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsR) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsS) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsT) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsU) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsV) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsW) -&gt; now(211069) -&gt; delta(0)
-input(AzI0wBsX) -&gt; now(214976) -&gt; delta(3907)
+input<span style="color:#f92672">(</span>AzI0wBsO<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211070</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsP<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span>-1<span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsQ<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsR<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsS<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsT<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsU<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsV<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsW<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">211069</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>
+input<span style="color:#f92672">(</span>AzI0wBsX<span style="color:#f92672">)</span> -&gt; now<span style="color:#f92672">(</span><span style="color:#ae81ff">214976</span><span style="color:#f92672">)</span> -&gt; delta<span style="color:#f92672">(</span><span style="color:#ae81ff">3907</span><span style="color:#f92672">)</span>
 Found pwd: AzI0wBsX
-python guessPWD.py  31.04s user 14.72s system 105% cpu 43.341 total
-</code></pre>
-
+python guessPWD.py  <span style="color:#ae81ff">31</span>.04s user <span style="color:#ae81ff">14</span>.72s system <span style="color:#ae81ff">105</span>% cpu <span style="color:#ae81ff">43</span>.341 total</code></pre></div>
 <p>验证一下</p>
-
-<pre><code class="language-bash">NDH2k13-crackme-500 [master●] ./crackme 
-Jonathan Salwan loves you &lt;3
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ./crackme 
+Jonathan Salwan loves you &lt;<span style="color:#ae81ff">3</span>
 ----------------------------
 
 Password: AzI0wBsX
-Good password
-</code></pre>
-
+Good password</code></pre></div>
 <p>这样，我们用不到 5 分钟的时间就猜出了 flag</p>
 
 <blockquote>
@@ -531,50 +528,41 @@ Good password
 <p>再以 hxpCTF2017 的一道题目演示改造 pintool 用于解题，我们着重演示改造 pintool 的步骤，因此恢复符号表和分析程序流程的部分可以参考这篇 <a href="http://eternal.red/2017/dont_panic-writeup/">writeup</a></p>
 
 <p>我们先尝试用上例的方法解这道题目</p>
-
-<pre><code class="language-bash">hxpCTF-2017-main_strip [master●●] ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">hxpCTF-2017-main_strip <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
 Nope.
-Count: 517715
-hxpCTF-2017-main_strip [master●●] ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a 
+Count: <span style="color:#ae81ff">517715</span>
+hxpCTF-2017-main_strip <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a 
 Nope.
-Count: 545828
-hxpCTF-2017-main_strip [master●●] ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
+Count: <span style="color:#ae81ff">545828</span>
+hxpCTF-2017-main_strip <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
 Nope.
-Count: 532656
-hxpCTF-2017-main_strip [master●●] ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
+Count: <span style="color:#ae81ff">532656</span>
+hxpCTF-2017-main_strip <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
 Nope.
-Count: 524544
-hxpCTF-2017-main_strip [master●●] ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
+Count: <span style="color:#ae81ff">524544</span>
+hxpCTF-2017-main_strip <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
 Nope.
-Count: 582401
-</code></pre>
-
+Count: <span style="color:#ae81ff">582401</span></code></pre></div>
 <p>很不幸，即使我们使用同一个输入，指令数也是有较大变化的，使用现有的 pintool 难以解出这道题目，我们进行更深一步的分析，验证 flag 的关键部分可以表示为如下代码</p>
-
-<pre><code class="language-C">for (int i=0; i&lt;length(provided_flag); i++)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>; i<span style="color:#f92672">&lt;</span>length(provided_flag); i<span style="color:#f92672">++</span>)
 {
-	if (main_mapanic(provided_flag[i]) != constant_binary_blob[i])
+	<span style="color:#66d9ef">if</span> (main_mapanic(provided_flag[i]) <span style="color:#f92672">!=</span> constant_binary_blob[i])
 	{
 		bad_boy();
 		exit();
 	}
 	goodboy();
-}
-</code></pre>
-
+}</code></pre></div>
 <p>可以看出判断相等是逐位进行的，因此可以考虑对 inscount0 的 docount 函数做如下更改</p>
-
-<pre><code class="language-C">更改前：
-VOID docount() { icount++; }
-更改后：
-VOID docount(void *ip) 
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#960050;background-color:#1e0010">更改前：</span>
+VOID docount() { icount<span style="color:#f92672">++</span>; }
+<span style="color:#960050;background-color:#1e0010">更改后：</span>
+VOID docount(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>ip) 
 {
-  	// .text:000000000047B96E  cmp al, cl; cmp mapanic(provided_flag[i]), constant_binary_blob[i]
-	if ((long long int)ip == 0x000000000047B96E)
-	 icount++; 
-}
-</code></pre>
-
+  	<span style="color:#75715e">// .text:000000000047B96E  cmp al, cl; cmp mapanic(provided_flag[i]), constant_binary_blob[i]
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> ((<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">int</span>)ip <span style="color:#f92672">==</span> <span style="color:#ae81ff">0x000000000047B96E</span>)
+	 icount<span style="color:#f92672">++</span>; 
+}</code></pre></div>
 <p>只有运行到 0x47B96E 一句才会计数，这样我们就可以根据 pintool 的结果来逐位爆破 flag 了</p>
 
 <blockquote>
@@ -602,24 +590,37 @@ VOID docount(void *ip)
 </ul>
 
 
-  </main>
+</article>
 
-<footer class="tc center bt b--near-white pvx phm pax-m phxl-l pvx-l">
-        <small class="f5 mw7 db center phm lh-copy">
-		  <nav>
-			  <ul class="list pln">
-				  <li class="dib prm"><a href="https://www.github.com/0x01f"><span class="js-geomicon geomicon blue" data-icon="github"></span></a></li>
-                  
-			  </ul>
-			  </nav>
-              Copyright-  2018
-        </small>
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/"><i class="fa fa-chevron-circle-left"></i> Hackme.Inndy的部分writeup</a>
+        </li>
+        
+        
+        <li>
+            <a href="https://0x01f.github.io/post/hitcon-training-writeup/">HITCON-Training-Writeup <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - M4x | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://0x01f.github.io/index.xml">Subscribe</a></h6>
     </footer>
-    <script src="http://d2v52k3cl9vedd.cloudfront.net/geomicons/0.2.0/geomicons.min.js.gz"></script>
-    <script>
-        var icons = document.querySelectorAll('.geomicon');
-        Geomicons.inject(icons);
-    </script>
-  </body>
-</html>
+</div>
+<script src="https://0x01f.github.io/js/scripts.js"></script>
+</body>
 
+</html>
