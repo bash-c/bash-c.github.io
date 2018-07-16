@@ -6,20 +6,10 @@
     <description>Recent content in Posts on M4x&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Fri, 13 Jul 2018 12:05:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
     
 	<atom:link href="https://0x01f.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>HITCON-Training-Writeup</title>
-      <link>https://0x01f.github.io/post/hitcon-training-writeup/</link>
-      <pubDate>Fri, 13 Jul 2018 12:05:10 +0800</pubDate>
-      
-      <guid>https://0x01f.github.io/post/hitcon-training-writeup/</guid>
-      <description>HITCON-Training-Writeup  原文链接M4x@10.0.0.55
-项目地址M4x&amp;rsquo;s github，欢迎 star~</description>
-    </item>
     
     <item>
       <title>Pin In CTF</title>
@@ -28,6 +18,16 @@
       
       <guid>https://0x01f.github.io/post/pin-in-ctf/</guid>
       <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</description>
+    </item>
+    
+    <item>
+      <title>HITCON-Training-Writeup</title>
+      <link>https://0x01f.github.io/post/hitcon-training-writeup/</link>
+      <pubDate>Tue, 03 Jul 2018 12:05:10 +0800</pubDate>
+      
+      <guid>https://0x01f.github.io/post/hitcon-training-writeup/</guid>
+      <description>HITCON-Training-Writeup  原文链接M4x@10.0.0.55
+项目地址M4x&amp;rsquo;s github，欢迎 star~</description>
     </item>
     
     <item>
