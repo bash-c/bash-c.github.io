@@ -597,7 +597,25 @@ VOID docount(<span style="color:#66d9ef">void</span> <span style="color:#f92672"
         
     </ul>
 </section>
-    
+<head>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+</head>
+<body>
+    <div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE',
+            notify:false,
+            verify:false,
+            avatar:'mm',
+            placeholder: 'just go go',
+            path:window.location.pathname
+        })
+    </script>
+</body>
 
 
 
