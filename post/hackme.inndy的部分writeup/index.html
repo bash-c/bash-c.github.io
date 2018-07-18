@@ -213,78 +213,128 @@
     <span style="color:#75715e">#  libc_base = int(io.recvuntil(&#34;..&#34;, drop = True), 16) - 241 - libc_offset #this is for local</span>
     log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;elf_base -&gt; 0x</span><span style="color:#e6db74">%x</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> elf_base)
     log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;libc_base -&gt; 0x</span><span style="color:#e6db74">%x</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> libc_base)
-    <span style="color:#66d9ef">return</span> elf_base <span style="color:#f92672">+</span> exit_got, libc_base <span style="color:#f92672">+</span> one_gadget
-<span style="color:#e6db74">``</span><span style="color:#960050;background-color:#1e0010">`</span>python
+    <span style="color:#66d9ef">return</span> elf_base <span style="color:#f92672">+</span> exit_got, libc_base <span style="color:#f92672">+</span> one_gadget</code></pre></div>
+<p>获得elf_base与libc_base基址后,按照正常的格式化字符串思路来就行,比如可以用one_gadget地址覆写exit函数的got表地址.</p>
 
-<span style="color:#960050;background-color:#1e0010">获得</span>elf_base与libc_base基址后,<span style="color:#960050;background-color:#1e0010">按照正常的格式化字符串思路来就行</span>,<span style="color:#960050;background-color:#1e0010">比如可以用</span>one_gadget地址覆写exit函数的got表地址<span style="color:#f92672">.</span>
+<h3 id="0x08-echo3">0x08 echo3</h3>
 
-<span style="color:#75715e">### 0x08 echo3</span>
+<p>漏洞和逻辑都很简单, 非栈区的格式化字符串利用, 利用方式可以参考 <a href="http://m4x.fun/post/hitcon-training-writeup/">hitcon-training 的 lab9</a>,  那道题里我把调试的过程也放到代码里了, 比较容易看清楚逻辑
+同时这道题有一个随机数来打乱栈的布局, 导致我们没办法确定每次格式化字符串的 offset, 但仔细观察后发现随机数只有几个, 可以通过爆破的方法来确定</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">inndy_echo3 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat rand<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+__Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
 
-<span style="color:#960050;background-color:#1e0010">这个题在和站主交流后发现我使用了非预期的解法，不太容易说清楚，最近比较忙，先不说原理了，忙过这一阵写一下对这道题的详细分析（估计要几个月后了），脚本如下：</span>
+f <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x: <span style="color:#ae81ff">16</span> <span style="color:#f92672">*</span> (((x <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x3039</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">30</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">0x10</span>)
 
-[inndy_echo3_](https:<span style="color:#f92672">//</span>github<span style="color:#f92672">.</span>com<span style="color:#f92672">/</span>M4xW4n9<span style="color:#f92672">/</span>pwn_repo<span style="color:#f92672">/</span>blob<span style="color:#f92672">/</span>master<span style="color:#f92672">/</span>inndy_echo3<span style="color:#f92672">/</span>exp<span style="color:#f92672">.</span>py)
+allrand <span style="color:#f92672">=</span> []
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> xrange(<span style="color:#ae81ff">0xffff</span>):
+    allrand<span style="color:#f92672">.</span>append(f(i))
 
-<span style="color:#75715e">### 0x09 smash-the-stack</span>
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> set(allrand):
+    <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;{:#x}</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">{}</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">{}&#34;</span><span style="color:#f92672">.</span>format(i, allrand<span style="color:#f92672">.</span>count(i), float(allrand<span style="color:#f92672">.</span>count(i)) <span style="color:#f92672">/</span> sum(set(allrand)))
+inndy_echo3 [master<span style="color:#960050;background-color:#1e0010">●</span>] python rand<span style="color:#f92672">.</span>py 
+<span style="color:#ae81ff">0x20</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x1010</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x1050</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x1030</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x2010</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x30</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x50</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x40</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x3050</span>	<span style="color:#ae81ff">2047</span>	<span style="color:#ae81ff">0.0165293927649</span>
+<span style="color:#ae81ff">0x3010</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x2020</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x1040</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x1020</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x3020</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x10</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x2040</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x3030</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x3040</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span>
+<span style="color:#ae81ff">0x2050</span>	<span style="color:#ae81ff">2048</span>	<span style="color:#ae81ff">0.0165374677003</span>
+<span style="color:#ae81ff">0x2030</span>	<span style="color:#ae81ff">4096</span>	<span style="color:#ae81ff">0.0330749354005</span></code></pre></div>
+<p>同时本地可以使用 gdb.debug() 来指定随机数方便本地调试, 具体的实现可以参考我的 <a href="https://github.com/0x01f/pwn_repo/blob/master/inndy_echo3/exp.py">exp</a>
+拿到 flag 后与站主交流, 发现我用了非预期解, 也贴一下站主的 <a href="https://github.com/0x01f/pwn_repo/blob/master/inndy_echo3/inndy_exp.py">exp</a></p>
 
-<span style="color:#960050;background-color:#1e0010">典型的</span>canary leak<span style="color:#960050;background-color:#1e0010">，覆盖</span>\__libc_argv[<span style="color:#ae81ff">0</span>]<span style="color:#960050;background-color:#1e0010">为</span>flag在内存中地址<span style="color:#960050;background-color:#1e0010">，触发</span>__stack_chk_fail函数即可泄露flag
+<h3 id="0x09-smash-the-stack">0x09 smash-the-stack</h3>
 
-<span style="color:#960050;background-color:#1e0010">放一篇学习链接</span>:http:<span style="color:#f92672">//</span>veritas501<span style="color:#f92672">.</span>space<span style="color:#f92672">/</span><span style="color:#ae81ff">2017</span><span style="color:#f92672">/</span><span style="color:#ae81ff">04</span><span style="color:#f92672">/</span><span style="color:#ae81ff">28</span><span style="color:#f92672">/%</span>E8<span style="color:#f92672">%</span>AE<span style="color:#f92672">%</span>BAcanary<span style="color:#f92672">%</span>E7<span style="color:#f92672">%</span><span style="color:#ae81ff">9</span>A<span style="color:#f92672">%</span><span style="color:#ae81ff">84</span><span style="color:#f92672">%</span>E5<span style="color:#f92672">%</span><span style="color:#ae81ff">87</span><span style="color:#f92672">%</span>A0<span style="color:#f92672">%</span>E7<span style="color:#f92672">%</span>A7<span style="color:#f92672">%</span><span style="color:#ae81ff">8</span>D<span style="color:#f92672">%</span>E7<span style="color:#f92672">%</span><span style="color:#ae81ff">8</span>E<span style="color:#f92672">%</span>A9<span style="color:#f92672">%</span>E6<span style="color:#f92672">%</span>B3<span style="color:#f92672">%</span><span style="color:#ae81ff">95</span><span style="color:#f92672">/</span>
+<p>典型的canary leak，覆盖__libc_argv[0]为flag在内存中地址，触发__stack_chk_fail函数即可泄露flag</p>
 
-<span style="color:#f92672">**</span>payload:<span style="color:#f92672">**</span>
+<p>放一篇学习链接:<a href="http://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/">http://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/</a></p>
 
-<span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1flhvskji94j30do00zt8l<span style="color:#f92672">.</span>jpg)
+<p><strong>payload:</strong></p>
 
-<span style="color:#960050;background-color:#1e0010">或者可以用更暴力的方法</span>,<span style="color:#960050;background-color:#1e0010">不计算</span>argv[<span style="color:#ae81ff">0</span>]<span style="color:#960050;background-color:#1e0010">到缓冲区的距离</span>,<span style="color:#960050;background-color:#1e0010">用一个较大的值直接覆盖过去即可</span>:
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1flhvskji94j30do00zt8l.jpg" alt="" /></p>
 
-<span style="color:#f92672">**</span>payload:<span style="color:#f92672">**</span>
+<p>或者可以用更暴力的方法,不计算argv[0]到缓冲区的距离,用一个较大的值直接覆盖过去即可:</p>
 
-<span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fm3h8o1x9bj30cw00xq30<span style="color:#f92672">.</span>jpg)
+<p><strong>payload:</strong></p>
 
-<span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">需要注意的是</span>write函数的长度是由用户输入决定的<span style="color:#960050;background-color:#1e0010">，给</span>buf一个较小的值即可
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fm3h8o1x9bj30cw00xq30.jpg" alt="" /></p>
 
-<span style="color:#75715e">### 0x0A onepunch</span>
+<blockquote>
+<p>需要注意的是write函数的长度是由用户输入决定的，给buf一个较小的值即可</p>
+</blockquote>
 
-<span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">本来以为</span>onepunch的意思是构造好payload一发get shell<span style="color:#960050;background-color:#1e0010">，</span> <span style="color:#960050;background-color:#1e0010">后来才发现是一个字节一个字节的打</span>
+<h3 id="0x0a-onepunch">0x0A onepunch</h3>
 
-<span style="color:#960050;background-color:#1e0010">题中有一个任意地址写一个字节的漏洞，刚开始觉得无从下手，后来调试的时候发现代码段为</span>rwxp权限<span style="color:#960050;background-color:#1e0010">，才觉得柳暗花明。</span>
+<blockquote>
+<p>本来以为onepunch的意思是构造好payload一发get shell， 后来才发现是一个字节一个字节的打</p>
+</blockquote>
 
-<span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fnt5r9gmg0j30r80h149o<span style="color:#f92672">.</span>jpg)
+<p>题中有一个任意地址写一个字节的漏洞，刚开始觉得无从下手，后来调试的时候发现代码段为rwxp权限，才觉得柳暗花明。</p>
 
-<span style="color:#960050;background-color:#1e0010">既然可以在代码段任意地址写，就意味着我们可以为所欲为的修改代码流程，因此就可以将</span>
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnt5r9gmg0j30r80h149o.jpg" alt="" /></p>
 
-<span style="color:#f92672">&gt;</span> <span style="color:#f92672">.</span>text:<span style="color:#ae81ff">0000000000400767</span>                 jnz     short loc_400773
+<p>既然可以在代码段任意地址写，就意味着我们可以为所欲为的修改代码流程，因此就可以将</p>
 
-<span style="color:#960050;background-color:#1e0010">修改为</span>
+<blockquote>
+<p>.text:0000000000400767                 jnz     short loc_400773</p>
+</blockquote>
 
-<span style="color:#f92672">&gt;</span> <span style="color:#f92672">.</span>text:<span style="color:#ae81ff">0000000000400767</span>                 jnz    <span style="color:#ae81ff">0x40071D</span>
+<p>修改为</p>
 
-<span style="color:#960050;background-color:#1e0010">这样就构成了一个循环，接下来在合适的位置写</span>shellcode<span style="color:#960050;background-color:#1e0010">，然后跳转到</span>shellcode即可
+<blockquote>
+<p>.text:0000000000400767                 jnz    0x40071D</p>
+</blockquote>
 
-<span style="color:#f92672">**</span>payload<span style="color:#960050;background-color:#1e0010">：</span><span style="color:#f92672">**</span>
+<p>这样就构成了一个循环，接下来在合适的位置写shellcode，然后跳转到shellcode即可</p>
 
-<span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fnt61kw6nyj30k809tn1v<span style="color:#f92672">.</span>jpg)
+<p><strong>payload：</strong></p>
 
-<span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">至于怎么确定要</span>patch的地址和值<span style="color:#960050;background-color:#1e0010">，我推荐</span>keypatch<span style="color:#960050;background-color:#1e0010">，用</span>keypatch修改完伪代码后<span style="color:#960050;background-color:#1e0010">，通过将</span> 　<span style="color:#f92672">*</span>Options <span style="color:#f92672">-&gt;</span> General <span style="color:#f92672">-&gt;</span>Number of Opcode byte<span style="color:#f92672">*</span><span style="color:#960050;background-color:#1e0010">修改为非</span><span style="color:#ae81ff">０</span><span style="color:#960050;background-color:#1e0010">值对比修改前后的字节码即可</span>
-<span style="color:#f92672">&gt;</span>
-<span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fnt641x5hij30i20c1t95<span style="color:#f92672">.</span>jpg)
-<span style="color:#f92672">&gt;</span>
-<span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fnt64pqggxj30tc0chq39<span style="color:#f92672">.</span>jpg)
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnt61kw6nyj30k809tn1v.jpg" alt="" /></p>
 
-<span style="color:#75715e">### 0x0B rsbo</span>
+<blockquote>
+<p>至于怎么确定要patch的地址和值，我推荐keypatch，用keypatch修改完伪代码后，通过将 　*Options -&gt; General -&gt;Number of Opcode byte*修改为非０值对比修改前后的字节码即可</p>
 
-<span style="color:#960050;background-color:#1e0010">这道题的利用方法倒是第一次见到，对于</span>read和write的第一个参数fd<span style="color:#960050;background-color:#1e0010">（文件描述符），</span>fd <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span><span style="color:#960050;background-color:#1e0010">时代表标准输入</span>stdin<span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">时代表标准输出</span>stdout<span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">时代表标准错误</span>stderr<span style="color:#960050;background-color:#1e0010">，</span><span style="color:#f92672">**</span><span style="color:#ae81ff">3</span><span style="color:#f92672">~</span><span style="color:#ae81ff">9</span><span style="color:#960050;background-color:#1e0010">则代表打开的文件</span><span style="color:#f92672">**</span><span style="color:#960050;background-color:#1e0010">。这一题的利用方式利用方式就是利用</span>rop先用open函数打开位于<span style="color:#f92672">/</span>home<span style="color:#f92672">/</span>rsbo<span style="color:#f92672">/</span><span style="color:#960050;background-color:#1e0010">的</span>flag<span style="color:#960050;background-color:#1e0010">，然后再用</span>read(<span style="color:#ae81ff">3</span>, )<span style="color:#960050;background-color:#1e0010">把</span>flag写到一个固定地址上<span style="color:#960050;background-color:#1e0010">，最后用</span>write输出
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnt641x5hij30i20c1t95.jpg" alt="" /></p>
 
-<span style="color:#f92672">**</span>payload:<span style="color:#f92672">**</span>
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnt64pqggxj30tc0chq39.jpg" alt="" /></p>
+</blockquote>
 
-<span style="color:#960050;background-color:#1e0010">!</span>[](https:<span style="color:#f92672">//</span>ws1<span style="color:#f92672">.</span>sinaimg<span style="color:#f92672">.</span>cn<span style="color:#f92672">/</span>large<span style="color:#f92672">/</span><span style="color:#ae81ff">006</span>AWYXBly1fkq4vt2qwfj30so0800ty<span style="color:#f92672">.</span>jpg)
+<h3 id="0x0b-rsbo">0x0B rsbo</h3>
 
-<span style="color:#75715e">### 0x0C leave\_msg</span>
+<p>这道题的利用方法倒是第一次见到，对于read和write的第一个参数fd（文件描述符），fd = 0时代表标准输入stdin，1时代表标准输出stdout，2时代表标准错误stderr，<strong>3~9则代表打开的文件</strong>。这一题的利用方式利用方式就是利用rop先用open函数打开位于/home/rsbo/的flag，然后再用read(3, )把flag写到一个固定地址上，最后用write输出</p>
 
-<span style="color:#960050;background-color:#1e0010">经过分析代码的逻辑</span>,<span style="color:#960050;background-color:#1e0010">绕过下边的限制</span>,<span style="color:#960050;background-color:#1e0010">就可以覆写</span>got表:
+<p><strong>payload:</strong></p>
 
-<span style="color:#e6db74">``</span><span style="color:#960050;background-color:#1e0010">`</span>c
-<span style="color:#66d9ef">if</span> ( v4 <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">64</span> <span style="color:#f92672">&amp;&amp;</span> nptr <span style="color:#f92672">!=</span> <span style="color:#ae81ff">45</span> )
-  dword_804A060[v4] <span style="color:#f92672">=</span> (int)strdup(<span style="color:#f92672">&amp;</span>buf);</code></pre></div>
+<p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fkq4vt2qwfj30so0800ty.jpg" alt="" /></p>
+
+<h3 id="0x0c-rsbo-2">0x0C rsbo-2</h3>
+
+<p>和 rsbo-1 完全一样, 这次要 get shell 了, 也很简单, binary 中有 write@plt, 因此可以通过 rop 来 leak write@got 等函数, 进而确定 libc.address, 然后再来一次 rop 执行 system(&ldquo;/bin/sh&rdquo;) 就行了
+因为远程端口也是一样的, 因此直接做 rsbo-2 即可</p>
+
+<blockquote>
+<p>这道题是回头又看的, 以前居然因为这种难度的题卡了那么久= =</p>
+</blockquote>
+
+<h3 id="0x0d-leave-msg">0x0D leave_msg</h3>
+
+<p>经过分析代码的逻辑,绕过下边的限制,就可以覆写got表:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> ( v4 <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">64</span> <span style="color:#f92672">&amp;&amp;</span> nptr <span style="color:#f92672">!=</span> <span style="color:#ae81ff">45</span> )
+  dword_804A060[v4] <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span>)strdup(<span style="color:#f92672">&amp;</span>buf);</code></pre></div>
 <p>而v4=atoi(&amp;ntpr),经过搜索atoi函数会跳过字符串开头的空白字符,因此只要构造<strong>(空格)-16</strong>就可以同时绕过上边的两个限制来覆写puts的got表,然后再用\x00绕过strlen的限制就可以执行shellcode,payload如下:</p>
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnqin1yr27j30os01tt9m.jpg" alt="" /></p>
@@ -297,7 +347,7 @@
 <p>至于0x36是怎么来的,我是调试看出来的,如果哪位表哥有静态计算的方法,还请不吝赐教!</p>
 </blockquote>
 
-<h3 id="0x0d-stack">0x0D stack</h3>
+<h3 id="0x0e-stack">0x0E stack</h3>
 
 <p>这个题开了全保护，第一眼看上去挺吓人，但其实漏洞很容易发现，pop时并没有对下标作出检查，这就意味着我们可以通过一直pop利用数组越界从栈上leak，先通过调试看栈结构</p>
 
@@ -407,9 +457,9 @@
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnziyk9lebj30qj0eqtio.jpg" alt="" /></p>
 
-<h3 id="0x0e-very-overflow">0x0E very_overflow</h3>
+<h3 id="0x0f-very-overflow">0x0F very_overflow</h3>
 
-<p>这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为128*(sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&ldquo;/bin/sh&rdquo;)或者one_gadget都可以求解</p>
+<p>这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为 128 * (sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&ldquo;/bin/sh&rdquo;)或者one_gadget都可以求解</p>
 
 <p><img src="https://ws1.sinaimg.cn/large/006AWYXBly1fnzjfuveuaj30ti0bh0zy.jpg" alt="" /></p>
 
@@ -417,7 +467,7 @@
 
 <p>另外就是刚开始本地可以get shell，但远程连接很容易超时，后来把context.log_level换成了info，减少了打印花费的时间，又把io.sendlineafter换成了直接io.sendline，就不容易超时了</p>
 
-<h3 id="0x0f-notepad">0x0F notepad</h3>
+<h3 id="0x10-notepad">0x10 notepad</h3>
 
 <p>这道题目的菜单输入那里乍看起来很奇怪,因为执行哪个分支是根据ord(input) - ord(&lsquo;a&rsquo;) 来决定的,当输入小于a时又没有做容错处理(似乎本题也只有这一个漏洞).
 仔细分析，在notepad_open函数里，有一个根据输入执行特定函数的机会，这样只要我们精心构造chunk布局和输入,让当前notepad_open函数根据我们的输入执行特定函数时,执行上一个chunk中我们填好的函数,这样我们就有了执行任意函数的能力,一图胜千言,用下图来表示此过程:</p>
@@ -466,11 +516,11 @@
 <li><p>执行 system(&ldquo;$0&rdquo;)</p></li>
 </ol>
 
-<h3 id="0x10-mailer">0x10 mailer</h3>
+<h3 id="0x11-mailer">0x11 mailer</h3>
 
 <p>很明显,gets那里能够arbitrary overflow, 又没开NX保护, 直接利用arbitrary overflow修改top_chunk,使用house of force修改got到shellcode的地址即可, 没什么好说的</p>
 
-<h3 id="0x11-tictactoe-1">0x11 tictactoe-1</h3>
+<h3 id="0x12-tictactoe-1">0x12 tictactoe-1</h3>
 
 <p>给的elf文件逆起来比较繁琐，通过反编译可以找到棋的源码，了解了程序的大体流程后，可以发现在落子时可以通过数组越界覆写GOT表</p>
 
