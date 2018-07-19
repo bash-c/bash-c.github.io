@@ -5,6 +5,8 @@
     <link>https://0x01f.github.io/</link>
     <description>Recent content on M4x&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>I_am_M4x@protonmail.com</managingEditor>
+    <webMaster>I_am_M4x@protonmail.com</webMaster>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
     <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
     
@@ -15,7 +17,7 @@
       <title>Pin In CTF</title>
       <link>https://0x01f.github.io/post/pin-in-ctf/</link>
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
-      
+      <author>I_am_M4x@protonmail.com</author>
       <guid>https://0x01f.github.io/post/pin-in-ctf/</guid>
       <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</description>
     </item>
@@ -24,7 +26,7 @@
       <title>HITCON-Training-Writeup</title>
       <link>https://0x01f.github.io/post/hitcon-training-writeup/</link>
       <pubDate>Tue, 03 Jul 2018 12:05:10 +0800</pubDate>
-      
+      <author>I_am_M4x@protonmail.com</author>
       <guid>https://0x01f.github.io/post/hitcon-training-writeup/</guid>
       <description>HITCON-Training-Writeup  原文链接M4x@10.0.0.55
 项目地址M4x&amp;rsquo;s github，欢迎 star~</description>
@@ -34,7 +36,7 @@
       <title>Hackme.Inndy的部分writeup</title>
       <link>https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/</link>
       <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
-      
+      <author>I_am_M4x@protonmail.com</author>
       <guid>https://0x01f.github.io/post/hackme.inndy%E7%9A%84%E9%83%A8%E5%88%86writeup/</guid>
       <description>hackme.inndy.tw的一些Writeup（7月6日更新）  原文链接：http://www.cnblogs.com/WangAoBo/p/7706719.html 原文链接：0x01f.github.io/post/hackme.inndy的部分writeup/</description>
     </item>
@@ -43,7 +45,7 @@
       <title>About</title>
       <link>https://0x01f.github.io/post/aboutme/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
+      <author>I_am_M4x@protonmail.com</author>
       <guid>https://0x01f.github.io/post/aboutme/</guid>
       <description>About me  Distro: latest Deepin, considering Manjaro Vim or Emacs: Vim bash, zsh or fish: zsh Tabs or spaces: spaces Coffee or tea: both Relationship status: In love</description>
     </item>
