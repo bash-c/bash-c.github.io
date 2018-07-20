@@ -23,16 +23,8 @@
   </url>
   
   <url>
-    <loc>https://0x01f.github.io/post/aboutme/</loc>
-  </url>
-  
-  <url>
     <loc>https://0x01f.github.io/categories/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://0x01f.github.io/post/link/</loc>
   </url>
   
   <url>
@@ -44,6 +36,14 @@
   <url>
     <loc>https://0x01f.github.io/tags/</loc>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://0x01f.github.io/post/link/</loc>
+  </url>
+  
+  <url>
+    <loc>https://0x01f.github.io/post/aboutme/</loc>
   </url>
   
 </urlset>
