@@ -77,7 +77,7 @@
 
         
 
-        <li>21 min read</li>
+        <li>22 min read</li>
     </ul>
 </aside>
     
@@ -87,11 +87,11 @@
 <h1 id="hitcon-training-writeup">HITCON-Training-Writeup</h1>
 
 <blockquote>
-<p>原文链接<a href="http://www.cnblogs.com/WangAoBo/p/8570640.html">M4x@10.0.0.55</a></p>
+<p><del>原文链接<a href="http://www.cnblogs.com/WangAoBo/p/8570640.html">M4x@10.0.0.55</a></del></p>
+
+<p>原文链接<a href="http://m4x.fun/post/hitcon-training-writeup/">M4x@10.0.0.55</a></p>
 
 <p>项目地址<a href="https://github.com/0x01f/HITCON-Training-Writeup">M4x&rsquo;s github</a>，欢迎 star~</p>
-
-<p>更新时间5月16</p>
 </blockquote>
 
 <p>复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：<a href="https://github.com/scwuaptx/HITCON-Training">https://github.com/scwuaptx/HITCON-Training</a></p>
@@ -303,7 +303,7 @@ lab3 [master<span style="color:#960050;background-color:#1e0010">●●</span>] 
 
 <h3 id="lab4-ret2lib">lab4-ret2lib</h3>
 
-<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libcBase，通过 one_gadget 或者 system(&ldquo;/bin/sh&rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
+<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&ldquo;/bin/sh&rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab4 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
 <span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
@@ -331,7 +331,7 @@ io<span style="color:#f92672">.</span>close()
 lab4 [master<span style="color:#960050;background-color:#1e0010">●●</span>] </code></pre></div>
 <h3 id="lab5-simplerop">lab5-simplerop</h3>
 
-<p>本来看程序是静态链接的，想通过 ROPgadget/ropper 等工具生成的 ropchain 一波带走，但实际操作时发现 read 函数只允许读入100个字符，去除 buf 到 main 函数返回地址的偏移为 32，我们一共有 100 - 32 = 68 的长度来构造 ropchain，而 ropper/ROPgadget 等自动生成的 ropchain 都大于这个长度，这就需要我们精心设计 ropchain 了，这里偷个懒，优化一下 ropper 生成的 ropchain 来缩短长度</p>
+<p>本来看程序是静态链接的，想通过 ROPgadget/ropper 等工具生成的 ropchain 一波带走，但实际操作时发现 read 函数只允许读入 100 个字符，去除 buf 到 main 函数返回地址的偏移为 32，我们一共有 100 - 32 = 68 的长度来构造 ropchain，而 ropper/ROPgadget 等自动生成的 ropchain 都大于这个长度，这就需要我们精心设计 ropchain 了，这里偷个懒，优化一下 ropper 生成的 ropchain 来缩短长度</p>
 
 <blockquote>
 <p>ropper &ndash;file ./simplerop &ndash;chain &ldquo;execve cmd=/bin/sh&rdquo;</p>
@@ -377,7 +377,8 @@ rop <span style="color:#f92672">+=</span> p(<span style="color:#ae81ff">0x000000
 rop <span style="color:#f92672">+=</span> rebase_0(<span style="color:#ae81ff">0x00026ef0</span>) <span style="color:#75715e"># 0x0806eef0: int 0x80; ret; </span>
 <span style="color:#66d9ef">print</span> rop
 [INFO] rop chain generated<span style="color:#960050;background-color:#1e0010">!</span></code></pre></div>
-<p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&ldquo;/bin/sh&rdquo;, 0, 0)，hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a></p>
+<p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&ldquo;/bin/sh&rdquo;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a>
+&gt; ret2syscall 的更多细节可以参考 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/basic_rop/#ret2syscall">ctf-wiki</a></p>
 
 <p>而当观察 ropper 等工具自动生成的 ropchain 时，会发现有很多步骤是很繁琐的，可以做出很多优化，给一个优化后的例子</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
@@ -510,9 +511,10 @@ io<span style="color:#f92672">.</span>close()</code></pre></div>
 </ul>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">    <span style="color:#66d9ef">if</span> ( count <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1337</span> )
       exit(<span style="color:#ae81ff">1</span>);</code></pre></div>
-<p>限制了我们只能利用一次 main 函数的溢出（直接控制 main 返回到 exit 后的话，程序的栈结构会乱掉）</p>
+<p>限制了我们只能利用一次 main 函数的溢出（如果能 leak 出栈地址的话, 可以在栈上构造 rop chain 并控制返回地址 ret 到栈上的 rop chain)</p>
 
-<p>所以我们就只能通过 20 个字节的 ropchain 来进行 rop 了，关于栈迁移（又称为 stack-pivot）可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_stack/DEP%20%26%20ROP.pdf%0A"><strong>slide</strong></a></p>
+<p>所以我们就只能通过 20 个字节的 ropchain 来进行 rop 了，关于栈迁移（又称为 stack-pivot）可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_stack/DEP%20%26%20ROP.pdf%0A"><strong>slide</strong></a>
+&gt; <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/others/#stack-pivoting">ctf-wiki</a> 上对 stack pivot 也有较为详细的介绍</p>
 
 <p><img src="https://raw.githubusercontent.com/M4xW4n9/slides/master/pwn_stack/stackPivot.jpg" alt="stackPivot" /></p>
 
@@ -565,7 +567,7 @@ sleep(<span style="color:#ae81ff">0.1</span>)
 
 io<span style="color:#f92672">.</span>interactive()
 io<span style="color:#f92672">.</span>close()</code></pre></div>
-<p>稍微解释一下，先通过主函数中可以控制的 20个 字节将 esp 指针劫持到可控的 bss 段，然后就可以为所欲为了。</p>
+<p>稍微解释一下，先通过主函数中可以控制的 20个 字节将 esp 指针劫持到可控的 bss 段，然后就可以可以在 bss 段为所欲为了。</p>
 
 <p>关于 stack-pivot，pwnable.kr 的 simple_login 是很经典的题目，放上一篇这道题的很不错的 <a href="https://blog.csdn.net/yuanyunfeng3/article/details/51456049"><strong>wp</strong></a></p>
 
@@ -574,7 +576,7 @@ io<span style="color:#f92672">.</span>close()</code></pre></div>
 
 <h3 id="lab7-crack">lab7-crack</h3>
 
-<p>输出 name 时有明显的格式化字符串漏洞，这个题的思路有很多，可以利用 fsb 改写 password，或者 leak 出 password，也可以直接通过 fsb，hijack puts_got 到 system(&ldquo;cat flag&rdquo;) 处（注意 printf 实际调用了 puts）</p>
+<p>输出 name 时有明显的格式化字符串漏洞，这个题的思路有很多，可以利用 fsb 改写 password，或者 leak 出 password，也可以直接通过 fsb，hijack puts_got 到 system(&ldquo;cat flag&rdquo;) 处（注意这里 printf 实际调用了 puts）</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab7 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat hijack<span style="color:#f92672">.</span>py 
 <span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
@@ -956,12 +958,12 @@ io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34
 io<span style="color:#f92672">.</span>interactive()
 io<span style="color:#f92672">.</span>close()</code></pre></div>
 <blockquote>
-<p>可以通过设置标记变量(如我 exp 中的 11111111, 22222222 等)进行定位</p>
+<p>可以通过设置标记变量(如我 exp 中的 11111111, 22222222 等)进行输入输出的定位</p>
 </blockquote>
 
 <h3 id="lab10-hacknote">lab10-hacknote</h3>
 
-<p>最简单的一种 uaf 利用，结构体中有函数指针，通过 uaf 控制该函数指针指向 magic 函数即可，uaf 的介绍可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf"><strong>slide</strong></a></p>
+<p>最简单的一种 fastbin uaf 利用，结构体中有函数指针，通过 uaf 控制该函数指针指向 magic 函数即可，uaf 的介绍可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf"><strong>slide</strong></a></p>
 
 <p>exp:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab10 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat solve<span style="color:#f92672">.</span>py 
@@ -1044,7 +1046,7 @@ magic_elf <span style="color:#f92672">=</span> elf<span style="color:#f92672">.<
 
 <h3 id="lab11-bamboobox">lab11-bamboobox</h3>
 
-<p>可以种 house of force，也可以使用 unlink，先说 house of force 的方法</p>
+<p>可以种 house of force，也可以使用 unsafe unlink，先说 house of force 的方法</p>
 
 <h4 id="house-of-force">house of force</h4>
 
@@ -1098,7 +1100,7 @@ io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34
 
 <h4 id="unlink">unlink</h4>
 
-<p>至于 unlink，在这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf">slide</a>中有较大篇幅的介绍，就不在说明原理了</p>
+<p>至于 unlink，在这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf">slide</a> 中有较大篇幅的介绍，就不在说明原理了</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab11 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat unlink<span style="color:#f92672">.</span>py 
 <span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
@@ -1170,7 +1172,7 @@ libc <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span
 
 <h3 id="lab12-secretgarden">lab12-secretgarden</h3>
 
-<p>通过 double free 实现 fastbin attack 的题目，所谓double free，指的就是对同一个 allocated chunk free 两次，这样就可以形成一个类似 <strong>0  -&gt; 1 -&gt; 0</strong> 的 cycled bin list，这样当我们 malloc 出 0 时，就可以修改 bin list 中 0 的 fd，如 <strong>1 -&gt; 0 -&gt; target</strong>，这样只要我们再 malloc 三次，并通过 malloc 的检查，就可以实现 malloc 到任何地址，进而实现任意地址写，至于 double free 的检查怎么绕过可以看这个<a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></p>
+<p>通过 double free 实现 fastbin attack 的题目，所谓 double free，指的就是对同一个 allocated chunk free 两次，这样就可以形成一个类似 <strong>0  -&gt; 1 -&gt; 0</strong> 的 cycled fastbin list，这样当我们 malloc 出 0 时，就可以修改 fastbin list 中 0 的 fd，如 <strong>1 -&gt; 0 -&gt; target</strong>，这样只要我们再 malloc 三次，并通过 malloc 的检查，就可以实现 malloc 到任何地址，进而实现任意地址写，至于 double free 的检查怎么绕过可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
@@ -1219,14 +1221,15 @@ context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">
 
     io<span style="color:#f92672">.</span>interactive()
     io<span style="color:#f92672">.</span>close()</code></pre></div>
-<blockquote>
-<p>以上的 exp 实现了通过 fastbin attack 来修改 got, 实际上通过 fastbin attack 来修改 __malloc_hook, __realloc_hook, __free_hook, IO_file_plus 结构体中的 jump_table 也是很常见的做法, 尤其是程序开了 Full Relro 保护时
-pwnable.tw 的 Secret Garden 一题就用到了以上几种做法, 可以参考这篇 <a href="http://tacxingxing.com/2018/02/20/pwnabletw-secretgarden/">writeup</a></p>
-</blockquote>
+<ul>
+<li>以上的 exp 实现了通过 fastbin attack 来修改 got, 实际上通过 fastbin attack 来修改 __malloc_hook, __realloc_hook, __free_hook, IO_file_plus 结构体中的 jump_table 也是很常见的做法, 尤其是程序开了 Full Relro 保护时</li>
+<li>pwnable.tw 的 Secret Garden 一题就用到了以上几种做法, 可以参考这篇 <a href="http://tacxingxing.com/2018/02/20/pwnabletw-secretgarden/">writeup</a></li>
+<li>参考了 <a href="https://veritas501.space/2018/03/27/调教pwndbg/">veritas501</a> 师傅的文章, 我在我的 <a href="https://github.com/0x01f/Pwngdb">fork</a> 里也加入了快速利用 fastbin attack 的函数 fake_fastbin_all</li>
+</ul>
 
 <h3 id="lab13-heapcreator">lab13-heapcreator</h3>
 
-<p>在 edit_heap 中有一个故意留下来的 off-by-one，并且不是 off-by-one null byte，因此可以使用 extended chunk 这种技巧造成 overlapping chunk，进而通过将 *content 覆写为某函数的 got (如 free/atoi )就可以 leak 出 libc 的地址，然后将改写为 system 的地址，控制参数即可 get shell</p>
+<p>在 edit_heap 中有一个故意留下来的 off-by-one，并且不是 off-by-one null byte，因此我们就可以有很大自由度地控制下一个 chunk 的 size, 可以使用 extended chunk 这种技巧造成 overlapping chunk，进而通过将 *content 覆写为某函数的 got (如 free/atoi) 就可以 leak 出 libc 的地址，然后再改写为 system 的地址，控制参数即可 get shell</p>
 
 <p>关于 extended chunk 的介绍可以看这个 <strong><a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></strong></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">lab13 [master<span style="color:#960050;background-color:#1e0010">●</span>] cat solve<span style="color:#f92672">.</span>py 
@@ -1282,7 +1285,34 @@ context<span style="color:#f92672">.</span>log_level <span style="color:#f92672"
     io<span style="color:#f92672">.</span>close()</code></pre></div>
 <h3 id="lab14-magicheap">lab14-magicheap</h3>
 
-<p>unsorted bin attack</p>
+<p>在 edit_heap() 里有 arbitrary overflow, 我们最终要达到的目的是修改全局变量 magic &gt; 4869, 可以考虑使用 unsorted bin attack 这一技巧
+unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsorted bin list 的地址), 看起来比较局限, 但在某些情境下还是很有用的:</p>
+
+<ul>
+<li><p>修改 global_max_fast 为一个较大的数, 这样根据 malloc 的源码</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">/*
+</span><span style="color:#75715e">If the size qualifies as a fastbin, first check corresponding bin.
+</span><span style="color:#75715e">This code is safe to execute even if av is not yet initialized, so we
+</span><span style="color:#75715e">can try it without checking, which saves some time on this fast path.
+</span><span style="color:#75715e">*/</span>
+<span style="color:#66d9ef">if</span> ((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span>) (nb) <span style="color:#f92672">&lt;=</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span>) (get_max_fast ()))
+{
+idx <span style="color:#f92672">=</span> fastbin_index (nb);
+mfastbinptr <span style="color:#f92672">*</span>fb <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>fastbin (av, idx);
+mchunkptr pp <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>fb;
+.....</code></pre></div>
+<p>更大的 chunk 也可以被视为 fastbin, fastbin attack 的利用范围就大了很多</p></li>
+
+<li><p>往某一地址上写值, 比如可以在 __free_hook 前的某一地址上写入一个大数(0x7f**********)来满足 fastbin attack 的条件(提供 fastbin 的 size)</p></li>
+</ul>
+
+<p>unsorted bin attack 的原理也很简单, unsorted bin 的自己实现了 unlink 的功能, 没有使用宏定义</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">          bck <span style="color:#f92672">=</span> victim<span style="color:#f92672">-&gt;</span>bk;
+          ......
+          <span style="color:#75715e">/* remove from unsorted list */</span>
+          unsorted_chunks (av)<span style="color:#f92672">-&gt;</span>bk <span style="color:#f92672">=</span> bck;
+          bck<span style="color:#f92672">-&gt;</span>fd <span style="color:#f92672">=</span> unsorted_chunks (av);</code></pre></div>
+<p>可以看出, 如果我们能控制 unsorted bin 的bk 为地址 target - 16, 那么在 bck -&gt; fd = unsorted_chunks(av) 这一步时, target 就会被写入 unsorted bin 的地址. 但同时也要注意此时 unsorted bin list 已经被破坏, 下次再有 unsorted bin 的操作就会引起 crash</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
@@ -1336,7 +1366,8 @@ elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#34;./
     io<span style="color:#f92672">.</span>close()</code></pre></div>
 <h3 id="lab15-zoo">lab15-zoo</h3>
 
-<p><a href="https://github.com/M4xW4n9/slides/blob/master/pwn_others/pwnincplusplus-160217120850.pdf">pwn in C++</a></p>
+<p>C++ 的 pwn 题, 这道题目没有开 NX, 也就是说可以使用 shellcode, 在 Dog::Dog, Cat::Cat 这些函数里也有很明显的通过 strcpy 实现 overflow 的漏洞, 因此这一题就可以通过溢出伪造虚表, 控制虚表指针指向 shellcode 地址来 get shell
+更多 C++ pwn 的内容可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_others/pwnincplusplus-160217120850.pdf">slide</a>, 内容虽然有点老了, 但很经典</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
