@@ -13,10 +13,10 @@
     
     <item>
       <title>Pin In CTF</title>
-      <link>https://0x01f.github.io/post/pin-in-ctf/</link>
+      <link>https://0x01f.github.io/post/reverse-is-multiplex-you-need-pintools/</link>
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
       
-      <guid>https://0x01f.github.io/post/pin-in-ctf/</guid>
+      <guid>https://0x01f.github.io/post/reverse-is-multiplex-you-need-pintools/</guid>
       <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</description>
     </item>
     
