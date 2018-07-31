@@ -8,17 +8,26 @@
     <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
     <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 31 Jul 2018 20:00:54 +0800</lastBuildDate>
     
 	<atom:link href="https://0x01f.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>如何 pwn 掉一个 arm 的binary</title>
+      <link>https://0x01f.github.io/post/arm_pwn/</link>
+      <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
+      <author>I_am_M4x@protonmail.com (M4x)</author>
+      <guid>https://0x01f.github.io/post/arm_pwn/</guid>
+      <description>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题</description>
+    </item>
+    
+    <item>
       <title>Reverse is Multiplex, You Need Pintools</title>
-      <link>https://0x01f.github.io/post/reverse-is-multiplex-you-need-pintools/</link>
+      <link>https://0x01f.github.io/post/pin-in-ctf/</link>
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
       <author>I_am_M4x@protonmail.com (M4x)</author>
-      <guid>https://0x01f.github.io/post/reverse-is-multiplex-you-need-pintools/</guid>
+      <guid>https://0x01f.github.io/post/pin-in-ctf/</guid>
       <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</description>
     </item>
     

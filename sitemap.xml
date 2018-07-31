@@ -4,11 +4,16 @@
   
   <url>
     <loc>https://0x01f.github.io/post/</loc>
-    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <lastmod>2018-07-31T20:00:54+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://0x01f.github.io/post/reverse-is-multiplex-you-need-pintools/</loc>
+    <loc>https://0x01f.github.io/post/arm_pwn/</loc>
+    <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://0x01f.github.io/post/pin-in-ctf/</loc>
     <lastmod>2018-07-03T12:16:10+08:00</lastmod>
   </url>
   
@@ -38,7 +43,7 @@
   
   <url>
     <loc>https://0x01f.github.io/</loc>
-    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <lastmod>2018-07-31T20:00:54+08:00</lastmod>
     <priority>0</priority>
   </url>
   
