@@ -8,10 +8,19 @@
     <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
     <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Tue, 31 Jul 2018 20:00:54 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 25 Aug 2018 20:19:16 +0800</lastBuildDate>
     
 	<atom:link href="https://0x01f.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>WhiteHat2018 Pwn Writeup</title>
+      <link>https://0x01f.github.io/post/whitehat2018-pwn-writeup/</link>
+      <pubDate>Sat, 25 Aug 2018 20:19:16 +0800</pubDate>
+      <author>I_am_M4x@protonmail.com (M4x)</author>
+      <guid>https://0x01f.github.io/post/whitehat2018-pwn-writeup/</guid>
+      <description>越南的一场比赛, 比赛当天陪女朋友理发, 在理发店看了 pwn01, 刚有思路, 电脑没电了, 第二天接着做时发现比赛结束了.</description>
+    </item>
     
     <item>
       <title>如何 pwn 掉一个 arm 的binary</title>
