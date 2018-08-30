@@ -414,7 +414,7 @@ pwndbg&gt; </code></pre></div>
 
 <h4 id="step-2-1">Step 2:</h4>
 
-<p>但问题出在 system + 32 在 <code>rsp + 0xa0</code> 这个位置, 我们需要控制 echo 函数返回到这里, 这个也好办, 用 [ret2vsyscall]() 可以达到这个目的</p>
+<p>但问题出在 system + 32 在 <code>rsp + 0xa0</code> 这个位置, 我们需要控制 echo 函数返回到这里, 这个也好办, 用 ret2vsyscall 可以达到这个目的</p>
 
 <blockquote>
 <p>TLDR:
