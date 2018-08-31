@@ -291,6 +291,10 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
     result <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)(sub_10BA8((<span style="color:#66d9ef">int</span>)<span style="color:#e6db74">&#34;exit 0&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>);
   <span style="color:#66d9ef">return</span> result;
 }</code></pre></div>
+<hr />
+
+<p>后来发现，使用 <code>rizzo</code> 可以恢复出 system 的符号表，这样寻找 system 的地址就很容易了</p>
+
 <h3 id="rop">ROP</h3>
 
 <p>这样我们只需要找一个能控制 r0 的 gadget 寄存器就行了</p>
@@ -442,7 +446,11 @@ context<span style="color:#f92672">.</span>log_level <span style="color:#f92672"
 
 <ul>
 <li>libc_datebase for arm?</li>
-<li>如何多快好省的分析 strip 后的程序</li>
+<li>如何多快好省的分析 strip 后的程序
+
+<ul>
+<li>后来了解到，对于静态编译的 bianry， 可以使用 lscan, flirt, rizzo, bindiff 等多种方法恢复部分符号表</li>
+</ul></li>
 <li>我的 melong 的 exp 是有问题的, 暂待解决</li>
 </ul>
 
