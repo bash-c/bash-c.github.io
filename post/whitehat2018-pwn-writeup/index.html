@@ -407,10 +407,13 @@ pwndbg&gt; telescope $rdi
 06:0030│      0x7ffd0eed2250 ◂— 0x6161617261616171 (&#39;qaaaraaa&#39;)
 07:0038│      0x7ffd0eed2258 ◂— 0x6161617461616173 (&#39;saaataaa&#39;)
 pwndbg&gt; </code></pre></div>
-<p>有两点很有意思:
-1. rdi + 8 到之后的很长一段都是可控的
-2. 栈上有一个 system + 32 的地址
-这样再结合之前 libc 上的 gadget <code>add rdi, 127; jmp system</code>, 就可以通过 partial overwrite 改写 system + 32 的低位为 gadget 的地址(调试验证此时只需改写最低位即可, 是可行的), 这样如果能控制 rip 为此 gadget 的地址, 就相当于控制了 system 的参数, 有了一次执行命令的机会</p>
+<p>有两点值得注意:</p>
+
+<ol>
+<li>rdi + 8 到之后的很长一段都是可控的</li>
+<li>栈上有一个 system + 32 的地址
+这样再结合之前 libc 上的 gadget <code>add rdi, 127; jmp system</code>, 就可以通过 partial overwrite 改写 system + 32 的低位为 gadget 的地址(调试验证此时只需改写最低位即可, 是可行的), 这样如果能控制 rip 为此 gadget 的地址, 就相当于控制了 system 的参数, 有了一次执行命令的机会</li>
+</ol>
 
 <h4 id="step-2-1">Step 2:</h4>
 
