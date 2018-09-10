@@ -8,10 +8,19 @@
     <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
     <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Sat, 25 Aug 2018 20:19:16 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 10 Sep 2018 23:17:33 +0800</lastBuildDate>
     
 	<atom:link href="https://0x01f.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Play with file descriptor(Ⅰ)</title>
+      <link>https://0x01f.github.io/post/play_with_file_descriptor_1/</link>
+      <pubDate>Mon, 10 Sep 2018 23:17:33 +0800</pubDate>
+      <author>I_am_M4x@protonmail.com (M4x)</author>
+      <guid>https://0x01f.github.io/post/play_with_file_descriptor_1/</guid>
+      <description>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成</description>
+    </item>
     
     <item>
       <title>WhiteHat2018 Pwn Writeup</title>

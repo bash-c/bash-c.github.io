@@ -1,0 +1,210 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>localhost</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="M4x" />
+  <meta name="generator" content="Hugo 0.44" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://0x01f.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://0x01f.github.io/">localhost</a>
+            </h1>
+
+      <ul id="social-media">
+        
+        <li><a href="https://twitter.com/M4x88985494"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+          
+        <li><a href="https://github.com/0x01f"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+            
+        <li><a href="mailto:I_am_M4x@protonmail.com"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+        
+      </ul>
+      
+      <p><em>Done with development, it&rsquo;s time to pwn.</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/">
+                <i class="fa-li fa  fa-lg"></i><span>ls -l ./post</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/link/">
+                <i class="fa-li fa  fa-lg"></i><span>cat ./friends</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/aboutme/">
+                <i class="fa-li fa  fa-lg"></i><span>whoami</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Play with file descriptor(Ⅰ)</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-09-10T23:17:33&#43;08:00">Sep 10, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>Reading time 1 min</li>
+    </ul>
+</aside>
+
+    
+
+    
+
+<p>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成</p>
+
+<p>第一篇主要区分一些概念，参考了很多，链接都放在最后了
+(这篇 post 基本是搬运了参考链接= =感谢大佬们的无私分享)</p>
+
+<h2 id="什么是-cli">什么是 CLI</h2>
+
+<p><strong>Command-line Interface</strong> 即命令行界面，通俗的说就是黑客电影中满屏都是字符的界面，与 GUI（图形用户界面，<strong>Graphical User Interface</strong>）相对。CLI 具有高效率等优点，因此即使是图形化较完善的操作系统（如 Windows）中，也保留了 cmd.exe 和 poweshell 等命令行的程序</p>
+
+<h2 id="什么是终端">什么是终端</h2>
+
+<p>在计算机领域，终端 (Terminal) 指的是一种<strong>将用户的输入传给计算机，并显示计算结果的机器</strong>，但要充分理解终端的话，需要我们回溯历史</p>
+
+<h3 id="历史上的终端">历史上的终端</h3>
+
+<p>在计算机刚诞生的时代，巨大的计算机往往放置在一个单独的房间里，程序员在其他的房间里通过某些设备与计算机进行交互，这些设备就称为<strong>终端(Terminal)</strong>，也叫终端机。</p>
+
+<p><img src="https://c1.staticflickr.com/3/2392/2283401196_2345b6584b_b.jpg" alt="" />
+早期的终端一般是一种叫做电传打字机（<strong>Teletype</strong>）的设备，原因很简单，*nix 系统作为一个多用户的系统，需要每个用户都有一个终端，而价格低廉的 Teletype 就成了最好的选择（为什么不用键盘和显示器？因为那个时代还没有独立的键盘和显示器）。</p>
+
+<p>这样，第一代程序员将这些打字机接到主机上，就实现了 *nix 的多用户交互，电传打字机也就成了第一个 Terminal 。</p>
+
+<h3 id="什么是控制台">什么是控制台</h3>
+
+<p>上边说到，历史上的终端是一种连接到计算机上方便用户输入输出的外设，但有一个终端与众不同，它是计算机的一个组成部分，与主机一体，这个特殊的终端就叫<strong>控制台（Console）</strong>。</p>
+
+<p>控制台，顾名思义是用来管理计算机的，只能给系统管理员用，具有比普通终端更大的权限，一台计算机一般只有一个控制台，但可以有很多个终端（*如下图中左边的即为 console，右边的为 terminal*）
+<img src="https://pic3.zhimg.com/80/4552f1d835d9d6f07222e45975d97933_hd.jpg" alt="" /></p>
+
+<blockquote>
+<p>但需要注意的是，随着 PC 的普及，Console 与 Terminal 的概念已经逐渐模糊。当我们在管理系统时，他们是控制台；当做一般的工作时，他们是终端。我们既是一般用户，有事系统管理员</p>
+
+<p>因此，<strong>现在的 Console 和 Terminal 基本可以看作是同义词</strong></p>
+</blockquote>
+
+<h3 id="什么是终端模拟器">什么是终端模拟器</h3>
+
+<p>随着硬件的发展，我们现在已经很少见到专门的终端设备了，取而代之的是键盘（输入）和显示器（输出）。</p>
+
+<p>没了终端设备，为了与操作系统交互，就需要一个程序来处理键盘和显示器的动作，模拟传统终端的行为，这种程序就是<strong>终端模拟器（Terminal Emulator）</strong>（下图是我正在使用的 terminal emulator： deepin-terminal）
+<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fv4wpt6p2dj311r0l94b2.jpg" alt="" /></p>
+
+<p>Terminal Emulator 的工作流程如下：</p>
+
+<ol>
+<li>捕获键盘输入</li>
+<li>将输入的信号经过处理后传递给命令行程序（程序会认为这是从一个真正的终端设备输入的）</li>
+<li>获得命令行程序的输出结果</li>
+<li>调用图形接口，将输出结果渲染到显示器</li>
+</ol>
+
+<p>终端模拟器的种类有很多，举几个常见的例子：</p>
+
+<ul>
+<li>Linux: gnome-terminal, Konsole;</li>
+<li>macOS: Terminal.app, iTerm2;</li>
+<li>Windows: Win32 控制台</li>
+</ul>
+
+<blockquote>
+<p>同样，随着历史发展，现在当人们一般直接将终端模拟器称作终端</p>
+</blockquote>
+
+<h3 id="终端窗口与虚拟控制台">终端窗口与虚拟控制台</h3>
+
+<p>大部分终端都是在图形用户界面（GUI）中运行的，叫做<strong>终端窗口（Terminal， Window）</strong>，如上图中的 deepin-terminal。</p>
+
+<p>但也有一些</p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://0x01f.github.io/post/whitehat2018-pwn-writeup/"><i class="fa fa-chevron-circle-left"></i> WhiteHat2018 Pwn Writeup</a>
+        </li>
+        
+        
+    </ul>
+</section>
+<head>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+</head>
+<body>
+    <div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE',
+            notify:false,
+            verify:true,
+            avatar:'wavatar',
+            vistor:true,
+            placeholder: 'Leave a comment',
+            path:window.location.pathname
+        })
+    </script>
+</body>
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - M4x | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://0x01f.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://0x01f.github.io/js/scripts.js"></script>
+</body>
+
+</html>
