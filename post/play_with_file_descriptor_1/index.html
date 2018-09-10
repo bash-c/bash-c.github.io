@@ -81,7 +81,7 @@
 
         
 
-        <li>Reading time 1 min</li>
+        <li>Reading time 2 min</li>
     </ul>
 </aside>
 
@@ -91,8 +91,9 @@
 
 <p>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成</p>
 
-<p>第一篇主要区分一些概念，参考了很多，链接都放在最后了
-(这篇 post 基本是搬运了参考链接= =感谢大佬们的无私分享)</p>
+<p>第一篇主要区分一些容易混淆的概念，和文件描述符关系并不大，但是很有意思。参考了很多，链接都放在最后了</p>
+
+<p>(这篇 post 基本是搬运了参考链接- -感谢大佬们的无私分享)</p>
 
 <h2 id="什么是-cli">什么是 CLI</h2>
 
@@ -100,7 +101,7 @@
 
 <h2 id="什么是终端">什么是终端</h2>
 
-<p>在计算机领域，终端 (Terminal) 指的是一种<strong>将用户的输入传给计算机，并显示计算结果的机器</strong>，但要充分理解终端的话，需要我们回溯历史</p>
+<p>在计算机领域，终端 (Terminal) 指的是一种<strong>将用户的输入传给计算机，并显示计算结果的机器</strong>，但要充分理解终端的话，需要我们回溯历史。</p>
 
 <h3 id="历史上的终端">历史上的终端</h3>
 
@@ -115,7 +116,7 @@
 
 <p>上边说到，历史上的终端是一种连接到计算机上方便用户输入输出的外设，但有一个终端与众不同，它是计算机的一个组成部分，与主机一体，这个特殊的终端就叫<strong>控制台（Console）</strong>。</p>
 
-<p>控制台，顾名思义是用来管理计算机的，只能给系统管理员用，具有比普通终端更大的权限，一台计算机一般只有一个控制台，但可以有很多个终端（*如下图中左边的即为 console，右边的为 terminal*）
+<p>控制台，顾名思义是用来管理计算机的，只能给系统管理员用，具有比普通终端更大的权限，一台计算机一般只有一个控制台，但可以有很多个终端（如下图中左边的即为 console，右边的为 terminal）
 <img src="https://pic3.zhimg.com/80/4552f1d835d9d6f07222e45975d97933_hd.jpg" alt="" /></p>
 
 <blockquote>
@@ -154,9 +155,73 @@
 
 <h3 id="终端窗口与虚拟控制台">终端窗口与虚拟控制台</h3>
 
-<p>大部分终端都是在图形用户界面（GUI）中运行的，叫做<strong>终端窗口（Terminal， Window）</strong>，如上图中的 deepin-terminal。</p>
+<p>大部分终端模拟器都是在图形用户界面（GUI）中运行的，叫做<strong>终端窗口（Terminal Window）</strong>，如上图中的 deepin-terminal。</p>
 
-<p>但也有一些</p>
+<p>但有一些终端模拟器比较特殊，如在 *nix 系统下，使用快捷键 <code>Ctrl + Alt + F1...F6</code> 等快捷键可以切换到<strong>虚拟控制台（Virtual Console）</strong>，快捷键 <code>Ctrl + Alt + F7</code> 切换回 GUI，虽然 Virtual Console 不运行在 GUI 中，但他们实质上也是一种终端模拟器（下图为正在现实系统启动信息的 Virtual Console）。
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/10/KNOPPIX_booting.png" alt="" /></p>
+
+<p>Terminal Window 与 Virtual Console 的区别是 Virutal Console 是直接由操作系统内核（OS kernel）提供的，因此当图形界面 down 了时，往往还可以到 virtual console 抢救，因为他们是由 kernel 直接提供的，只要系统不出问题一般都还是可以用的</p>
+
+<h2 id="那么-什么是-tty">那么，什么是 TTY ？</h2>
+
+<p>先给结论，tty 就是终端的统称。</p>
+
+<p>从上边的历史我们知道电传打字机（Teletype）是最早的终端，tty 即为 Teletype 的缩写。由于 *nix 是多用户的操作系统，所以一台计算机会有多个终端连接。在早期，为了支持这些连接的电传打字机，开发者设计了名为 tty 的子系统（因为所有终端都是 tty，因此这个子系统也被命名为了 tty）。</p>
+
+<p>同时因为 *nix 系统的哲学之一 —— <strong>Everything is a file</strong>，具体的硬件设备也被抽象为了 <strong>/dev/tty?</strong> 等文件
+<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fv4xrbniooj30y109i762.jpg" alt="" /></p>
+
+<p><em>上边说的 ctrl + alt + F1-6 等 virtual console 分别对应了图中的 /dev/tty1-6</em></p>
+
+<p>虽然现在终端设备已经不再限制于 teletype，但 tty 这个名称还是被保留了下来，所以在现代，tty 就可以理解成终端设备，终端设备即为 tty 。</p>
+
+<blockquote>
+<p>后来，在 tty 子系统中衍生出了 pty，ptmx，pts 等概念，我们下篇再讲</p>
+</blockquote>
+
+<h2 id="什么是-shell">什么是 shell</h2>
+
+<p>先看这张图，shell 位于最外层，像一层壳（shell）一样供用户与 kernel 沟通，让 kernel 完成用户交于的任务
+<img src="https://img.blessing.studio/images/2018/08/23/computer_system.png" alt="" /></p>
+
+<blockquote>
+<p>实际上 shell 知识提供了用户操作系统的入口，一般是通过 shell 去调用其他的应用程序来达成目的。</p>
+
+<p>如我们运行 <code>cat test</code> 时，shell 会运行 <code>cat</code> 这个程序，cat 再去调用内核提供的 open，read，write 等系统调用，虽然 shell 并没有直接与内核进行交互，但广义上我们可以认为 shell 提供了用户与内核交互的界面</p>
+</blockquote>
+
+<p>shell 可以分为命令行 shell 和图形 shell 两类。命令行 shell 提供 CLI 界面，图形 shell 提供 GUI 界面（如 windows 的 explorer.exe，接受用户的指令，与内核完成交互）</p>
+
+<p>常用的命令行 shell 有：</p>
+
+<ul>
+<li>*nix:
+
+<ul>
+<li>sh(Bourne shell)，最经典的 shell</li>
+<li>bash(Bourne-Again shell)，绝大多数 linux 发行版的默认 shell</li>
+<li>zsh，fish 等专注于用户友好体验的 shell</li>
+</ul></li>
+<li>Windows 下的 cmd.exe 与 powershell</li>
+</ul>
+
+<h2 id="shell-与终端的分工">shell 与终端的分工</h2>
+
+<p>总结一下:</p>
+
+<ul>
+<li>终端从用户接受输入（通过键盘，鼠标等输入设备），把输入交给 shell，然后把 shell 返回的结果通过显示器等方法展示给用户。</li>
+<li>shell 从终端接受用户的输入，解析后交给操作系统内核进行处理，并把结果返回给终端</li>
+</ul>
+
+<h2 id="references">References:</h2>
+
+<p><a href="https://superuser.com/questions/144666/what-is-the-difference-between-shell-console-and-terminal">https://superuser.com/questions/144666/what-is-the-difference-between-shell-console-and-terminal</a>
+<a href="https://www.zhihu.com/question/65280843">https://www.zhihu.com/question/65280843</a>
+<a href="https://blessing.studio/the-difference-between-cli-terminal-shell-tty/">https://blessing.studio/the-difference-between-cli-terminal-shell-tty/</a>
+<a href="https://stackoverflow.com/questions/21014344/terminal-or-console-or-shell-or-command-prompt">https://stackoverflow.com/questions/21014344/terminal-or-console-or-shell-or-command-prompt</a>
+<a href="https://zh.wikipedia.org/wiki/終端">https://zh.wikipedia.org/wiki/終端</a>
+<a href="https://en.wikipedia.org/wiki/Terminal_emulator">https://en.wikipedia.org/wiki/Terminal_emulator</a></p>
 
 
 </article>
