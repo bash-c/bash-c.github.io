@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="The HTML5 Herald" />
   <meta name="author" content="M4x" />
-  <meta name="generator" content="Hugo 0.44" />
+  <meta name="generator" content="Hugo 0.41" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
@@ -91,13 +91,14 @@
 
 <p>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成</p>
 
-<p>第一篇主要区分一些容易混淆的概念，和文件描述符关系并不大，但是很有意思。参考了很多，链接都放在最后了</p>
+<p>第一篇主要区分一些设备上容易混淆的概念，和 fd 关系并不大，但是很有意思。参考了很多，链接都放在最后了</p>
 
 <p>(这篇 post 基本是搬运了参考链接- -感谢大佬们的无私分享)</p>
 
 <h2 id="什么是-cli">什么是 CLI</h2>
 
-<p><strong>Command-line Interface</strong> 即命令行界面，通俗的说就是黑客电影中满屏都是字符的界面，与 GUI（图形用户界面，<strong>Graphical User Interface</strong>）相对。CLI 具有高效率等优点，因此即使是图形化较完善的操作系统（如 Windows）中，也保留了 cmd.exe 和 poweshell 等命令行的程序</p>
+<p><img src="http://photo.orsoon.com/171201/Hacker_at_work/RVjaq0ElzR.jpg" alt="" />
+<strong>Command-line Interface</strong> 即命令行界面，通俗的说就是黑客电影中满屏都是字符的界面，与 GUI（图形用户界面，<strong>Graphical User Interface</strong>）相对。CLI 具有高效率等优点，因此即使是图形化较完善的操作系统（如 Windows）中，也保留了 cmd.exe 和 powershell 等命令行的程序</p>
 
 <h2 id="什么是终端">什么是终端</h2>
 
@@ -176,7 +177,7 @@
 <p>虽然现在终端设备已经不再限制于 teletype，但 tty 这个名称还是被保留了下来，所以在现代，tty 就可以理解成终端设备，终端设备即为 tty 。</p>
 
 <blockquote>
-<p>后来，在 tty 子系统中衍生出了 pty，ptmx，pts 等概念，我们下篇再讲</p>
+<p>后来，在 tty 子系统中衍生出了 pty，ptmx，pts 等概念，这些概念留到第三篇</p>
 </blockquote>
 
 <h2 id="什么是-shell">什么是 shell</h2>
@@ -234,6 +235,10 @@
             <a href="https://0x01f.github.io/post/whitehat2018-pwn-writeup/"><i class="fa fa-chevron-circle-left"></i> WhiteHat2018 Pwn Writeup</a>
         </li>
         
+        
+        <li>
+            <a href="https://0x01f.github.io/post/play_with_file_descriptor_2/">Play with file descriptor(II) <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
         
     </ul>
 </section>

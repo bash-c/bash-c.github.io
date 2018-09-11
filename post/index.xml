@@ -8,10 +8,19 @@
     <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
     <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
     <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Mon, 10 Sep 2018 23:17:33 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 11 Sep 2018 20:46:54 +0800</lastBuildDate>
     
 	<atom:link href="https://0x01f.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Play with file descriptor(II)</title>
+      <link>https://0x01f.github.io/post/play_with_file_descriptor_2/</link>
+      <pubDate>Tue, 11 Sep 2018 20:46:54 +0800</pubDate>
+      <author>I_am_M4x@protonmail.com (M4x)</author>
+      <guid>https://0x01f.github.io/post/play_with_file_descriptor_2/</guid>
+      <description>这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。</description>
+    </item>
     
     <item>
       <title>Play with file descriptor(Ⅰ)</title>
