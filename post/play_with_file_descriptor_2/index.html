@@ -111,7 +111,7 @@
 
 <h2 id="什么是文件描述符">什么是文件描述符</h2>
 
-<p>在 *nix 系统中，当进程打开现有文件或创建新文件时，内核向进程返回一个 <strong>文件描述符（file descriptor）</strong>。在形式上是一个非负整数，作为一个索引指向被打开的文件，所有执行 I/O 操作的系统调用都会通过文件描述符。</p>
+<p>在 *nix 系统中，当进程打开现有文件或创建新文件 (open) 时，内核向进程返回一个 <strong>文件描述符（file descriptor）</strong>。在形式上是一个非负整数，作为一个索引指向被打开的文件，所有执行 I/O 操作的系统调用都会通过文件描述符。</p>
 
 <p>我们用下边的代码解释这个概念</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">// gcc file_descriptor.c -o file_decsriptor
@@ -251,10 +251,10 @@ DESCRIPTION
 </blockquote>
 
 <p>read 和 write 这两个系统调用一个从文件读取内容，一个把内容写到文件里。
-再前进一步，这个进程运行时，read 是从 0 这个文件读取内容，然后把内容写到了 1 这个文件里。
+更具体的，这个进程运行时，read 是从 0 这个文件读取内容，然后把内容写到了 1 这个文件里。
 那么 0 和 1 ，以及刚刚提到的 2 这个文件又是什么？</p>
 
-<p>这个答案很容易搜索到：0,1 和 2 分别为 stdin，stdout 和 stderr。<code>man stdin</code> 查看一下对应的用户手册，圈出重点</p>
+<p>这个答案很容易搜索到：0，1 和 2 分别为 stdin，stdout 和 stderr。<code>man stdin</code> 查看一下对应的用户手册，圈出重点</p>
 
 <pre><code> Under  normal  circumstances every UNIX program has three streams opened for it when it starts up, 
  one for input, one for output, and one for printing diagnostic  or  error  messages.
@@ -328,7 +328,7 @@ Since open<span style="color:#f92672">()</span> returns <span style="color:#ae81
 <li><p>同理，我们还可以通过 close(0)，close(1) 等操作控制进程从其他文件（包括其他进程，socket，pipe 等）进行 io。</p></li>
 </ul>
 
-<p>值得一提的是 17 行的 close(fd) 的操作，这是因为每个用户和每个进程所能承受的 fd 是有限的，进程的可以通过 /proc/[PID]/limits 查看，用户可以通过 <code>ulimit -a</code> 查看</p>
+<p>值得一提的记得 17 行的 close(fd) 的操作，这是因为每个用户和每个进程所能承受的 fd 是有限的，进程的可以通过 /proc/[PID]/limits 查看，用户可以通过 <code>ulimit -a</code> 查看</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">post ulimit -a
 -t: cpu time <span style="color:#f92672">(</span>seconds<span style="color:#f92672">)</span>              unlimited
 -f: file size <span style="color:#f92672">(</span>blocks<span style="color:#f92672">)</span>              unlimited
@@ -373,6 +373,10 @@ Since open<span style="color:#f92672">()</span> returns <span style="color:#ae81
             <a href="https://0x01f.github.io/post/play_with_file_descriptor_1/"><i class="fa fa-chevron-circle-left"></i> Play with file descriptor(Ⅰ)</a>
         </li>
         
+        
+        <li>
+            <a href="https://0x01f.github.io/post/play_with_file_descriptor_3/">Play with file descriptor(Ⅲ) <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
         
     </ul>
 </section>

