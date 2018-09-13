@@ -19,7 +19,7 @@
       <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
       <author>I_am_M4x@protonmail.com (M4x)</author>
       <guid>https://0x01f.github.io/post/play_with_file_descriptor_3/</guid>
-      <description>接下来以一些 pwnable 题目分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。</description>
+      <description>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。</description>
     </item>
     
     <item>
