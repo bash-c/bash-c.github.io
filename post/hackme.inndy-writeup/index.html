@@ -984,7 +984,7 @@ c
 <p>刚开始的想法也是和第一层验证一样设置运行过程中各个参数的值，但后来发现这些很难找，卡了一段时间后如梦初醒，程序的运行时间是从<strong>/etc/localtime</strong>获取的(代码中可以看出)，只要保证程序运行的瞬间<strong>zdump /etc/localtime</strong>的值为<strong>2018/1/1 00:00:00 (UTC)</strong>即可，关于如何设置时间，刚开始的想法是在gdb调试过程中set，尝试了很久，最后还是写了一个shellscript</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/usr/bin/env bash
 </span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">while</span> :
+<span style="color:#66d9ef">while</span> true
 <span style="color:#66d9ef">do</span>
 	sudo date -us <span style="color:#e6db74">&#34;2018-01-01 00:00:00&#34;</span>
 <span style="color:#66d9ef">done</span></code></pre></div>
