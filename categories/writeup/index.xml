@@ -7,19 +7,10 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sun, 16 Sep 2018 22:09:27 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 25 Aug 2018 20:19:16 +0800</lastBuildDate>
     
 	<atom:link href="https://bash-c.github.io/categories/writeup/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>JarvisOJ Pwn Writeup</title>
-      <link>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</link>
-      <pubDate>Sun, 16 Sep 2018 22:09:27 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</guid>
-      <description>JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的</description>
-    </item>
     
     <item>
       <title>WhiteHat2018 Pwn Writeup</title>
