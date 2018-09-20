@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Arm on localhost - Done with development, it&#39;s time to pwn.</title>
+    <link>https://bash-c.github.io/tags/arm/</link>
+    <description>Recent content in Arm on localhost - Done with development, it&#39;s time to pwn.</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Tue, 31 Jul 2018 20:00:54 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/arm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>如何 pwn 掉一个 arm 的binary</title>
+      <link>https://bash-c.github.io/post/arm_pwn/</link>
+      <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/arm_pwn/</guid>
+      <description>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0</description>
+    </item>
+    
+  </channel>
+</rss>

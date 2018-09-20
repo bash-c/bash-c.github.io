@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Whitehat on localhost - Done with development, it&#39;s time to pwn.</title>
+    <link>https://bash-c.github.io/tags/whitehat/</link>
+    <description>Recent content in Whitehat on localhost - Done with development, it&#39;s time to pwn.</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Sat, 25 Aug 2018 20:19:16 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/whitehat/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>WhiteHat2018 Pwn Writeup</title>
+      <link>https://bash-c.github.io/post/whitehat2018-pwn-writeup/</link>
+      <pubDate>Sat, 25 Aug 2018 20:19:16 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/whitehat2018-pwn-writeup/</guid>
+      <description>越南的一场比赛, 比赛当天陪女朋友理发, 在理发店看了 pwn01, 刚有思路, 电脑没电了, 第二天接着做时发现比赛结束了. 比赛结束后参考 writeup 复现了三道 pwn, 收获不少</description>
+    </item>
+    
+  </channel>
+</rss>

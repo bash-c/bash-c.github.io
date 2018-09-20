@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on localhost</title>
+    <title>Categories on localhost - Done with development, it&#39;s time to pwn.</title>
     <link>https://bash-c.github.io/categories/</link>
-    <description>Recent content in Categories on localhost</description>
+    <description>Recent content in Categories on localhost - Done with development, it&#39;s time to pwn.</description>
     <generator>Hugo -- gohugo.io</generator>
-    <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
-    <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
-    <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
+    <language>en</language>
+    <copyright>M4x</copyright>
     
 	<atom:link href="https://bash-c.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How2</title>
+      <link>https://bash-c.github.io/categories/how2/</link>
+      <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/categories/how2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Writeup</title>
+      <link>https://bash-c.github.io/categories/writeup/</link>
+      <pubDate>Sun, 16 Sep 2018 22:09:27 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/categories/writeup/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://bash-c.github.io/sitemap.xml

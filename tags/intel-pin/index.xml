@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Intel Pin on localhost - Done with development, it&#39;s time to pwn.</title>
+    <link>https://bash-c.github.io/tags/intel-pin/</link>
+    <description>Recent content in Intel Pin on localhost - Done with development, it&#39;s time to pwn.</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/intel-pin/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Reverse is Multiplex, You Need Pintools</title>
+      <link>https://bash-c.github.io/post/pin-in-ctf/</link>
+      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/pin-in-ctf/</guid>
+      <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序 什</description>
+    </item>
+    
+  </channel>
+</rss>

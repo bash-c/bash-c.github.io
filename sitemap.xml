@@ -1,74 +1,191 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<?xml-stylesheet type="text/xsl" href="https://bash-c.github.io/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <loc>https://bash-c.github.io/link/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/play_with_file_descriptor_3/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/play_with_file_descriptor_2/</loc>
     <lastmod>2018-09-11T20:46:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/play_with_file_descriptor_1/</loc>
     <lastmod>2018-09-10T23:17:33+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/whitehat2018-pwn-writeup/</loc>
     <lastmod>2018-08-25T20:19:16+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/arm_pwn/</loc>
     <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/pin-in-ctf/</loc>
     <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/hackme.inndy-writeup/</loc>
     <lastmod>2018-07-03T12:01:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/hitcon-training-writeup/</loc>
     <lastmod>2018-07-02T12:05:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/arm/</loc>
+    <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/categories/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/file-descriptor/</loc>
+    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/hackme.inndy/</loc>
+    <lastmod>2018-07-03T12:01:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/hitcon-training/</loc>
+    <lastmod>2018-07-02T12:05:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/how2/</loc>
+    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/intel-pin/</loc>
+    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/jarvisoj/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/os/</loc>
+    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/pwn/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/reverse/</loc>
+    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/tags/</loc>
+    <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/post/link/</loc>
+    <loc>https://bash-c.github.io/tags/whitehat/</loc>
+    <lastmod>2018-08-25T20:19:16+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/writeup/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/</loc>
-    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/post/aboutme/</loc>
+    <loc>https://bash-c.github.io/aboutme/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
 </urlset>

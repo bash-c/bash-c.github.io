@@ -1,109 +1,96 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ls -l ./post on localhost</title>
+    <title>Posts on localhost - Done with development, it&#39;s time to pwn.</title>
     <link>https://bash-c.github.io/post/</link>
-    <description>Recent content in ls -l ./post on localhost</description>
+    <description>Recent content in Posts on localhost - Done with development, it&#39;s time to pwn.</description>
     <generator>Hugo -- gohugo.io</generator>
-    <managingEditor>I_am_M4x@protonmail.com (M4x)</managingEditor>
-    <webMaster>I_am_M4x@protonmail.com (M4x)</webMaster>
-    <copyright>Copyright &amp;copy; 2018 - M4x</copyright>
-    <lastBuildDate>Wed, 12 Sep 2018 15:30:01 +0800</lastBuildDate>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Sun, 16 Sep 2018 22:09:27 +0800</lastBuildDate>
     
 	<atom:link href="https://bash-c.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>JarvisOJ Pwn Writeup</title>
+      <link>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</link>
+      <pubDate>Sun, 16 Sep 2018 22:09:27 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</guid>
+      <description>JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的</description>
+    </item>
+    
+    <item>
       <title>Play with file descriptor(Ⅲ)</title>
       <link>https://bash-c.github.io/post/play_with_file_descriptor_3/</link>
       <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/play_with_file_descriptor_3/</guid>
-      <description>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。</description>
+      <description>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13</description>
     </item>
     
     <item>
       <title>Play with file descriptor(II)</title>
       <link>https://bash-c.github.io/post/play_with_file_descriptor_2/</link>
       <pubDate>Tue, 11 Sep 2018 20:46:54 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/play_with_file_descriptor_2/</guid>
-      <description>这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。</description>
+      <description>这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比</description>
     </item>
     
     <item>
       <title>Play with file descriptor(Ⅰ)</title>
       <link>https://bash-c.github.io/post/play_with_file_descriptor_1/</link>
       <pubDate>Mon, 10 Sep 2018 23:17:33 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/play_with_file_descriptor_1/</guid>
-      <description>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。</description>
+      <description>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要</description>
     </item>
     
     <item>
       <title>WhiteHat2018 Pwn Writeup</title>
       <link>https://bash-c.github.io/post/whitehat2018-pwn-writeup/</link>
       <pubDate>Sat, 25 Aug 2018 20:19:16 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/whitehat2018-pwn-writeup/</guid>
-      <description>越南的一场比赛, 比赛当天陪女朋友理发, 在理发店看了 pwn01, 刚有思路, 电脑没电了, 第二天接着做时发现比赛结束了.</description>
+      <description>越南的一场比赛, 比赛当天陪女朋友理发, 在理发店看了 pwn01, 刚有思路, 电脑没电了, 第二天接着做时发现比赛结束了. 比赛结束后参考 writeup 复现了三道 pwn, 收获不少</description>
     </item>
     
     <item>
       <title>如何 pwn 掉一个 arm 的binary</title>
       <link>https://bash-c.github.io/post/arm_pwn/</link>
       <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/arm_pwn/</guid>
-      <description>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题</description>
+      <description>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0</description>
     </item>
     
     <item>
       <title>Reverse is Multiplex, You Need Pintools</title>
       <link>https://bash-c.github.io/post/pin-in-ctf/</link>
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/pin-in-ctf/</guid>
-      <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</description>
+      <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序 什</description>
     </item>
     
     <item>
       <title>Hackme.Inndy 的部分 writeup</title>
       <link>https://bash-c.github.io/post/hackme.inndy-writeup/</link>
       <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/hackme.inndy-writeup/</guid>
-      <description>原文链接：http://www.cnblogs.com/WangAoBo/p/7706719.html 原文链接：0x01f.github.io/post/hackme.inndy的部分writeup/
- 推荐一下hackme.</description>
+      <description>原文链接：http://www.cnblogs.com/WangAoBo/p/7706719.html 原文链接：0x01f.github.i</description>
     </item>
     
     <item>
       <title>HITCON-Training-Writeup</title>
       <link>https://bash-c.github.io/post/hitcon-training-writeup/</link>
       <pubDate>Mon, 02 Jul 2018 12:05:10 +0800</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
+      
       <guid>https://bash-c.github.io/post/hitcon-training-writeup/</guid>
-      <description>HITCON-Training-Writeup  原文链接M4x@10.0.0.55
-原文链接M4x@10.0.0.55</description>
-    </item>
-    
-    <item>
-      <title>cat ./friends</title>
-      <link>https://bash-c.github.io/post/link/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
-      <guid>https://bash-c.github.io/post/link/</guid>
-      <description> 新添加了友链功能, 有需要的小伙伴可以联系我
- </description>
-    </item>
-    
-    <item>
-      <title>whoami</title>
-      <link>https://bash-c.github.io/post/aboutme/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <author>I_am_M4x@protonmail.com (M4x)</author>
-      <guid>https://bash-c.github.io/post/aboutme/</guid>
-      <description>About me An undergraduate in Beijing Institute of Technology</description>
+      <description>HITCON-Training-Writeup 原文链接M4x@10.0.0.55 原文链接M4x@10.0.0.55 项目地址M4x&amp;rsquo;s github，欢迎 star~ 复习一下二进制基础，</description>
     </item>
     
   </channel>

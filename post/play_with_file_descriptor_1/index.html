@@ -1,93 +1,360 @@
-<!doctype html>
-
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
 <head>
-  <title>localhost</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The HTML5 Herald" />
-  <meta name="author" content="M4x" />
-  <meta name="generator" content="Hugo 0.41" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
-  <link rel="stylesheet" type="text/css" href="https://bash-c.github.io/css/styles.css" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Play with file descriptor(Ⅰ) - localhost - Done with development, it&#39;s time to pwn.</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="M4x" />
+  <meta name="description" content="本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.48" />
+
+
+<link rel="canonical" href="https://bash-c.github.io/post/play_with_file_descriptor_1/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+<link href="/dist/jane.min.css?v=2.7.0" rel="stylesheet">
+
+
+
+
+<meta property="og:title" content="Play with file descriptor(Ⅰ)" />
+<meta property="og:description" content="本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bash-c.github.io/post/play_with_file_descriptor_1/" /><meta property="article:published_time" content="2018-09-10T23:17:33&#43;08:00"/>
+<meta property="article:modified_time" content="2018-09-10T23:17:33&#43;08:00"/>
+<meta itemprop="name" content="Play with file descriptor(Ⅰ)">
+<meta itemprop="description" content="本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要">
+
+
+<meta itemprop="datePublished" content="2018-09-10T23:17:33&#43;08:00" />
+<meta itemprop="dateModified" content="2018-09-10T23:17:33&#43;08:00" />
+<meta itemprop="wordCount" content="2270">
+
+
+
+<meta itemprop="keywords" content="file-descriptor,pwn,os," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Play with file descriptor(Ⅰ)"/>
+<meta name="twitter:description" content="本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
 </head>
-
 <body>
-  <div id="container">
-    <header>
-      <h1>
-                <a href="https://bash-c.github.io/">localhost</a>
-            </h1>
-
-      <ul id="social-media">
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">localhost - Done with development, it&#39;s time to pwn.</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
         
-        <li><a href="https://twitter.com/M4x88985494"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
           
-        <li><a href="https://github.com/bash-c"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
-            
-        <li><a href="mailto:I_am_M4x@protonmail.com"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd /home;</a>
+          
         
-      </ul>
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l ./post;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">cat ./tags;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">Categories;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">cat ./friends</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami;</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
       
-      <p><em>Done with development, it&rsquo;s time to pwn.</em></p>
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
       
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      localhost - Done with development, it&#39;s time to pwn.
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd /home;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l ./post;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">cat ./tags;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">Categories;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">cat ./friends</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami;</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Play with file descriptor(Ⅰ)</h1>
+      
+      <div class="post-meta">
+        <span class="post-time"> 2018-09-10 </span>
+        <div class="post-category">
+            <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
+            
+          </div>
+        
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
     </header>
 
     
-<nav>
-    <ul>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/">
-                <i class="fa-li fa  fa-lg"></i><span>ls -l ./post</span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/link/">
-                <i class="fa-li fa  fa-lg"></i><span>cat ./friends</span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/aboutme/">
-                <i class="fa-li fa  fa-lg"></i><span>whoami</span>
-            </a>
-        </li>
-        
-    </ul>
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#什么是-cli">什么是 CLI</a></li>
+<li><a href="#什么是终端">什么是终端</a>
+<ul>
+<li><a href="#历史上的终端">历史上的终端</a></li>
+<li><a href="#什么是控制台">什么是控制台</a></li>
+<li><a href="#什么是终端模拟器">什么是终端模拟器</a></li>
+<li><a href="#终端窗口与虚拟控制台">终端窗口与虚拟控制台</a></li>
+</ul></li>
+<li><a href="#那么-什么是-tty">那么，什么是 TTY ？</a></li>
+<li><a href="#什么是-shell">什么是 shell</a></li>
+<li><a href="#shell-与终端的分工">shell 与终端的分工</a></li>
+<li><a href="#references">References:</a></li>
+</ul></li>
+</ul>
 </nav>
-
-    <main>
-
-
-
-
-<article>
-
-    <h1>Play with file descriptor(Ⅰ)</h1>
+  </div>
+</div>
 
     
-        <aside>
-    <ul>
-        <li>
-            <time class="post-date" datetime="2018-09-10T23:17:33&#43;08:00">Sep 10, 2018</time>
-        </li>
-        
-        
-
-        
-
-        <li>Reading time 2 min</li>
-    </ul>
-</aside>
-
-    
-
-    
+    <div class="post-content">
+      
 
 <p>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。</p>
 
@@ -224,57 +491,145 @@
 <a href="https://zh.wikipedia.org/wiki/終端">https://zh.wikipedia.org/wiki/終端</a>
 <a href="https://en.wikipedia.org/wiki/Terminal_emulator">https://en.wikipedia.org/wiki/Terminal_emulator</a></p>
 
+    </div>
 
-</article>
-
-
-<section class="post-nav">
-    <ul>
-        
-        <li>
-            <a href="https://bash-c.github.io/post/whitehat2018-pwn-writeup/"><i class="fa fa-chevron-circle-left"></i> WhiteHat2018 Pwn Writeup</a>
-        </li>
-        
-        
-        <li>
-            <a href="https://bash-c.github.io/post/play_with_file_descriptor_2/">Play with file descriptor(II) <i class="fa fa-chevron-circle-right"></i> </a>
-        </li>
-        
-    </ul>
-</section>
-<head>
-    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
-</head>
-<body>
-    <div id="vcomments"></div>
-    <script>
-        new Valine({
-            el: '#vcomments',
-            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
-            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE',
-            notify:false,
-            verify:true,
-            avatar:'wavatar',
-            vistor:true,
-            placeholder: 'Leave a comment',
-            path:window.location.pathname
-        })
-    </script>
-</body>
-
-
-
-
-
-</main>
-    <footer>
-        <h6>Copyright &copy; 2018 - M4x | 
-            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
-            <a href="https://bash-c.github.io/index.xml">Subscribe</a></h6>
-    </footer>
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">M4x</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-09-10</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
 </div>
-<script src="https://bash-c.github.io/js/scripts.js"></script>
-</body>
 
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://bash-c.github.io/tags/file-descriptor/">file-descriptor</a>
+          <a href="https://bash-c.github.io/tags/pwn/">pwn</a>
+          <a href="https://bash-c.github.io/tags/os/">os</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/play_with_file_descriptor_2/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Play with file descriptor(II)</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/whitehat2018-pwn-writeup/">
+            <span class="next-text nav-default">WhiteHat2018 Pwn Writeup</span>
+            <span class="prev-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:I_am_M4x@protonmail.com" rel="me noopener" class="iconfont icon-email"
+        title="email">
+      </a>
+      <a href="http://github.com/bash-c" rel="me noopener" class="iconfont icon-github"
+        title="github" target="_blank">
+      </a>
+  <a href="https://bash-c.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml" class="iconfont icon-rss"
+    title="rss" target="_blank">
+  </a>
+  </div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+       -
+    2018
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span><span class="author">
+        M4x
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/dist/jane.min.js?v=2.7.0"></script>
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+</body>
 </html>

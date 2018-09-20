@@ -1,93 +1,353 @@
-<!doctype html>
-
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
 <head>
-  <title>localhost</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The HTML5 Herald" />
-  <meta name="author" content="M4x" />
-  <meta name="generator" content="Hugo 0.41" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
-  <link rel="stylesheet" type="text/css" href="https://bash-c.github.io/css/styles.css" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Play with file descriptor(II) - localhost - Done with development, it&#39;s time to pwn.</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="M4x" />
+  <meta name="description" content="这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.48" />
+
+
+<link rel="canonical" href="https://bash-c.github.io/post/play_with_file_descriptor_2/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+<link href="/dist/jane.min.css?v=2.7.0" rel="stylesheet">
+
+
+
+
+<meta property="og:title" content="Play with file descriptor(II)" />
+<meta property="og:description" content="这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bash-c.github.io/post/play_with_file_descriptor_2/" /><meta property="article:published_time" content="2018-09-11T20:46:54&#43;08:00"/>
+<meta property="article:modified_time" content="2018-09-11T20:46:54&#43;08:00"/>
+<meta itemprop="name" content="Play with file descriptor(II)">
+<meta itemprop="description" content="这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比">
+
+
+<meta itemprop="datePublished" content="2018-09-11T20:46:54&#43;08:00" />
+<meta itemprop="dateModified" content="2018-09-11T20:46:54&#43;08:00" />
+<meta itemprop="wordCount" content="3192">
+
+
+
+<meta itemprop="keywords" content="file-descriptor,pwn,os," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Play with file descriptor(II)"/>
+<meta name="twitter:description" content="这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
 </head>
-
 <body>
-  <div id="container">
-    <header>
-      <h1>
-                <a href="https://bash-c.github.io/">localhost</a>
-            </h1>
-
-      <ul id="social-media">
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">localhost - Done with development, it&#39;s time to pwn.</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
         
-        <li><a href="https://twitter.com/M4x88985494"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
           
-        <li><a href="https://github.com/bash-c"><i class="fa fa-github fa-lg" aria-hidden="true"></i></a></li>
-            
-        <li><a href="mailto:I_am_M4x@protonmail.com"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd /home;</a>
+          
         
-      </ul>
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l ./post;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">cat ./tags;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">Categories;</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">cat ./friends</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami;</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
       
-      <p><em>Done with development, it&rsquo;s time to pwn.</em></p>
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
       
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      localhost - Done with development, it&#39;s time to pwn.
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd /home;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l ./post;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">cat ./tags;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">Categories;</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">cat ./friends</a>
+          
+
+        
+
+      </li>
+    
+      <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami;</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Play with file descriptor(II)</h1>
+      
+      <div class="post-meta">
+        <span class="post-time"> 2018-09-11 </span>
+        <div class="post-category">
+            <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
+            
+          </div>
+        
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
     </header>
 
     
-<nav>
-    <ul>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/">
-                <i class="fa-li fa  fa-lg"></i><span>ls -l ./post</span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/link/">
-                <i class="fa-li fa  fa-lg"></i><span>cat ./friends</span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="" href="https://bash-c.github.io/post/aboutme/">
-                <i class="fa-li fa  fa-lg"></i><span>whoami</span>
-            </a>
-        </li>
-        
-    </ul>
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#什么是文件">什么是文件</a></li>
+<li><a href="#什么是文件描述符">什么是文件描述符</a></li>
+<li><a href="#stdin-stdout-和-stderr">stdin, stdout 和 stderr</a></li>
+<li><a href="#play-with-file-decsriptors">Play with file decsriptors</a></li>
+<li><a href="#references">References</a></li>
+</ul></li>
+</ul>
 </nav>
-
-    <main>
-
-
-
-
-<article>
-
-    <h1>Play with file descriptor(II)</h1>
+  </div>
+</div>
 
     
-        <aside>
-    <ul>
-        <li>
-            <time class="post-date" datetime="2018-09-11T20:46:54&#43;08:00">Sep 11, 2018</time>
-        </li>
-        
-        
-
-        
-
-        <li>Reading time 5 min</li>
-    </ul>
-</aside>
-
-    
-
-    
+    <div class="post-content">
+      
 
 <p>这一篇主要介绍一些文件描述符的内容。
 同样参考了很多，链接都放在 reference 了。</p>
@@ -114,33 +374,78 @@
 <p>在 *nix 系统中，当进程打开现有文件或创建新文件 (open) 时，内核向进程返回一个 <strong>文件描述符（file descriptor）</strong>。在形式上是一个非负整数，作为一个索引指向被打开的文件，所有执行 I/O 操作的系统调用都会通过文件描述符。</p>
 
 <p>我们用下边的代码解释这个概念</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">// gcc file_descriptor.c -o file_decsriptor
-</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/stat.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
-{
-	getchar();
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// gcc file_descriptor.c -o file_decsriptor
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">getchar</span><span class="p">();</span>
 
-	puts(<span style="color:#e6db74">&#34;Open a file.&#34;</span>);
-	<span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> open(<span style="color:#e6db74">&#34;/dev/urandom&#34;</span>, <span style="color:#ae81ff">0</span>);
-	getchar();
+	<span class="n">puts</span><span class="p">(</span><span class="s">&#34;Open a file.&#34;</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/urandom&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="n">getchar</span><span class="p">();</span>
 
-	printf(<span style="color:#e6db74">&#34;Close the file.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
-	close(fd);
-	getchar();
+	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;Close the file.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+	<span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+	<span class="n">getchar</span><span class="p">();</span>
 
-	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-}</code></pre></div>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>编译运行，一个进程就被建立起来了，我们可以在 /proc/[PID] 目录下查看这个进程的信息（这个机制与 linux 的 procfs 有关，不做过多介绍）。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ./file_descriptor 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ./file_descriptor 
 ....
 
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> pgrep file_descriptor
-<span style="color:#ae81ff">468</span>
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ls /proc/468
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> pgrep file_descriptor
+<span class="m">468</span>
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ls /proc/468
 attr             cwd       map_files   oom_adj        schedstat     syscall
 autogroup        environ   maps        oom_score      sessionid     task
 auxv             exe       mem         oom_score_adj  setgroups     timers
@@ -149,69 +454,183 @@ clear_refs       fdinfo    mounts      patch_state    smaps_rollup  uid_map
 cmdline          gid_map   mountstats  personality    stack         wchan
 comm             io        net         projid_map     stat
 coredump_filter  limits    ns          root           statm
-cpuset           loginuid  numa_maps   sched          status</code></pre></div>
+cpuset           loginuid  numa_maps   sched          status</code></pre></td></tr></table>
+</div>
+</div>
 <p>比如 /proc/[PID]/maps 存储了该进程的内存布局，/proc/[PID]/environ 存储了该进程的环境变量，还有很多有趣的文件，就不一一介绍了。</p>
 
 <p>本篇主要讲的是 fd(file descriptor)，因此我们直奔主题，查看 /proc/[PID]/fd 下有什么</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ls /proc/468/fd  
-<span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">2</span></code></pre></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ls /proc/468/fd  
+<span class="m">0</span>  <span class="m">1</span>  <span class="m">2</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>可以看到该进程已经有了三个 fd， 至于这三个 fd 是什么我们待会再谈，继续运行程序</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ./file_descriptor 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ./file_descriptor 
 
 Open a file.
 ....
 
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ls /proc/468/fd
-<span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">3</span>
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> file /proc/468/fd/3
-/proc/468/fd/3: symbolic link to /dev/urandom</code></pre></div>
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ls /proc/468/fd
+<span class="m">0</span>  <span class="m">1</span>  <span class="m">2</span>  <span class="m">3</span>
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> file /proc/468/fd/3
+/proc/468/fd/3: symbolic link to /dev/urandom</code></pre></td></tr></table>
+</div>
+</div>
 <p>可以看到，当该进程新打开了一个文件时，/proc/[PID]/fd 中多了一个文件描述符，并且该文件描述符指向我们打开的文件 /dev/urandom。</p>
 
 <p>继续运行</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ./file_descriptor ：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ./file_descriptor ：
 
 Open a file.
 
 Close the file.
 ....
 
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ls /proc/468/fd
-<span style="color:#ae81ff">0</span>  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">2</span></code></pre></div>
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ls /proc/468/fd
+<span class="m">0</span>  <span class="m">1</span>  <span class="m">2</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>此时进程关闭了 /dev/urandom 这个文件，3 号文件描述符也就消失了。
 如果在程序关闭前，有对该文件进行 IO，那么这些操作都将通过这个文件描述符。</p>
 
 <h2 id="stdin-stdout-和-stderr">stdin, stdout 和 stderr</h2>
 
 <p>我们再写一个简单的程序</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">// gcc echo.c -o echo
-</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
-{
-	<span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">0x10</span>];
-	gets(buf);
-	puts(buf);
-	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-}</code></pre></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// gcc echo.c -o echo
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mh">0x10</span><span class="p">];</span>
+	<span class="n">gets</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+	<span class="n">puts</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>编译生成可执行文件，使用 strace 观察它在运行过程中的系统调用</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> strace ./echo 
-execve<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;./echo&#34;</span>, <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;./echo&#34;</span><span style="color:#f92672">]</span>, 0x7fff39984720 /* <span style="color:#ae81ff">52</span> vars */<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> strace ./echo 
+execve<span class="o">(</span><span class="s2">&#34;./echo&#34;</span>, <span class="o">[</span><span class="s2">&#34;./echo&#34;</span><span class="o">]</span>, 0x7fff39984720 /* <span class="m">52</span> vars */<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
 ......
-read<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span>, </code></pre></div>
+read<span class="o">(</span><span class="m">0</span>, </code></pre></td></tr></table>
+</div>
+</div>
 <p>忽略程序装载时的一些系统调用，程序停在了 <strong>read(0,</strong> 这里等待我们的输入，也就是说 gets 这个库函数实际上使用了read 这个系统调用，传入一些输入继续观察</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> strace ./echo 
-execve<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;./echo&#34;</span>, <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;./echo&#34;</span><span style="color:#f92672">]</span>, 0x7ffdc5b21cb0 /* <span style="color:#ae81ff">52</span> vars */<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> strace ./echo 
+execve<span class="o">(</span><span class="s2">&#34;./echo&#34;</span>, <span class="o">[</span><span class="s2">&#34;./echo&#34;</span><span class="o">]</span>, 0x7ffdc5b21cb0 /* <span class="m">52</span> vars */<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
 ......
-read<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">12345678</span>
-<span style="color:#e6db74">&#34;12345678\n&#34;</span>, <span style="color:#ae81ff">1024</span><span style="color:#f92672">)</span>             <span style="color:#f92672">=</span> <span style="color:#ae81ff">9</span>
+read<span class="o">(</span><span class="m">0</span>, <span class="m">12345678</span>
+<span class="s2">&#34;12345678\n&#34;</span>, <span class="m">1024</span><span class="o">)</span>             <span class="o">=</span> <span class="m">9</span>
 ......
-write<span style="color:#f92672">(</span><span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;12345678\n&#34;</span>, <span style="color:#ae81ff">912345678</span>
-<span style="color:#f92672">)</span>               <span style="color:#f92672">=</span> <span style="color:#ae81ff">9</span>
-exit_group<span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">)</span>                           <span style="color:#f92672">=</span> ?
-+++ exited with <span style="color:#ae81ff">0</span> +++</code></pre></div>
+write<span class="o">(</span><span class="m">1</span>, <span class="s2">&#34;12345678\n&#34;</span>, <span class="m">912345678</span>
+<span class="o">)</span>               <span class="o">=</span> <span class="m">9</span>
+exit_group<span class="o">(</span><span class="m">0</span><span class="o">)</span>                           <span class="o">=</span> ?
++++ exited with <span class="m">0</span> +++</code></pre></td></tr></table>
+</div>
+</div>
 <p>这说明 puts 实际上使用了 write 这个系统调用，使用 <code>man 3 read</code> 和 <code>man 3 write</code> 查看 read 和 write 的用户手册，可以发现如下的描述</p>
-
-<pre><code>NAME
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">NAME
        pread, read — read from a file
 
 SYNOPSIS
@@ -239,9 +658,9 @@ SYNOPSIS
 
 DESCRIPTION
        The write() function shall attempt to write nbyte bytes from the buffer pointed
-       to by buf to the file associated with the open file descriptor, fildes.
-</code></pre>
-
+       to by buf to the file associated with the open file descriptor, fildes.</pre></td></tr></table>
+</div>
+</div>
 <p>圈一下重点</p>
 
 <blockquote>
@@ -255,23 +674,47 @@ DESCRIPTION
 那么 0 和 1 ，以及刚刚提到的 2 这个文件又是什么？</p>
 
 <p>这个答案很容易搜索到：0，1 和 2 分别为 stdin，stdout 和 stderr。<code>man stdin</code> 查看一下对应的用户手册，圈出重点</p>
-
-<pre><code> Under  normal  circumstances every UNIX program has three streams opened for it when it starts up, 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma"> Under  normal  circumstances every UNIX program has three streams opened for it when it starts up, 
  one for input, one for output, and one for printing diagnostic  or  error  messages.
 
-The input stream is referred to as  &quot;standard  input&quot;;  
-the  output  stream  is referred to as &quot;standard output&quot;; 
-and the error stream is referred to as &quot;standard error&quot;.  
-These terms are abbreviated to form the symbols used to refer  to these files, namely stdin, stdout, and stderr.
-</code></pre>
-
+The input stream is referred to as  &#34;standard  input&#34;;  
+the  output  stream  is referred to as &#34;standard output&#34;; 
+and the error stream is referred to as &#34;standard error&#34;.  
+These terms are abbreviated to form the symbols used to refer  to these files, namely stdin, stdout, and stderr.</pre></td></tr></table>
+</div>
+</div>
 <p>每个程序在运行时会自动打开三个文件 stdin，stdout 和 stderr，文件描述符为0,1,2，分别代表标准输入，标准输出和标准错误；</p>
 
 <p>之后打开的文件会从 3 继续向后递增，新打开文件 (open) 时，将返回所能允许的最小文件描述符。</p>
 
 <p>同时从 stdin 的用户手册里还可以发现 stderr 默认是无缓冲，stdout 默认是行缓冲，stdin 默认是全缓冲，可以通过 setbuf， setvbuf 等函数改变这些属性（关于 io 缓冲的更多知识可以参考这篇<a href="https://blog.csdn.net/K346K346/article/details/63259524">文章</a>）</p>
-
-<pre><code>NOTES
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">NOTES
        The  stream  stderr  is unbuffered.  The stream stdout is line-buffered when it
        points to a terminal.  Partial lines will not appear until fflush(3) or exit(3)
        is called, or a newline is printed.  This can produce unexpected results, espe‐
@@ -281,45 +724,87 @@ These terms are abbreviated to form the symbols used to refer  to these files, n
        buffering  in  the  terminal  driver,  entirely  unrelated  to stdio buffering.
        (Indeed, normally terminal input is line buffered in the kernel.)  This  kernel
        input handling can be modified using calls like tcsetattr(3); see also stty(1),
-       and termios(3).
-
-</code></pre>
-
+       and termios(3).</pre></td></tr></table>
+</div>
+</div>
 <h2 id="play-with-file-decsriptors">Play with file decsriptors</h2>
 
 <p>有了以上的概念，我们来看一下下边的代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">others_reverse_shell [master<span style="color:#960050;background-color:#1e0010">●●</span>] bat play_with_fd.c
-<span style="color:#960050;background-color:#1e0010">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
-       <span style="color:#960050;background-color:#1e0010">│</span> File: play_with_fd.c
-<span style="color:#960050;background-color:#1e0010">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
-   <span style="color:#ae81ff">1</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">// gcc play_with_fd.c -o play_with_fd
-</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">2</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">3</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;fcntl.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">4</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">5</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/stat.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>   <span style="color:#ae81ff">6</span>   <span style="color:#960050;background-color:#1e0010">│</span>
-   <span style="color:#ae81ff">7</span>   <span style="color:#960050;background-color:#1e0010">│</span> <span style="color:#66d9ef">int</span> main()
-   <span style="color:#ae81ff">8</span>   <span style="color:#960050;background-color:#1e0010">│</span> {
-   <span style="color:#ae81ff">9</span>   <span style="color:#960050;background-color:#1e0010">│</span>        puts(<span style="color:#e6db74">&#34;Now stdout is on.&#34;</span>);
-  <span style="color:#ae81ff">10</span>   <span style="color:#960050;background-color:#1e0010">│</span>        puts(<span style="color:#e6db74">&#34;And then we close stdout.&#34;</span>);
-  <span style="color:#ae81ff">11</span>   <span style="color:#960050;background-color:#1e0010">│</span>
-  <span style="color:#ae81ff">12</span>   <span style="color:#960050;background-color:#1e0010">│</span>        close(<span style="color:#ae81ff">1</span>);
-  <span style="color:#ae81ff">13</span>   <span style="color:#960050;background-color:#1e0010">│</span>        puts(<span style="color:#e6db74">&#34;dumb output because stdout is closed.&#34;</span>);
-  <span style="color:#ae81ff">14</span>   <span style="color:#960050;background-color:#1e0010">│</span>
-  <span style="color:#ae81ff">15</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> open(<span style="color:#e6db74">&#34;output.txt&#34;</span>, O_RDWR <span style="color:#f92672">|</span> O_CREAT, <span style="color:#ae81ff">0777</span>);
-  <span style="color:#ae81ff">16</span>   <span style="color:#960050;background-color:#1e0010">│</span>        puts(<span style="color:#e6db74">&#34;Since open() returns 1 and puts() triggers write(1,....), this message wi</span><span style="color:#960050;background-color:#1e0010">
-</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#e6db74">       │ ll be written to the file output.txt&#34;</span>);
-  <span style="color:#ae81ff">17</span>   <span style="color:#960050;background-color:#1e0010">│</span>        close(fd); <span style="color:#75715e">// don&#39;t forget to close(fd)!!!
-</span><span style="color:#75715e"></span>  <span style="color:#ae81ff">18</span>   <span style="color:#960050;background-color:#1e0010">│</span>
-  <span style="color:#ae81ff">19</span>   <span style="color:#960050;background-color:#1e0010">│</span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-  <span style="color:#ae81ff">20</span>   <span style="color:#960050;background-color:#1e0010">│</span> }
-<span style="color:#960050;background-color:#1e0010">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="n">others_reverse_shell</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">bat</span> <span class="n">play_with_fd</span><span class="p">.</span><span class="n">c</span>
+<span class="err">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
+       <span class="err">│</span> <span class="nl">File</span><span class="p">:</span> <span class="n">play_with_fd</span><span class="p">.</span><span class="n">c</span>
+<span class="err">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
+   <span class="mi">1</span>   <span class="err">│</span> <span class="c1">// gcc play_with_fd.c -o play_with_fd
+</span><span class="c1"></span>   <span class="mi">2</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span>   <span class="mi">3</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp"></span>   <span class="mi">4</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp"></span>   <span class="mi">5</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt;</span><span class="cp">
+</span><span class="cp"></span>   <span class="mi">6</span>   <span class="err">│</span>
+   <span class="mi">7</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+   <span class="mi">8</span>   <span class="err">│</span> <span class="p">{</span>
+   <span class="mi">9</span>   <span class="err">│</span>        <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Now stdout is on.&#34;</span><span class="p">);</span>
+  <span class="mi">10</span>   <span class="err">│</span>        <span class="n">puts</span><span class="p">(</span><span class="s">&#34;And then we close stdout.&#34;</span><span class="p">);</span>
+  <span class="mi">11</span>   <span class="err">│</span>
+  <span class="mi">12</span>   <span class="err">│</span>        <span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="mi">13</span>   <span class="err">│</span>        <span class="n">puts</span><span class="p">(</span><span class="s">&#34;dumb output because stdout is closed.&#34;</span><span class="p">);</span>
+  <span class="mi">14</span>   <span class="err">│</span>
+  <span class="mi">15</span>   <span class="err">│</span>        <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;output.txt&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span> <span class="o">|</span> <span class="n">O_CREAT</span><span class="p">,</span> <span class="mo">0777</span><span class="p">);</span>
+  <span class="mi">16</span>   <span class="err">│</span>        <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Since open() returns 1 and puts() triggers write(1,....), this message wi</span><span class="err">
+</span><span class="err"></span><span class="s">       │ ll be written to the file output.txt&#34;</span><span class="p">);</span>
+  <span class="mi">17</span>   <span class="err">│</span>        <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span> <span class="c1">// don&#39;t forget to close(fd)!!!
+</span><span class="c1"></span>  <span class="mi">18</span>   <span class="err">│</span>
+  <span class="mi">19</span>   <span class="err">│</span>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="mi">20</span>   <span class="err">│</span> <span class="p">}</span>
+<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></td></tr></table>
+</div>
+</div>
 <p>编译运行，得到如下结果</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> ./play_with_fd 
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> ./play_with_fd 
 Now stdout is on.
-And <span style="color:#66d9ef">then</span> we close stdout.
-others_reverse_shell <span style="color:#f92672">[</span>master●●<span style="color:#f92672">]</span> cat output.txt 
-Since open<span style="color:#f92672">()</span> returns <span style="color:#ae81ff">1</span> and puts<span style="color:#f92672">()</span> triggers write<span style="color:#f92672">(</span><span style="color:#ae81ff">1</span>,....<span style="color:#f92672">)</span>, this message will be written to the file output.txt</code></pre></div>
+And <span class="k">then</span> we close stdout.
+others_reverse_shell <span class="o">[</span>master●●<span class="o">]</span> cat output.txt 
+Since open<span class="o">()</span> returns <span class="m">1</span> and puts<span class="o">()</span> triggers write<span class="o">(</span><span class="m">1</span>,....<span class="o">)</span>, this message will be written to the file output.txt</code></pre></td></tr></table>
+</div>
+</div>
 <ul>
 <li><p>13 行的输出并没有向往常一样显示在显示屏上，因为 stdout 在 12 行已经被关闭了；</p></li>
 
@@ -329,23 +814,46 @@ Since open<span style="color:#f92672">()</span> returns <span style="color:#ae81
 </ul>
 
 <p>值得一提的记得 17 行的 close(fd) 的操作，这是因为每个用户和每个进程所能承受的 fd 是有限的，进程的可以通过 /proc/[PID]/limits 查看，用户可以通过 <code>ulimit -a</code> 查看</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">post ulimit -a
--t: cpu time <span style="color:#f92672">(</span>seconds<span style="color:#f92672">)</span>              unlimited
--f: file size <span style="color:#f92672">(</span>blocks<span style="color:#f92672">)</span>              unlimited
--d: data seg size <span style="color:#f92672">(</span>kbytes<span style="color:#f92672">)</span>          unlimited
--s: stack size <span style="color:#f92672">(</span>kbytes<span style="color:#f92672">)</span>             <span style="color:#ae81ff">8192</span>
--c: core file size <span style="color:#f92672">(</span>blocks<span style="color:#f92672">)</span>         <span style="color:#ae81ff">0</span>
--m: resident set size <span style="color:#f92672">(</span>kbytes<span style="color:#f92672">)</span>      unlimited
--u: processes                       <span style="color:#ae81ff">30645</span>
--n: file descriptors                <span style="color:#ae81ff">1024</span>      &lt;- max
--l: locked-in-memory size <span style="color:#f92672">(</span>kbytes<span style="color:#f92672">)</span>  <span style="color:#ae81ff">16384</span>
--v: address space <span style="color:#f92672">(</span>kbytes<span style="color:#f92672">)</span>          unlimited
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">post <span class="nb">ulimit</span> -a
+-t: cpu <span class="nb">time</span> <span class="o">(</span>seconds<span class="o">)</span>              unlimited
+-f: file size <span class="o">(</span>blocks<span class="o">)</span>              unlimited
+-d: data seg size <span class="o">(</span>kbytes<span class="o">)</span>          unlimited
+-s: stack size <span class="o">(</span>kbytes<span class="o">)</span>             <span class="m">8192</span>
+-c: core file size <span class="o">(</span>blocks<span class="o">)</span>         <span class="m">0</span>
+-m: resident <span class="nb">set</span> size <span class="o">(</span>kbytes<span class="o">)</span>      unlimited
+-u: processes                       <span class="m">30645</span>
+-n: file descriptors                <span class="m">1024</span>      &lt;- max
+-l: locked-in-memory size <span class="o">(</span>kbytes<span class="o">)</span>  <span class="m">16384</span>
+-v: address space <span class="o">(</span>kbytes<span class="o">)</span>          unlimited
 -x: file locks                      unlimited
--i: pending signals                 <span style="color:#ae81ff">30645</span>
--q: bytes in POSIX msg queues       <span style="color:#ae81ff">819200</span>
--e: max nice                        <span style="color:#ae81ff">0</span>
--r: max rt priority                 <span style="color:#ae81ff">0</span>
--N <span style="color:#ae81ff">15</span>:                              unlimited</code></pre></div>
+-i: pending signals                 <span class="m">30645</span>
+-q: bytes in POSIX msg queues       <span class="m">819200</span>
+-e: max nice                        <span class="m">0</span>
+-r: max rt priority                 <span class="m">0</span>
+-N <span class="m">15</span>:                              unlimited</code></pre></td></tr></table>
+</div>
+</div>
 <p>比如我的环境下我最多能同时打开 1024 个文件，如果大于这个数值，会造成文件打开失败，后续的从文件 io 等操作全部失效。</p>
 
 <blockquote>
@@ -362,57 +870,145 @@ Since open<span style="color:#f92672">()</span> returns <span style="color:#ae81
 <a href="https://www.zhihu.com/question/25696682">https://www.zhihu.com/question/25696682</a>
 <a href="https://www.zhihu.com/question/30420304">https://www.zhihu.com/question/30420304</a></p>
 
+    </div>
 
-</article>
-
-
-<section class="post-nav">
-    <ul>
-        
-        <li>
-            <a href="https://bash-c.github.io/post/play_with_file_descriptor_1/"><i class="fa fa-chevron-circle-left"></i> Play with file descriptor(Ⅰ)</a>
-        </li>
-        
-        
-        <li>
-            <a href="https://bash-c.github.io/post/play_with_file_descriptor_3/">Play with file descriptor(Ⅲ) <i class="fa fa-chevron-circle-right"></i> </a>
-        </li>
-        
-    </ul>
-</section>
-<head>
-    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
-</head>
-<body>
-    <div id="vcomments"></div>
-    <script>
-        new Valine({
-            el: '#vcomments',
-            appId: 'goABwRBvfqsbEkzfPSjlbhDJ-gzGzoHsz',
-            appKey: 'jm5HSLcqP40fvEBMOcBwPXPE',
-            notify:false,
-            verify:true,
-            avatar:'wavatar',
-            vistor:true,
-            placeholder: 'Leave a comment',
-            path:window.location.pathname
-        })
-    </script>
-</body>
-
-
-
-
-
-</main>
-    <footer>
-        <h6>Copyright &copy; 2018 - M4x | 
-            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
-            <a href="https://bash-c.github.io/index.xml">Subscribe</a></h6>
-    </footer>
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">M4x</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-09-11</span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">License</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
 </div>
-<script src="https://bash-c.github.io/js/scripts.js"></script>
-</body>
 
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://bash-c.github.io/tags/file-descriptor/">file-descriptor</a>
+          <a href="https://bash-c.github.io/tags/pwn/">pwn</a>
+          <a href="https://bash-c.github.io/tags/os/">os</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/play_with_file_descriptor_3/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Play with file descriptor(Ⅲ)</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+          <a class="next" href="/post/play_with_file_descriptor_1/">
+            <span class="next-text nav-default">Play with file descriptor(Ⅰ)</span>
+            <span class="prev-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:I_am_M4x@protonmail.com" rel="me noopener" class="iconfont icon-email"
+        title="email">
+      </a>
+      <a href="http://github.com/bash-c" rel="me noopener" class="iconfont icon-github"
+        title="github" target="_blank">
+      </a>
+  <a href="https://bash-c.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml" class="iconfont icon-rss"
+    title="rss" target="_blank">
+  </a>
+  </div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+       -
+    2018
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span><span class="author">
+        M4x
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/dist/jane.min.js?v=2.7.0"></script>
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+</body>
 </html>
