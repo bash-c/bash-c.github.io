@@ -9,6 +9,13 @@
   </url>
   
   <url>
+    <loc>https://bash-c.github.io/post/jarvisoj-pwn-writeup/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://bash-c.github.io/post/play_with_file_descriptor_3/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -113,6 +120,13 @@
   </url>
   
   <url>
+    <loc>https://bash-c.github.io/tags/jarvisoj/</loc>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://bash-c.github.io/tags/os/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -121,14 +135,14 @@
   
   <url>
     <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/tags/pwn/</loc>
-    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -156,14 +170,14 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/writeup/</loc>
-    <lastmod>2018-08-25T20:19:16+08:00</lastmod>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/</loc>
-    <lastmod>2018-09-12T15:30:01+08:00</lastmod>
+    <lastmod>2018-09-16T22:09:27+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
