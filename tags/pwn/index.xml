@@ -23,28 +23,28 @@
     
     <item>
       <title>Play with file descriptor(Ⅲ)</title>
-      <link>https://bash-c.github.io/post/play_with_file_descriptor_3/</link>
+      <link>https://bash-c.github.io/post/play-with-file-descriptor-3/</link>
       <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
       
-      <guid>https://bash-c.github.io/post/play_with_file_descriptor_3/</guid>
+      <guid>https://bash-c.github.io/post/play-with-file-descriptor-3/</guid>
       <description>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13</description>
     </item>
     
     <item>
       <title>Play with file descriptor(II)</title>
-      <link>https://bash-c.github.io/post/play_with_file_descriptor_2/</link>
+      <link>https://bash-c.github.io/post/play-with-file-descriptor-2/</link>
       <pubDate>Tue, 11 Sep 2018 20:46:54 +0800</pubDate>
       
-      <guid>https://bash-c.github.io/post/play_with_file_descriptor_2/</guid>
+      <guid>https://bash-c.github.io/post/play-with-file-descriptor-2/</guid>
       <description>这一篇主要介绍一些文件描述符的内容。 同样参考了很多，链接都放在 reference 了。 什么是文件 上一篇提到了 *nix 的一个哲学思想 一切皆文件，我们可以与 windows 做一个对比</description>
     </item>
     
     <item>
       <title>Play with file descriptor(Ⅰ)</title>
-      <link>https://bash-c.github.io/post/play_with_file_descriptor_1/</link>
+      <link>https://bash-c.github.io/post/play-with-file-descriptor-1/</link>
       <pubDate>Mon, 10 Sep 2018 23:17:33 +0800</pubDate>
       
-      <guid>https://bash-c.github.io/post/play_with_file_descriptor_1/</guid>
+      <guid>https://bash-c.github.io/post/play-with-file-descriptor-1/</guid>
       <description>本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要</description>
     </item>
     
@@ -59,10 +59,10 @@
     
     <item>
       <title>如何 pwn 掉一个 arm 的binary</title>
-      <link>https://bash-c.github.io/post/arm_pwn/</link>
+      <link>https://bash-c.github.io/post/how-2-pwn-an-arm-binary/</link>
       <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
       
-      <guid>https://bash-c.github.io/post/arm_pwn/</guid>
+      <guid>https://bash-c.github.io/post/how-2-pwn-an-arm-binary/</guid>
       <description>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0</description>
     </item>
     
