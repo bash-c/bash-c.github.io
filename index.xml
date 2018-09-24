@@ -228,6 +228,8 @@ tcpdump version &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;.9.0
 libpcap version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.7.4&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;h3 id=&#34;segment-fault&#34;&gt;Segment Fault&lt;/h3&gt;
+
 &lt;p&gt;使用如下的 poc 即可出发漏洞产生 Segment Fault&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -293,6 +295,8 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 
 &lt;h2 id=&#34;漏洞分析&#34;&gt;漏洞分析&lt;/h2&gt;
 
+&lt;h3 id=&#34;pcap-文件格式&#34;&gt;pcap 文件格式&lt;/h3&gt;
+
 &lt;p&gt;首先我们需要对 pcap 的文件格式有一个了解。&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -302,6 +306,8 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 &lt;p&gt;总体结构是 &lt;code&gt;global header&lt;/code&gt; 后跟着几条捕获数据包的记录:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://ww1.sinaimg.cn/large/006AWYXBly1fvl2i61v5sj30mt01cq2s.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;global-header&#34;&gt;global header&lt;/h4&gt;
 
 &lt;p&gt;其中 global header 的结构具体如下&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -328,6 +334,39 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcap_hdr_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;magic_number:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，用来识别文件格式本身和字节顺序。分三种情况：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;0xa1b2c3d4&lt;/strong&gt;: 按照程序字节序的方式写入。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;0xd4c3b2a1&lt;/strong&gt;: 表示后边所有的字段都要进行字节序反转。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;0xa1b23c4d&lt;/strong&gt;: 文件为纳秒精度。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;version_major, version_minor:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;各 2 bytes，文件格式的版本号，目前最新的版本为 2.4。&lt;/p&gt;
+
+&lt;p&gt;即常见的 pcap 包中，version_major 为 0x0002，version_minor 为 0x0004。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;thiszone:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;GMT (UTC) 和后面 packet header 的时间戳所用的时区的时间差（单位：秒）。 实际上，时间戳用的一般都是 GMT 时间, 所以 &lt;strong&gt;thiszone 一般都设为 0&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;sigfigs:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;时间戳的精度,
+实际上，&lt;strong&gt;一般也设置为0&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;snaplen:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;每个数据包的最大存储长度（该值设置所抓获的数据包的最大长度，如果所有数据包都要抓获，将该值设置为 65535； 例如想获取数据包的前 64 字节，可将该值设置为 64）&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;困了，明天再写&lt;/p&gt;
+&lt;/blockquote&gt;
+
 &lt;h2 id=&#34;reference-and-thanks-to&#34;&gt;Reference and thanks to&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/firmianay/CTF-All-In-One/blob/master/doc/7.1.1_tcpdump_2017-11543.md&#34;&gt;https://github.com/firmianay/CTF-All-In-One/blob/master/doc/7.1.1_tcpdump_2017-11543.md&lt;/a&gt;&lt;/p&gt;
