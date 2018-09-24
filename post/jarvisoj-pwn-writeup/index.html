@@ -531,7 +531,7 @@
 
 <p>这道题目特殊在程序是 arm 架构的，但其实只是一个简单的 rop，把环境搭建好后并不难。</p>
 
-<p>我在另一篇博文中以这道题目为例分析了 arm 的 pwn，包括了运行和调试的环境搭建，以及恢复符号，<a href="http://m4x.fun/post/arm_pwn/">链接</a>。</p>
+<p>我在另一篇博文中以这道题目为例分析了 arm 的 pwn，包括了运行和调试的环境搭建，以及恢复符号，<a href="http://m4x.fun/post/how-2-pwn-an-arm-binary/">链接</a>。</p>
 
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_typo/solve.py">exploit here</a></p>
 
@@ -1527,7 +1527,7 @@ DESCRIPTION
 
 <p>但关键是执行什么命令，这道题目是通过 socket 进行通信的，因此直接 <code>cat flag</code> 不会有回显，可以通过管道将结果发送到远程 vps 上，在 vps 上监听到 flag，或者可以直接建立一个 reverse shell。</p>
 
-<p>原理可以看我写的几篇分析 <a href="http://m4x.fun/post/play_with_file_descriptor_1/">fd</a> 的文章。</p>
+<p>原理可以看我写的几篇分析 <a href="http://m4x.fun/post/play-with-file-descriptor-1/">fd</a> 的文章。</p>
 
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_HTTP/solve.py">expoit here</a></p>
 

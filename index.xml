@@ -542,7 +542,7 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 
 &lt;p&gt;这道题目特殊在程序是 arm 架构的，但其实只是一个简单的 rop，把环境搭建好后并不难。&lt;/p&gt;
 
-&lt;p&gt;我在另一篇博文中以这道题目为例分析了 arm 的 pwn，包括了运行和调试的环境搭建，以及恢复符号，&lt;a href=&#34;http://m4x.fun/post/arm_pwn/&#34;&gt;链接&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;我在另一篇博文中以这道题目为例分析了 arm 的 pwn，包括了运行和调试的环境搭建，以及恢复符号，&lt;a href=&#34;http://m4x.fun/post/how-2-pwn-an-arm-binary/&#34;&gt;链接&lt;/a&gt;。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_typo/solve.py&#34;&gt;exploit here&lt;/a&gt;&lt;/p&gt;
 
@@ -1538,7 +1538,7 @@ DESCRIPTION
 
 &lt;p&gt;但关键是执行什么命令，这道题目是通过 socket 进行通信的，因此直接 &lt;code&gt;cat flag&lt;/code&gt; 不会有回显，可以通过管道将结果发送到远程 vps 上，在 vps 上监听到 flag，或者可以直接建立一个 reverse shell。&lt;/p&gt;
 
-&lt;p&gt;原理可以看我写的几篇分析 &lt;a href=&#34;http://m4x.fun/post/play_with_file_descriptor_1/&#34;&gt;fd&lt;/a&gt; 的文章。&lt;/p&gt;
+&lt;p&gt;原理可以看我写的几篇分析 &lt;a href=&#34;http://m4x.fun/post/play-with-file-descriptor-1/&#34;&gt;fd&lt;/a&gt; 的文章。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_HTTP/solve.py&#34;&gt;expoit here&lt;/a&gt;&lt;/p&gt;
 
