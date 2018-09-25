@@ -205,13 +205,23 @@ ii  libpcap-dev    &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.7.4-2      all  
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get install wget gcc make vim python
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get install wget gcc make vim python gdb git sudo
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# wget https://github.com/the-tcpdump-group/tcpdump/archive/tcpdump-4.9.0.tar.gz
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tar xzf ./tcpdump-4.9.0.tar.gz 
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;# ./configure&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;执行 &lt;code&gt;configure&lt;/code&gt; 会生成 &lt;code&gt;Makefile&lt;/code&gt;，然后 &lt;code&gt;make&lt;/code&gt; 即可在源码目录下生成二进制文件。&lt;/p&gt;
+&lt;p&gt;执行 &lt;code&gt;configure&lt;/code&gt; 会生成 &lt;code&gt;Makefile&lt;/code&gt;。
+为了后边调试的方便，修改一下 Makefile，CFLAGS 改为 &lt;code&gt;-g -O0 -no-pie&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nv&#34;&gt;CFLAGS&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; -g -O0 -no-pie&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;然后 &lt;code&gt;make&lt;/code&gt; 即可在源码目录下生成二进制文件。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -309,28 +319,78 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 
 &lt;h4 id=&#34;global-header&#34;&gt;global header&lt;/h4&gt;
 
-&lt;p&gt;其中 global header 的结构具体如下&lt;/p&gt;
+&lt;p&gt;其中 global header 的结构具体如下(&lt;a href=&#34;https://github.com/kynesim/tstools/blob/db1f79f409818fa0476ecf8593079a7ca3dbafd2/pcap.h#L53-L86&#34;&gt;Source Code&lt;/a&gt;)，共 24 个字节。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcap_hdr_s&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint32&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;magic_number&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/* magic number */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint16&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;version_major&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* major version number */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint16&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;version_minor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* minor version number */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;gint32&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;thiszone&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;       &lt;span class=&#34;cm&#34;&gt;/* GMT to local correction */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint32&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sigfigs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;        &lt;span class=&#34;cm&#34;&gt;/* accuracy of timestamps */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint32&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;snaplen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;        &lt;span class=&#34;cm&#34;&gt;/* max length of captured packets, in octets */&lt;/span&gt;
-        &lt;span class=&#34;n&#34;&gt;guint32&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;network&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;        &lt;span class=&#34;cm&#34;&gt;/* data link type */&lt;/span&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcap_hdr_s&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;cm&#34;&gt;/*! Magic number - 0xa1b2c3d4 means no swap needed,
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   *  0xd4c3b2a1 means we&amp;#39;ll need to swap.
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;magic_number&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Major version number (currently 2) */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint16_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;version_major&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Minor version number (4 + ) */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint16_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;version_minor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! GMT to local-time correction, in s */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;int32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;thiszone&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Accuracy of timestamps. In practice, always 0 */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sigfigs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Snapshot length (typically 65535 + but might be limited) */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;snaplen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+
+  &lt;span class=&#34;cm&#34;&gt;/* These are network types - equivalent to WTAP_ENCAP_XXX in
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   *  libpcap.c  . We only care about a few ..
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   */&lt;/span&gt;
+
+&lt;span class=&#34;cp&#34;&gt;#define PCAP_NETWORK_TYPE_NONE 0
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#define PCAP_NETWORK_TYPE_ETHERNET 1
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;cm&#34;&gt;/*! Network type: Ethernet = 1 .. */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;network&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcap_hdr_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -350,32 +410,464 @@ slip-bad-direction.pcap: tcpdump capture file &lt;span class=&#34;o&#34;&gt;(&lt
 
 &lt;p&gt;即常见的 pcap 包中，version_major 为 0x0002，version_minor 为 0x0004。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;thiszone:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;thiszone :&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;GMT (UTC) 和后面 packet header 的时间戳所用的时区的时间差（单位：秒）。 实际上，时间戳用的一般都是 GMT 时间, 所以 &lt;strong&gt;thiszone 一般都设为 0&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;4 bytes，GMT (UTC) 和后面 packet header 的时间戳所用的时区的时间差（单位：秒）。 实际上，时间戳用的一般都是 GMT 时间, 所以 &lt;strong&gt;thiszone 一般都设为 0&lt;/strong&gt;。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;sigfigs:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;sigfigs :&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;时间戳的精度,
-实际上，&lt;strong&gt;一般也设置为0&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;4 bytes，时间戳的精度, &lt;strong&gt;一般也设置为0&lt;/strong&gt;。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;snaplen:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;snaplen :&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;每个数据包的最大存储长度（该值设置所抓获的数据包的最大长度，如果所有数据包都要抓获，将该值设置为 65535； 例如想获取数据包的前 64 字节，可将该值设置为 64）&lt;/p&gt;
+&lt;p&gt;4 bytes，每个数据包的最大存储长度（该值设置所抓获的数据包的最大长度，如果所有数据包都要抓获，将该值设置为 65535； 例如想获取数据包的前 64 字节，可将该值设置为 64）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;network :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，链路类型，例如为 1 时代表为以太网，8 时代表为 SLIP，完整的对应关系 &lt;a href=&#34;http://www.tcpdump.org/linktypes.html&#34;&gt;戳这&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;我们看一下生成 pcap 的 global_header，这里用的是 &lt;a href=&#34;https://www.sweetscape.com/010editor/&#34;&gt;010editor&lt;/a&gt; 的 pcap template。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;th&gt;Start&lt;/th&gt;
+&lt;th&gt;Size&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;struct PCAPHEADER header&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;0h&lt;/td&gt;
+&lt;td&gt;18h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 magic_number&lt;/td&gt;
+&lt;td&gt;A1B2C3D4h&lt;/td&gt;
+&lt;td&gt;0h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint16 version_major&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;td&gt;2h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint16 version_minor&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;6h&lt;/td&gt;
+&lt;td&gt;2h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;int32 thiszone&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;8h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 sigfigs&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;Ch&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 snaplen&lt;/td&gt;
+&lt;td&gt;40000h&lt;/td&gt;
+&lt;td&gt;10h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 network&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;14h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;其中 &lt;strong&gt;network == 8&lt;/strong&gt;，即链路类型为 SLIP，&lt;/p&gt;
+
+&lt;h4 id=&#34;record-packet-header&#34;&gt;Record (Packet) Header&lt;/h4&gt;
+
+&lt;p&gt;Packet Header 的源码如下(&lt;a href=&#34;https://github.com/kynesim/tstools/blob/db1f79f409818fa0476ecf8593079a7ca3dbafd2/pcap.h#L92-L106&#34;&gt;Source Code&lt;/a&gt;)，共 16 个字节。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;k&#34;&gt;typedef&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcaprec_hdr_s&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;cm&#34;&gt;/*! Timestamp seconds */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ts_sec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Timetamp uS */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ts_usec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Number of octets saved after the header */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;incl_len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+  &lt;span class=&#34;cm&#34;&gt;/*! Original packet length */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;uint32_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;orig_len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pcaprec_hdr_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;ts_sec :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，时间戳高位，精确到 seconds（值是自从 January 1, 1970 00:00:00 GMT以来的秒数来记），其实就是 *nix 的time_t，可以用 ANSI C time.h 中的 time() 函数来获取这个值。如果时间戳不是基于 GMT 的，需调整 global header 中的 thiszone&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ts_usec :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，时间戳低位。一般的 pcap 文件中，精确到 microseconds（数据包被捕获时候的微秒数，是自 ts-sec 的偏移量）
+在纳秒精度的文件中，这个字段是数据包被捕获时候的纳秒数
+注意：这个字段的值不能大于 1 秒&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;incl_len :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，捕获且存储在 PCAP 文件中的数据包长度
+其实就是 min[orig_len, snaplen]&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;orig_len :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;4 bytes，这个数据包在网络中的原始长度。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;poc 中对应的数据为&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;th&gt;Start&lt;/th&gt;
+&lt;th&gt;Size&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;time_t ts_sec&lt;/td&gt;
+&lt;td&gt;02/16/2017 14:23:50&lt;/td&gt;
+&lt;td&gt;18h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 ts_usec&lt;/td&gt;
+&lt;td&gt;7BDF8h&lt;/td&gt;
+&lt;td&gt;1Ch&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 incl_len&lt;/td&gt;
+&lt;td&gt;27h&lt;/td&gt;
+&lt;td&gt;20h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;uint32 orig_len&lt;/td&gt;
+&lt;td&gt;E7E7E736h&lt;/td&gt;
+&lt;td&gt;24h&lt;/td&gt;
+&lt;td&gt;4h&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h4 id=&#34;packet-data&#34;&gt;Packet Data&lt;/h4&gt;
+
+&lt;p&gt;Packet(链路层的数据帧) 的具体内容，其长度即为 incl_len。&lt;/p&gt;
+
+&lt;p&gt;链路层类型为 &lt;code&gt;08&lt;/code&gt;，即 SLIP。SLIP 包的结构如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;+-------------------------+
+|        Direction        |
+|        (1 Octet)        |
++-------------------------+
+|       Packet type       |
+|        (1 Octet)        |
++-------------------------+
+| Compression information |
+|       (14 Octets)       |
++-------------------------+
+|         Payload         |
+.                         .
+.                         .
+.                         .&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;则在此 poc 中，direction 即为 0xe7&lt;/p&gt;
+
+&lt;h3 id=&#34;代码定位&#34;&gt;代码定位&lt;/h3&gt;
+
+&lt;p&gt;直接上 gdb，编译时加了 &lt;code&gt;-g&lt;/code&gt; 参数，很容易就能定位到 crash 的源代码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;62
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;root@7fe409e06b06:~# gdb ./tcpdump-tcpdump-4.9.0/tcpdump -q
+pwndbg: loaded &lt;span class=&#34;m&#34;&gt;164&lt;/span&gt; commands. Type pwndbg &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;filter&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; a list.
+pwndbg: created &lt;span class=&#34;nv&#34;&gt;$rebase&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;$ida&lt;/span&gt; gdb functions &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;can be used with print/break&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+Reading symbols from ./tcpdump-tcpdump-4.9.0/tcpdump...done.
+pwndbg&amp;gt; r -e -r ./slip-bad-direction.pcap 
+Starting program: /root/tcpdump-tcpdump-4.9.0/tcpdump -e -r ./slip-bad-direction.pcap
+reading from file ./slip-bad-direction.pcap, link-type SLIP &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SLIP&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000004affb9 in compressed_sl_print &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;ndo&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x7fffffffd420, &lt;span class=&#34;nv&#34;&gt;chdr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x7ffff7fad011 &lt;span class=&#34;s1&#34;&gt;&amp;#39;\347&amp;#39;&lt;/span&gt; &amp;lt;repeats &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt; times&amp;gt;, &amp;lt;incomplete sequence &lt;span class=&#34;se&#34;&gt;\3&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;47&lt;/span&gt;&amp;gt;..., &lt;span class=&#34;nv&#34;&gt;ip&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0x7ffff7fad020, &lt;span class=&#34;nv&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;3890734886&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;dir&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;231&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; at ./print-sl.c:253
+&lt;span class=&#34;m&#34;&gt;253&lt;/span&gt;		lastlen&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;dir&lt;span class=&#34;o&#34;&gt;][&lt;/span&gt;lastconn&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; length - &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;hlen &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt; 2);
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;──────────────────────────────────────────────────[ REGISTERS ]──────────────────────────────────────────────────
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt; RAX  0xe7e7
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt; RBX  0x7ffff7fad019 ◂— 0xe7e7e7e7e7e7e7e7
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt; RCX  0xe7
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt; RDX  0xe7e7e70a
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt; RDI  0x7ffff7b9062&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;_IO_2_1_stdout_&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— 0xfbad2a84
+ RSI  0x0
+ R8   0x0
+ R9   0x6
+ R10  0x0
+ R11  0xfffffffffffffffe
+ R12  0x7
+ R13  0xe7e7e726
+ R14  0xffffffff
+ R15  0x4062df &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;print_packet&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— push   rbp
+ RBP  0x7fffffffd170 —▸ 0x7fffffffd1c0 —▸ 0x7fffffffd210 —▸ 0x7fffffffd250 ◂— 0x7fffffffd280
+ RSP  0x7fffffffd140 ◂— 0xe7e7e726000000e7
+ RIP  0x4affb9 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;compressed_sl_print+534&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— mov    dword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rax*4 + 0x877380&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, edx
+───────────────────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; DISASM &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────────────────
+ ► 0x4affb9 &amp;lt;compressed_sl_print+534&amp;gt;    mov    dword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rax*4 + 0x877380&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, edx
+   0x4affc0 &amp;lt;compressed_sl_print+541&amp;gt;    mov    rax, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rbp - 0x18&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0x4affc4 &amp;lt;compressed_sl_print+545&amp;gt;    mov    r8, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rax + 0x98&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0x4affcb &amp;lt;compressed_sl_print+552&amp;gt;    mov    rdx, rbx
+   0x4affce &amp;lt;compressed_sl_print+555&amp;gt;    mov    rax, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rbp - 0x20&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0x4affd2 &amp;lt;compressed_sl_print+559&amp;gt;    mov    rcx, rdx
+   0x4affd5 &amp;lt;compressed_sl_print+562&amp;gt;    sub    rcx, rax
+   0x4affd8 &amp;lt;compressed_sl_print+565&amp;gt;    mov    eax, dword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rip + 0x281c12&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &amp;lt;0x731bf0&amp;gt;
+   0x4affde &amp;lt;compressed_sl_print+571&amp;gt;    mov    edx, eax
+   0x4affe0 &amp;lt;compressed_sl_print+573&amp;gt;    mov    eax, dword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rbp - 0x30&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0x4affe3 &amp;lt;compressed_sl_print+576&amp;gt;    cdqe   
+────────────────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; SOURCE &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;CODE&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────────────
+   &lt;span class=&#34;m&#34;&gt;248&lt;/span&gt; 	 * &lt;span class=&#34;s1&#34;&gt;&amp;#39;cp - chdr&amp;#39;&lt;/span&gt; is the length of the compressed header.
+   &lt;span class=&#34;m&#34;&gt;249&lt;/span&gt; 	 * &lt;span class=&#34;s1&#34;&gt;&amp;#39;length - hlen&amp;#39;&lt;/span&gt; is the amount of data in the packet.
+   &lt;span class=&#34;m&#34;&gt;250&lt;/span&gt; 	 */
+   &lt;span class=&#34;m&#34;&gt;251&lt;/span&gt; 	&lt;span class=&#34;nv&#34;&gt;hlen&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; IP_HL&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ip&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+   &lt;span class=&#34;m&#34;&gt;252&lt;/span&gt; 	&lt;span class=&#34;nv&#34;&gt;hlen&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; TH_OFF&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;const struct tcphdr *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;const int32_t *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;ip&lt;span class=&#34;o&#34;&gt;)[&lt;/span&gt;hlen&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ ► &lt;span class=&#34;m&#34;&gt;253&lt;/span&gt; 	lastlen&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;dir&lt;span class=&#34;o&#34;&gt;][&lt;/span&gt;lastconn&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; length - &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;hlen &lt;span class=&#34;s&#34;&gt;&amp;lt;&amp;lt; 2);
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;   2&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;54&lt;/span&gt; 	ND_PRINT&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;ndo, &lt;span class=&#34;s2&#34;&gt;&amp;#34; %d (%ld)&amp;#34;&lt;/span&gt;, lastlen&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;dir&lt;span class=&#34;o&#34;&gt;][&lt;/span&gt;lastconn&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;long&lt;span class=&#34;o&#34;&gt;)(&lt;/span&gt;cp - chdr&lt;span class=&#34;o&#34;&gt;)))&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+   &lt;span class=&#34;m&#34;&gt;255&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+────────────────────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; STACK &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────────────────
+&lt;span class=&#34;m&#34;&gt;00&lt;/span&gt;:0000│ rsp  0x7fffffffd140 ◂— 0xe7e7e726000000e7
+&lt;span class=&#34;m&#34;&gt;01&lt;/span&gt;:0008│      0x7fffffffd148 —▸ 0x7ffff7fad020 ◂— 0xcae7e7e7e7e7e7
+&lt;span class=&#34;m&#34;&gt;02&lt;/span&gt;:0010│      0x7fffffffd150 —▸ 0x7ffff7fad011 ◂— 0xe7e7e7e7e7e7e7e7
+&lt;span class=&#34;m&#34;&gt;03&lt;/span&gt;:0018│      0x7fffffffd158 —▸ 0x7fffffffd420 ◂— 0x100000000
+&lt;span class=&#34;m&#34;&gt;04&lt;/span&gt;:0020│      0x7fffffffd160 —▸ 0x7ffff7fad010 ◂— 0xe7e7e7e7e7e7e7e7
+&lt;span class=&#34;m&#34;&gt;05&lt;/span&gt;:0028│      0x7fffffffd168 —▸ 0x7ffff7fad020 ◂— 0xcae7e7e7e7e7e7
+&lt;span class=&#34;m&#34;&gt;06&lt;/span&gt;:0030│ rbp  0x7fffffffd170 —▸ 0x7fffffffd1c0 —▸ 0x7fffffffd210 —▸ 0x7fffffffd250 ◂— 0x7fffffffd280
+&lt;span class=&#34;m&#34;&gt;07&lt;/span&gt;:0038│      0x7fffffffd178 —▸ 0x4afc58 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;sliplink_print+435&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— mov    rax, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rbp - 0x38&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+Program received signal SIGSEGV &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;fault address 0x8b131c&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+pwndbg&amp;gt; &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;很容易看出，在 &lt;code&gt;print-sl.c&lt;/code&gt; 的 253 行发生了地址不可读，此时的代码为 &lt;code&gt;► 253     lastlen[dir][lastconn] = length - (hlen &amp;lt;&amp;lt; 2);&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;看一下此时各个变量的值&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;pwndbg&amp;gt; p /x dir
+$1 = 0xe7
+pwndbg&amp;gt; p /x lastconn
+$2 = 0xe7
+pwndbg&amp;gt; p /x length
+$3 = 0xe7e7e726
+pwndbg&amp;gt; p /x hlen
+$4 = 0x7
+pwndbg&amp;gt; p /x lastlen
+$5 = {{0x0 &amp;lt;repeats 256 times&amp;gt;}, {0x0 &amp;lt;repeats 256 times&amp;gt;}}
+pwndbg&amp;gt; p  &amp;amp;lastlen
+$6 = (u_int (*)[2][256]) 0x877380 &amp;lt;lastlen&amp;gt;
+pwndbg&amp;gt; ptype dir
+type = int
+pwndbg&amp;gt; bt
+#0  0x00000000004affb9 in compressed_sl_print (ndo=0x7fffffffd420, chdr=0x7ffff7fad011 &amp;#39;\347&amp;#39; &amp;lt;repeats 14 times&amp;gt;, &amp;lt;incomplete sequence \347&amp;gt;..., ip=0x7ffff7fad020, length=3890734886, dir=231) at ./print-sl.c:253
+#1  0x00000000004afc58 in sliplink_print (ndo=0x7fffffffd420, p=0x7ffff7fad010 &amp;#39;\347&amp;#39; &amp;lt;repeats 14 times&amp;gt;, &amp;lt;incomplete sequence \347&amp;gt;..., ip=0x7ffff7fad020, length=3890734886) at ./print-sl.c:166
+#2  0x00000000004af97e in sl_if_print (ndo=0x7fffffffd420, h=0x7fffffffd2b0, p=0x7ffff7fad010 &amp;#39;\347&amp;#39; &amp;lt;repeats 14 times&amp;gt;, &amp;lt;incomplete sequence \347&amp;gt;...) at ./print-sl.c:77
+#3  0x000000000040a57a in pretty_print_packet (ndo=0x7fffffffd420, h=0x7fffffffd2b0, sp=0x7ffff7fad010 &amp;#39;\347&amp;#39; &amp;lt;repeats 14 times&amp;gt;, &amp;lt;incomplete sequence \347&amp;gt;..., packets_captured=1) at ./print.c:339
+#4  0x000000000040632b in print_packet (user=0x7fffffffd420 &amp;#34;&amp;#34;, h=0x7fffffffd2b0, sp=0x7ffff7fad010 &amp;#39;\347&amp;#39; &amp;lt;repeats 14 times&amp;gt;, &amp;lt;incomplete sequence \347&amp;gt;...) at ./tcpdump.c:2501
+#5  0x00007ffff7bb3ac4 in ?? () from /usr/lib/x86_64-linux-gnu/libpcap.so.0.8
+#6  0x00007ffff7ba41cf in pcap_loop () from /usr/lib/x86_64-linux-gnu/libpcap.so.0.8
+#7  0x000000000040582e in main (argc=4, argv=0x7fffffffe6f8) at ./tcpdump.c:2004
+#8  0x00007ffff77eb830 in __libc_start_main (main=0x40414f &amp;lt;main&amp;gt;, argc=4, argv=0x7fffffffe6f8, init=&amp;lt;optimized out&amp;gt;, fini=&amp;lt;optimized out&amp;gt;, rtld_fini=&amp;lt;optimized out&amp;gt;, stack_end=0x7fffffffe6e8) at ../csu/libc-start.c:291
+#9  0x0000000000402b79 in _start ()&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里用的 gdb plugin 是我自己修改过的 &lt;a href=&#34;https://github.com/bash-c/Pwngdb&#34;&gt;Pwngdb&lt;/a&gt;，就分析这个 CVE 而言，可以使用更轻量的 &lt;a href=&#34;https://github.com/longld/peda&#34;&gt;peda&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;如果不修改 CFLAGS 中的优化等级为 &lt;code&gt;-O0&lt;/code&gt;， 在打印变量值时会显示 &lt;code&gt;&amp;lt;value optimized out&amp;gt;&lt;/code&gt;，原因可以看 Reference&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;计算一下很容易发现此时发生地址不可读是因为 &lt;code&gt;dir == 0xe7&lt;/code&gt;，我们找到对应的源码&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;困了，明天再写&lt;/p&gt;
+&lt;p&gt;未完待续&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h2 id=&#34;reference-and-thanks-to&#34;&gt;Reference and thanks to&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/firmianay/CTF-All-In-One/blob/master/doc/7.1.1_tcpdump_2017-11543.md&#34;&gt;https://github.com/firmianay/CTF-All-In-One/blob/master/doc/7.1.1_tcpdump_2017-11543.md&lt;/a&gt;&lt;/p&gt;
 
+&lt;p&gt;&lt;a href=&#34;https://vuldb.com/?id.104408&#34;&gt;https://vuldb.com/?id.104408&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;&lt;a href=&#34;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&#34;&gt;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/google/sanitizers/wiki/AddressSanitizer&#34;&gt;https://github.com/google/sanitizers/wiki/AddressSanitizer&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://wizardforcel.gitbooks.io/100-gcc-tips/content/address-sanitizer.html&#34;&gt;https://wizardforcel.gitbooks.io/100-gcc-tips/content/address-sanitizer.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.zybuluo.com/natsumi/note/80231&#34;&gt;https://www.zybuluo.com/natsumi/note/80231&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/串列線路網際網路協定&#34;&gt;https://zh.wikipedia.org/wiki/串列線路網際網路協定&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://tools.ietf.org/html/rfc1055.html&#34;&gt;https://tools.ietf.org/html/rfc1055.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&#34;&gt;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&lt;/a&gt;&lt;/p&gt;
 </description>
       
     </item>
