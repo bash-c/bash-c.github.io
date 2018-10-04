@@ -35,7 +35,7 @@
       
         <description>&lt;p&gt;&lt;/p&gt;
 
-&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，比较基础。&lt;/p&gt;
+&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
 
 &lt;h2 id=&#34;basic-knowledge&#34;&gt;Basic Knowledge&lt;/h2&gt;
 
