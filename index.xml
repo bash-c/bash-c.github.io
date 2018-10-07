@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Wed, 03 Oct 2018 19:50:41 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 06 Oct 2018 12:57:09 +0800</lastBuildDate>
     
         <atom:link href="https://bash-c.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -22,12 +22,103 @@
         <description>&lt;blockquote&gt;
 &lt;p&gt;新添加了友链功能, 有需要的小伙伴可以联系我&lt;/p&gt;
 &lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/bash-c&#34;&gt;Github&lt;/a&gt; is my friend.&lt;/li&gt;
+&lt;/ul&gt;
 </description>
       
     </item>
     
     <item>
-      <title>Linux Kernel Pwn ABC(Ⅰ)(draft)</title>
+      <title>Linux Kernel Pwn ABC(II)</title>
+      <link>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</link>
+      <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
+      
+        <description>&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;这一篇讲 smep 保护和 ret2usr 攻击。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h2 id=&#34;smep&#34;&gt;SMEP&lt;/h2&gt;
+
+&lt;p&gt;Supervisor Mode Execution Protection，是内核的一种保护措施，作用是当 CPU 处于 &lt;code&gt;ring0&lt;/code&gt; 模式时，执行 &lt;code&gt;用户空间的代码&lt;/code&gt; 会触发页错误；这个保护在 arm 中被称为 &lt;code&gt;PXN&lt;/code&gt;；作用是防止 &lt;code&gt;ret2usr&lt;/code&gt; 攻击。&lt;/p&gt;
+
+&lt;p&gt;通过 qemu 启动内核时的选项可以判断是否开启了 smep 保护。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; grep smep ./boot.sh
+qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append &lt;span class=&#34;s1&#34;&gt;&amp;#39;console=ttyS0 root=/dev/ram oops=panic panic=1&amp;#39;&lt;/span&gt; -enable-kvm -monitor /dev/null -m 64M --nographic  -smp &lt;span class=&#34;nv&#34;&gt;cores&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;,threads&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; -cpu kvm64,+smep&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;也可以通过&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; grep smep /proc/cpuinfo 
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap intel_pt xsaveopt dtherm ida arat pln pts
+......&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;检测该保护是否开启。&lt;/p&gt;
+
+&lt;h3 id=&#34;smep-和-cr4-寄存器&#34;&gt;smep 和 CR4 寄存器&lt;/h3&gt;
+
+&lt;p&gt;系统根据 CR4 寄存器的值判断是否开启 smep 保护，当 CR4 寄存器的第 20 位是 1 时，保护开启；是 0 时，保护关闭。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://ww1.sinaimg.cn/large/006AWYXBly1fvzmqcu1irj30py06egmo.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;例如，当&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;$CR4 = 0x1407f0 = 000 1 0100 0000 0111 1111 0000&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;时，smep 保护开启。而 CR4 寄存器是可以通过 mov 指令修改的，因此只需要&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-asm&#34; data-lang=&#34;asm&#34;&gt;&lt;span class=&#34;nf&#34;&gt;mov&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;cr4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0x1407e0&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;#&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;x1407e0&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;101&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0000&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0011&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1111&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;00000&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;即可关闭 smep 保护。&lt;/p&gt;
+
+&lt;p&gt;搜索一下从 &lt;code&gt;vmlinux&lt;/code&gt; 中提取出的 gadget，很容易就能达到这个目的。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;如何查看 CR4 寄存器的值？
+
+&lt;ul&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;例题&#34;&gt;例题&lt;/h2&gt;
+
+&lt;h3 id=&#34;ciscn2017-babydriver&#34;&gt;CISCN2017 - babydriver&lt;/h3&gt;
+
+&lt;p&gt;之前已经分析过使用 &lt;a href=&#34;http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-uaf-ciscn2017-babydriver&#34;&gt;uaf&lt;/a&gt; 的做法，这次换一种方法，通过关闭 smep 保护和 ret2usr 来提权。&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>Linux Kernel Pwn ABC(Ⅰ)</title>
       <link>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</link>
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
@@ -39,7 +130,7 @@
 
 &lt;h2 id=&#34;basic-knowledge&#34;&gt;Basic Knowledge&lt;/h2&gt;
 
-&lt;p&gt;主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/13_lecture.pdf&#34;&gt;Linux Kernel Exploitation&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/13_lecture.pdf&#34;&gt;Linux Kernel Exploitation&lt;/a&gt;，另外强力建议阅读 &lt;a href=&#34;http://mp.weixin.qq.com/mp/homepage?__biz=MzI3NzA5MzUxNA==&amp;amp;hid=2&amp;amp;sn=73cb26dd403cac563c9d661a8126c035&amp;amp;scene=18#wechat_redirect&#34;&gt;内核模块编程入门&lt;/a&gt;。&lt;/p&gt;
 
 &lt;h3 id=&#34;kernel&#34;&gt;Kernel&lt;/h3&gt;
 
@@ -81,6 +172,14 @@
 &lt;p&gt;&lt;img src=&#34;http://ww1.sinaimg.cn/large/006AWYXBly1fvw9qhknaoj30ps0hkaev.jpg&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;LKMs 的文件格式和用户态的可执行程序相同，Linux 下为 ELF，Windows 下为 exe/dll，mac 下为 MACH-O，因此我们可以用 IDA 等工具来分析内核模块。&lt;/p&gt;
+
+&lt;p&gt;模块可以被单独编译，但不能单独运行。它在运行时被链接到内核作为内核的一部分在内核空间运行，这与运行在用户控件的进程不同。&lt;/p&gt;
+
+&lt;p&gt;模块通常用来实现一种文件系统、一个驱动程序或者其他内核上层的功能。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Linux 内核之所以提供模块机制，是因为它本身是一个单内核 (monolithic kernel)。单内核的优点是效率高，因为所有的内容都集合在一起，但缺点是可扩展性和可维护性相对较差，模块机制就是为了弥补这一缺陷。&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;h4 id=&#34;相关指令&#34;&gt;相关指令&lt;/h4&gt;
 
@@ -369,7 +468,7 @@ DESCRIPTION
 
 &lt;p&gt;从函数名也可以看出，执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 即可获得 root 权限（root 的 uid，gid 均为 0）&lt;/p&gt;
 
-&lt;p&gt;执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 也是最常用的提权手段，两个函数的地址都可以在 &lt;code&gt;/proc/kallsyms&lt;/code&gt; 中查看&lt;/p&gt;
+&lt;p&gt;执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt; 也是最常用的提权手段，两个函数的地址都可以在 &lt;code&gt;/proc/kallsyms&lt;/code&gt; 中查看（较老的内核版本中是 &lt;code&gt;/proc/ksyms&lt;/code&gt;。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -405,7 +504,11 @@ ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred&lt;/code&gt;&lt;/pre&gt;&lt;/td
 &lt;/blockquote&gt;
 
 &lt;ul&gt;
-&lt;li&gt;smep:&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;smep: Supervisor Mode Execution Protection，当处理器处于 &lt;code&gt;ring0&lt;/code&gt; 模式时，执行 &lt;code&gt;用户空间&lt;/code&gt; 的代码会触发页错误。（在 arm 中该保护称为 &lt;code&gt;PXN&lt;/code&gt;)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;smap: Superivisor Mode Access Protection，类似于 smep，通常是在访问数据时。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;mmap_min_addr:&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;ctf-kernel-pwn-相关&#34;&gt;CTF kernel pwn 相关&lt;/h3&gt;
@@ -483,6 +586,8 @@ CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;sp
 &lt;/ul&gt;
 
 &lt;p&gt;其他的选项可以通过 &amp;ndash;help 查看。&lt;/p&gt;
+
+&lt;h4 id=&#34;如何把-exp&#34;&gt;如何把 exp&lt;/h4&gt;
 
 &lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
 
@@ -1133,7 +1238,18 @@ ROPgadget --binary ./vmlinux &amp;gt; g2  &lt;span class=&#34;m&#34;&gt;1064&lt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;如果题目没有给 vmlinux，可以通过 &lt;a href=&#34;https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux&#34;&gt;extract-vmlinux&lt;/a&gt; 提取。&lt;/p&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./extract-vmlinux ./bzImage &amp;gt; vmlinux
+CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file vmlinux 
+vmlinux: ELF &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;-bit LSB executable, x86-64, version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SYSV&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, statically linked, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;e993ea9809ee28d059537a0d5e866794f27e33b4, stripped&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;p&gt;看一下 start.sh&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -10102,11 +10218,6 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt
       
         <description>
 
-&lt;blockquote&gt;
-&lt;p&gt;&lt;del&gt;原文链接：&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/p/7706719.html&#34;&gt;http://www.cnblogs.com/WangAoBo/p/7706719.html&lt;/a&gt;&lt;/del&gt;
-原文链接：0x01f.github.io/post/hackme.inndy的部分writeup/&lt;/p&gt;
-&lt;/blockquote&gt;
-
 &lt;p&gt;推荐一下&lt;a href=&#34;https://hackme.inndy.tw/scoreboard/&#34;&gt;hackme.inndy&lt;/a&gt;，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题目（主要是pwn和re），以后会跟着解题进度的推进逐步更新，同时遵循inndy师傅的规矩，只放思路，不放flag。&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -12374,11 +12485,9 @@ CTF? -&amp;gt; UPX!
 &lt;h1 id=&#34;hitcon-training-writeup&#34;&gt;HITCON-Training-Writeup&lt;/h1&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;&lt;del&gt;原文链接&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/p/8570640.html&#34;&gt;M4x@10.0.0.55&lt;/a&gt;&lt;/del&gt;&lt;/p&gt;
-
 &lt;p&gt;原文链接&lt;a href=&#34;http://m4x.fun/post/hitcon-training-writeup/&#34;&gt;M4x@10.0.0.55&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;项目地址&lt;a href=&#34;https://github.com/0x01f/HITCON-Training-Writeup&#34;&gt;M4x&amp;rsquo;s github&lt;/a&gt;，欢迎 star~&lt;/p&gt;
+&lt;p&gt;项目地址&lt;a href=&#34;https://github.com/bash-c/HITCON-Training-Writeup&#34;&gt;M4x&amp;rsquo;s github&lt;/a&gt;，欢迎 star~&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：&lt;a href=&#34;https://github.com/scwuaptx/HITCON-Training&#34;&gt;https://github.com/scwuaptx/HITCON-Training&lt;/a&gt;&lt;/p&gt;

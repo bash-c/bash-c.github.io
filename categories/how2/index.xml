@@ -7,13 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Wed, 03 Oct 2018 19:50:41 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 06 Oct 2018 12:57:09 +0800</lastBuildDate>
     
 	<atom:link href="https://bash-c.github.io/categories/how2/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Linux Kernel Pwn ABC(Ⅰ)(draft)</title>
+      <title>Linux Kernel Pwn ABC(II)</title>
+      <link>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</link>
+      <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Linux Kernel Pwn ABC(Ⅰ)</title>
       <link>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</link>
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
