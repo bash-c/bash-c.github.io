@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-06T12:57:09&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-06T12:57:09&#43;08:00" />
-<meta itemprop="wordCount" content="503">
+<meta itemprop="wordCount" content="628">
 
 
 
@@ -314,7 +314,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 503 words </span>
+        <span class="more-meta"> 628 words </span>
           <span class="more-meta"> 2 min read </span>
 
         
@@ -338,6 +338,10 @@
 <ul>
 <li>
 <ul>
+<li><a href="#ret2usr">ret2usr</a>
+<ul>
+<li><a href="#2018-强网杯-core">2018 强网杯 - core</a></li>
+</ul></li>
 <li><a href="#smep">SMEP</a>
 <ul>
 <li><a href="#smep-和-cr4-寄存器">smep 和 CR4 寄存器</a></li>
@@ -356,7 +360,15 @@
     <div class="post-content">
       <p></p>
 
-<p>这一篇讲 smep 保护和 ret2usr 攻击。主要参考了 <a href="https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf">Pratical SMEP bypass techniques on Linux</a>。</p>
+<p>这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 <a href="https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf">Pratical SMEP bypass techniques on Linux</a>。</p>
+
+<h2 id="ret2usr">ret2usr</h2>
+
+<p>ret2usr 攻击利用了 <strong>用户空间的进程不能访问内核空间，但内核空间能访问用户空间</strong> 这个特性来定向内核代码或数据流指向用户控件，以 <code>ring 0</code> 特权执行用户空间代码完成提权等操作。</p>
+
+<h3 id="2018-强网杯-core">2018 强网杯 - core</h3>
+
+<p>上一篇分析了使用 <a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-rop-2018强网杯-core">kernel rop</a> 完成提权拿 shell 的步骤，这一篇分析一下使用 ret2usr 手法获取 root shell。</p>
 
 <h2 id="smep">SMEP</h2>
 

@@ -39,7 +39,15 @@
       
         <description>&lt;p&gt;&lt;/p&gt;
 
-&lt;p&gt;这一篇讲 smep 保护和 ret2usr 攻击。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h2 id=&#34;ret2usr&#34;&gt;ret2usr&lt;/h2&gt;
+
+&lt;p&gt;ret2usr 攻击利用了 &lt;strong&gt;用户空间的进程不能访问内核空间，但内核空间能访问用户空间&lt;/strong&gt; 这个特性来定向内核代码或数据流指向用户控件，以 &lt;code&gt;ring 0&lt;/code&gt; 特权执行用户空间代码完成提权等操作。&lt;/p&gt;
+
+&lt;h3 id=&#34;2018-强网杯-core&#34;&gt;2018 强网杯 - core&lt;/h3&gt;
+
+&lt;p&gt;上一篇分析了使用 &lt;a href=&#34;http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-rop-2018强网杯-core&#34;&gt;kernel rop&lt;/a&gt; 完成提权拿 shell 的步骤，这一篇分析一下使用 ret2usr 手法获取 root shell。&lt;/p&gt;
 
 &lt;h2 id=&#34;smep&#34;&gt;SMEP&lt;/h2&gt;
 
@@ -12485,8 +12493,6 @@ CTF? -&amp;gt; UPX!
 &lt;h1 id=&#34;hitcon-training-writeup&#34;&gt;HITCON-Training-Writeup&lt;/h1&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;原文链接&lt;a href=&#34;http://m4x.fun/post/hitcon-training-writeup/&#34;&gt;M4x@10.0.0.55&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;项目地址&lt;a href=&#34;https://github.com/bash-c/HITCON-Training-Writeup&#34;&gt;M4x&amp;rsquo;s github&lt;/a&gt;，欢迎 star~&lt;/p&gt;
 &lt;/blockquote&gt;
 
