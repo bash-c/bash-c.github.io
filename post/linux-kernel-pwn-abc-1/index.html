@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-03T19:50:41&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-03T19:50:41&#43;08:00" />
-<meta itemprop="wordCount" content="12009">
+<meta itemprop="wordCount" content="12046">
 
 
 
@@ -314,8 +314,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 12009 words </span>
-          <span class="more-meta"> 24 min read </span>
+        <span class="more-meta"> 12046 words </span>
+          <span class="more-meta"> 25 min read </span>
 
         
         
@@ -356,10 +356,7 @@
 <li><a href="#struct-cred">struct cred</a></li>
 <li><a href="#内核态函数">内核态函数</a></li>
 <li><a href="#mitigation">Mitigation</a></li>
-<li><a href="#ctf-kernel-pwn-相关">CTF kernel pwn 相关</a>
-<ul>
-<li><a href="#如何把-exp">如何把 exp</a></li>
-</ul></li>
+<li><a href="#ctf-kernel-pwn-相关">CTF kernel pwn 相关</a></li>
 </ul></li>
 <li><a href="#example">Example</a>
 <ul>
@@ -781,8 +778,8 @@ ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred</code></pre></td></tr></table>
 <ol>
 <li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关</li>
 <li>bzImage: kernel binary</li>
-<li>rootfs.cpio: 文件系统映像</li>
-</ol>
+
+<li><p>rootfs.cpio: 文件系统映像</p>
 
 <p>比如：</p>
 <div class="highlight"><div class="chroma">
@@ -845,12 +842,14 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> b
 <li>-initrd rootfs.cpio，使用 rootfs.cpio 作为内核启动的文件系统</li>
 <li>-kernel bzImage，使用 bzImage 作为 kernel 映像</li>
 <li>-cpu kvm64,+smep，设置 CPU 的安全选项，这里开启了 smep</li>
-<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M</li>
+<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M
+<br /></li>
 </ul>
 
-<p>其他的选项可以通过 &ndash;help 查看。</p>
+<p>其他的选项可以通过 &ndash;help 查看。</p></li>
 
-<h4 id="如何把-exp">如何把 exp</h4>
+<li><p>本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag</p></li>
+</ol>
 
 <h2 id="example">Example</h2>
 

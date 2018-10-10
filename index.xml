@@ -1271,8 +1271,8 @@ ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred&lt;/code&gt;&lt;/pre&gt;&lt;/td
 &lt;ol&gt;
 &lt;li&gt;boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关&lt;/li&gt;
 &lt;li&gt;bzImage: kernel binary&lt;/li&gt;
-&lt;li&gt;rootfs.cpio: 文件系统映像&lt;/li&gt;
-&lt;/ol&gt;
+
+&lt;li&gt;&lt;p&gt;rootfs.cpio: 文件系统映像&lt;/p&gt;
 
 &lt;p&gt;比如：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -1335,12 +1335,14 @@ CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;sp
 &lt;li&gt;-initrd rootfs.cpio，使用 rootfs.cpio 作为内核启动的文件系统&lt;/li&gt;
 &lt;li&gt;-kernel bzImage，使用 bzImage 作为 kernel 映像&lt;/li&gt;
 &lt;li&gt;-cpu kvm64,+smep，设置 CPU 的安全选项，这里开启了 smep&lt;/li&gt;
-&lt;li&gt;-m 64M，设置虚拟 RAM 为 64M，默认为 128M&lt;/li&gt;
+&lt;li&gt;-m 64M，设置虚拟 RAM 为 64M，默认为 128M
+&lt;br /&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;其他的选项可以通过 &amp;ndash;help 查看。&lt;/p&gt;
+&lt;p&gt;其他的选项可以通过 &amp;ndash;help 查看。&lt;/p&gt;&lt;/li&gt;
 
-&lt;h4 id=&#34;如何把-exp&#34;&gt;如何把 exp&lt;/h4&gt;
+&lt;li&gt;&lt;p&gt;本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
 
