@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sat, 06 Oct 2018 12:57:09 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Oct 2018 22:29:11 +0800</lastBuildDate>
     
 	<atom:link href="https://bash-c.github.io/tags/pwn/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>HWB2018 Pwn Writeup</title>
+      <link>https://bash-c.github.io/post/hwb2018-pwn-writeup/</link>
+      <pubDate>Sat, 13 Oct 2018 22:29:11 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/hwb2018-pwn-writeup/</guid>
+      <description>&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Linux Kernel Pwn ABC(II)</title>
