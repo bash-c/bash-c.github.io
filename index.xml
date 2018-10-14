@@ -512,7 +512,17 @@
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;tcache_puts()&lt;/code&gt; 完成了把释放的 chunk 插入到 &lt;code&gt;tcache-&amp;gt;entries[tc_idx]&lt;/code&gt; 链表头部的操作，也几乎没有任何保护。并且 &lt;strong&gt;没有把 p 位置零&lt;/strong&gt;。&lt;/p&gt;</description>
+&lt;p&gt;&lt;code&gt;tcache_puts()&lt;/code&gt; 完成了把释放的 chunk 插入到 &lt;code&gt;tcache-&amp;gt;entries[tc_idx]&lt;/code&gt; 链表头部的操作，也几乎没有任何保护。并且 &lt;strong&gt;没有把 p 位置零&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h2 id=&#34;references-thanks-to&#34;&gt;References &amp;amp; thanks to:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://code.woboq.org/userspace/glibc/malloc/malloc.c.html&#34;&gt;https://code.woboq.org/userspace/glibc/malloc/malloc.c.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://tukan.farm/2017/07/08/tcache/&#34;&gt;http://tukan.farm/2017/07/08/tcache/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_heap/tcache_exploitation.pdf&#34;&gt;https://github.com/bash-c/slides/blob/master/pwn_heap/tcache_exploitation.pdf&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.secpulse.com/archives/71958.html&#34;&gt;https://www.secpulse.com/archives/71958.html&lt;/a&gt;&lt;/p&gt;</description>
       
     </item>
     
