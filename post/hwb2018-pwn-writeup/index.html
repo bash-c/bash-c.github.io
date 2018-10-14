@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-13T22:29:11&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-13T22:29:11&#43;08:00" />
-<meta itemprop="wordCount" content="1967">
+<meta itemprop="wordCount" content="1975">
 
 
 
@@ -313,7 +313,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 1967 words </span>
+        <span class="more-meta"> 1975 words </span>
           <span class="more-meta"> 4 min read </span>
 
         
@@ -608,7 +608,7 @@
 <p>总觉得这道题目以前在哪里见过，忘了是哪次比赛的了。</p>
 </blockquote>
 
-<p>首先程序有两次 mmap，经过分析，两处空间分别用于保存 shellcode 和模拟栈，权限都是 rwx 。</p>
+<p>首先程序有两次 mmap，经过分析，两处空间分别用于保存 shellcode 和模拟栈，shellcode 权限是 rwx 。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
