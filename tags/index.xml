@@ -49,6 +49,15 @@
     </item>
     
     <item>
+      <title>Heap</title>
+      <link>https://bash-c.github.io/tags/heap/</link>
+      <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/heap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Hitcon Training</title>
       <link>https://bash-c.github.io/tags/hitcon-training/</link>
       <pubDate>Mon, 02 Jul 2018 12:05:10 +0800</pubDate>
@@ -96,7 +105,7 @@
     <item>
       <title>Pwn</title>
       <link>https://bash-c.github.io/tags/pwn/</link>
-      <pubDate>Sat, 13 Oct 2018 22:29:11 +0800</pubDate>
+      <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
       <guid>https://bash-c.github.io/tags/pwn/</guid>
       <description></description>
@@ -108,6 +117,15 @@
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
       
       <guid>https://bash-c.github.io/tags/reverse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tcache</title>
+      <link>https://bash-c.github.io/tags/tcache/</link>
+      <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/tcache/</guid>
       <description></description>
     </item>
     

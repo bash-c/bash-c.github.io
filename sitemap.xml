@@ -9,6 +9,13 @@
   </url>
   
   <url>
+    <loc>https://bash-c.github.io/post/dive-into-tcache-1/</loc>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://bash-c.github.io/post/hwb2018-pwn-writeup/</loc>
     <lastmod>2018-10-13T22:29:11+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -134,6 +141,13 @@
   </url>
   
   <url>
+    <loc>https://bash-c.github.io/tags/heap/</loc>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://bash-c.github.io/tags/hitcon-training/</loc>
     <lastmod>2018-07-02T12:05:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -142,7 +156,7 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/how2/</loc>
-    <lastmod>2018-10-06T12:57:09+08:00</lastmod>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -177,14 +191,14 @@
   
   <url>
     <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2018-10-13T22:29:11+08:00</lastmod>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/tags/pwn/</loc>
-    <lastmod>2018-10-13T22:29:11+08:00</lastmod>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -199,6 +213,13 @@
   <url>
     <loc>https://bash-c.github.io/tags/</loc>
     <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/tcache/</loc>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -219,7 +240,7 @@
   
   <url>
     <loc>https://bash-c.github.io/</loc>
-    <lastmod>2018-10-13T22:29:11+08:00</lastmod>
+    <lastmod>2018-10-14T20:22:25+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
