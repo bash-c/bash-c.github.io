@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2018-07-31T20:00:54&#43;08:00" />
 <meta itemprop="dateModified" content="2018-07-31T20:00:54&#43;08:00" />
-<meta itemprop="wordCount" content="3027">
+<meta itemprop="wordCount" content="4668">
 
 
 
@@ -312,8 +312,8 @@
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 3027 words </span>
-          <span class="more-meta"> 7 min read </span>
+        <span class="more-meta"> 4668 words </span>
+          <span class="more-meta"> 10 min read </span>
 
         
         
@@ -363,6 +363,7 @@
 <li><a href="#exp">exp</a></li>
 </ul></li>
 <li><a href="#more-1">More</a></li>
+<li><a href="#后记">后记</a></li>
 <li><a href="#reference-1">Reference</a></li>
 </ul></li>
 </ul>
@@ -1125,6 +1126,205 @@ pwndbg&gt; cyclic -l 0x62616164
 </ul></li>
 <li>我的 melong 的 exp 是有问题的, 暂待解决</li>
 </ul>
+
+<h2 id="后记">后记</h2>
+
+<p>后来遇到 pwnable.kr 的 mipstake 这道题目，发现用以前的方法不能运行了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ls lib 
+ld.so.1  libc.so.6
+pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> bat run.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: run.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────
+   <span class="m">1</span>   │ <span class="cp">#!/usr/bin/env bash
+</span><span class="cp"></span>   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
+   <span class="m">3</span>   │ 
+   <span class="m">4</span>   │ <span class="nb">unset</span> LD_LIBRARY_PATH
+   <span class="m">5</span>   │ qemu-mips -L ./ ./mipstake
+───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────
+pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ./run.sh 
++ <span class="nb">unset</span> LD_LIBRARY_PATH
++ qemu-mips -L ./ ./mipstake
+qemu: uncaught target signal <span class="m">11</span> <span class="o">(</span>Segmentation fault<span class="o">)</span> - core dumped
+./run.sh: 行 <span class="m">5</span>: <span class="m">14538</span> 段错误               qemu-mips -L ./ ./mipstake</code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>把 ld.so, libc.so 放到同一目录下而不是使用 <code>-L /usr/mips-linux-gnu/</code>，可以让 gdb-multiarch 在调试时更清楚的识别对应的地址是什么文件而不只是显示一个 <code>[linker]</code>。这是在和 <a href="http://myhackerworld.top/2018/10/22/HITCON-CTF-2018-tooooo/">D4rk3r</a> 师傅讨论一道题目的时候偶然发现的。</p>
+</blockquote>
+
+<p>但 <code>ld.so.1</code>，<code>libc.so.6</code> 在我本地又是可以运行的，说明不是 libc 版本的问题。</p>
+
+<p>用 <code>strace</code> 跟踪一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">unset</span> LD_LIBRARY_PATH          
+pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> qemu-mips -strace -L ./ ./mipstake
+<span class="m">14911</span> brk<span class="o">(</span>NULL<span class="o">)</span> <span class="o">=</span> 0x00412000
+<span class="m">14911</span> mmap2<span class="o">(</span>NULL,8192,PROT_READ<span class="p">|</span>PROT_WRITE,MAP_PRIVATE<span class="p">|</span>MAP_ANONYMOUS,-1,0<span class="o">)</span> <span class="o">=</span> 0x7f7c8000
+<span class="m">14911</span> uname<span class="o">(</span>0x7fffeac8<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+<span class="m">14911</span> access<span class="o">(</span><span class="s2">&#34;/etc/ld.so.nohwcap&#34;</span>,F_OK<span class="o">)</span> <span class="o">=</span> -1 <span class="nv">errno</span><span class="o">=</span><span class="m">2</span> <span class="o">(</span>No such file or directory<span class="o">)</span>
+<span class="m">14911</span> access<span class="o">(</span><span class="s2">&#34;/etc/ld.so.preload&#34;</span>,R_OK<span class="o">)</span> <span class="o">=</span> -1 <span class="nv">errno</span><span class="o">=</span><span class="m">2</span> <span class="o">(</span>No such file or directory<span class="o">)</span>
+<span class="m">14911</span> openat<span class="o">(</span>AT_FDCWD,<span class="s2">&#34;/etc/ld.so.cache&#34;</span>,O_RDONLY<span class="p">|</span>O_CLOEXEC<span class="o">)</span> <span class="o">=</span> <span class="m">3</span>
+<span class="m">14911</span> fstat64<span class="o">(</span><span class="m">3</span>,0x7fffe718<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+<span class="m">14911</span> mmap2<span class="o">(</span>NULL,148329,PROT_READ,MAP_PRIVATE,3,0<span class="o">)</span> <span class="o">=</span> 0x7f7a3000
+<span class="m">14911</span> close<span class="o">(</span><span class="m">3</span><span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+--- SIGSEGV <span class="o">{</span><span class="nv">si_signo</span><span class="o">=</span>SIGSEGV, <span class="nv">si_code</span><span class="o">=</span><span class="m">1</span>, <span class="nv">si_addr</span><span class="o">=</span>0xcf9e3008<span class="o">}</span> ---
+qemu: uncaught target signal <span class="m">11</span> <span class="o">(</span>Segmentation fault<span class="o">)</span> - core dumped
+<span class="o">[</span><span class="m">1</span><span class="o">]</span>    <span class="m">14911</span> segmentation fault  qemu-mips -strace -L ./ ./mipstake</code></pre></td></tr></table>
+</div>
+</div>
+<p>发现了问题，<code>/etc/ld.so.nohwacap</code>，<code>/etc/ld.so.preload</code> 这些文件不存在（原因可能是因为只用包管理装了对应 arch 的 libc 而没有其他信息）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ls /usr/mips-linux-gnu 
+lib
+
+# 没有 etc 这个目录</code></pre></td></tr></table>
+</div>
+</div>
+<p>那么 <code>/etc/ld.so.nohwacap</code> 这些文件是什么作用呢？google 了一下，发现大概就是和 <code>LD_PRELOAD</code> 一个作用</p>
+
+<blockquote>
+<p><a href="https://superuser.com/a/1183252/960572">https://superuser.com/a/1183252/960572</a></p>
+</blockquote>
+
+<p>但知道了原因，不知道要怎么解决。。。刚开始是想看看有没有什么包能安装其他 arch 的 <code>/etc/ld.so.preload</code> 这些文件，但找了一圈没找到（如果有师傅有这样的解决方法请务必指教）。</p>
+
+<p>后来偶然搜索到了这部分的 <a href="https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606">源码</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">  /* We have two ways to specify objects to preload: via environment
+     variable and via the file /etc/ld.so.preload.  The latter can also
+     be used when security is enabled.  */
+  assert (*first_preload == NULL);
+  struct link_map **preloads = NULL;
+  unsigned int npreloads = 0;
+  if (__glibc_unlikely (preloadlist != NULL))
+    {
+      HP_TIMING_NOW (start);
+      npreloads += handle_ld_preload (preloadlist, main_map);
+      HP_TIMING_NOW (stop);
+      HP_TIMING_DIFF (diff, start, stop);
+      HP_TIMING_ACCUM_NT (load_time, diff);
+    }
+  /* There usually is no ld.so.preload file, it should only be used
+     for emergencies and testing.  So the open call etc should usually
+     fail.  Using access() on a non-existing file is faster than using
+     open().  So we do this first.  If it succeeds we do almost twice
+     the work but this does not matter, since it is not for production
+     use.  */</pre></td></tr></table>
+</div>
+</div>
+<p>从注释找到了解决方案，没有 <code>/etc/ld.so.preload</code>，我们还可以更改 <code>LD_PRELAOD</code> 这个环境变量。</p>
+
+<p>修改一下运行脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> bat run.sh 
+───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: run.sh
+───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────
+   <span class="m">1</span>   │ <span class="cp">#!/usr/bin/env bash
+</span><span class="cp"></span>   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
+   <span class="m">3</span>   │ 
+   <span class="m">4</span>   │ <span class="nv">LD_PRELOAD</span><span class="o">=</span><span class="s2">&#34;./lib/libc.so.6&#34;</span> <span class="s2">&#34;./lib/ld.so.1&#34;</span> <span class="s2">&#34;./mipstake&#34;</span>
+   <span class="m">5</span>   │ qemu-mips -L ./ ./mipstake
+───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────
+pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ./run.sh 
++ <span class="nv">LD_PRELOAD</span><span class="o">=</span>./lib/libc.so.6
++ ./lib/ld.so.1 ./mipstake
+ERROR: ld.so: object <span class="s1">&#39;./lib/libc.so.6&#39;</span> from LD_PRELOAD cannot be preloaded <span class="o">(</span>wrong ELF class: ELFCLASS32<span class="o">)</span>: ignored.
+no need to brute-force..
+listening...
+^C</code></pre></td></tr></table>
+</div>
+</div>
+<p>终于可以正常运行了，虽然还有报错，但只是 64 位系统和 32 位 libc 的兼容问题，影响不大。</p>
 
 <h2 id="reference-1">Reference</h2>
 
