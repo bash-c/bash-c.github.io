@@ -12668,7 +12668,7 @@ lib
 &lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;   │ &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; -euxo pipefail
    &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;   │ 
    &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;   │ &lt;span class=&#34;nv&#34;&gt;LD_PRELOAD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;./lib/libc.so.6&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;./lib/ld.so.1&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;./mipstake&amp;#34;&lt;/span&gt;
-   &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;   │ qemu-mips -L ./ ./mipstake
+   &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;   │ qemu-mips ./mipstake
 ───────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────
 pwnable_mipstake &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ./run.sh 
 + &lt;span class=&#34;nv&#34;&gt;LD_PRELOAD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;./lib/libc.so.6
