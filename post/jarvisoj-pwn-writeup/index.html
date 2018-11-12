@@ -67,7 +67,7 @@
 
 <meta itemprop="datePublished" content="2018-09-16T22:09:27&#43;08:00" />
 <meta itemprop="dateModified" content="2018-09-16T22:09:27&#43;08:00" />
-<meta itemprop="wordCount" content="9736">
+<meta itemprop="wordCount" content="10233">
 
 
 
@@ -311,8 +311,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 9736 words </span>
-          <span class="more-meta"> 20 min read </span>
+        <span class="more-meta"> 10233 words </span>
+          <span class="more-meta"> 21 min read </span>
 
         
         
@@ -348,7 +348,11 @@
 <li><a href="#xman-level3-x64-250">[XMAN]level3(x64) (250)</a></li>
 <li><a href="#xman-level4-250">[XMAN]level4 (250)</a></li>
 <li><a href="#test-your-memory-300">Test Your Memory (300)</a></li>
-<li><a href="#xman-level5-300">[XMAN]level5 (300)</a></li>
+<li><a href="#xman-level5-300">[XMAN]level5 (300)</a>
+<ul>
+<li><a href="#mprotect">mprotect</a></li>
+<li><a href="#mmap">mmap</a></li>
+</ul></li>
 <li><a href="#add-300">Add (300)</a></li>
 <li><a href="#61dctf-calc-exe-300">[61dctf]calc.exe (300)</a></li>
 <li><a href="#guess-300">Guess (300)</a></li>
@@ -1110,6 +1114,8 @@ DESCRIPTION
        process and a memory object.</pre></td></tr></table>
 </div>
 </div>
+<h3 id="mprotect">mprotect</h3>
+
 <p>mprotect 函数用于改变某段地址的权限（rwxp），mmap 用于申请一段空间，根据参数不同可以设置这段空间的权限。</p>
 
 <p>这道题目开启了 NX 保护，并假设禁用了 system 和 execve 函数（实际并没有），因此可以考虑通过 mprotect 改变 .bss/.data 权限或者通过 mmap 申请一段具有可执行权限的空间写 shellcode 的方法来 get shell，重点介绍如何使用 mprotect。</p>
@@ -1126,9 +1132,118 @@ DESCRIPTION
 
 <p>并且 <strong>mprotect 指定的内存区必须包含整个内存页，区间长度必须是页大小的整数倍</strong>。</p>
 
-<p>也想过使用 mmap 来申请一段内存，但 mmap 需要控制 6 个寄存器，找了半天没有找到太好的 gadget，就没有再继续尝试了，如果有大佬能使用 mmap 来申请空间请务必指教。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level5/exp_mprotect.py">exploit here</a></p>
+
+<h3 id="mmap">mmap</h3>
+
+<p>mmap 可以申请一段空间，但麻烦在需要控制 6 个参数，对 64 位的程序而言，也就是需要找到能控制 <code>rdi, rsi, rdx, rcx, r8, r9</code> 的 gadget。</p>
+
+<p>刚开始尝试了 <a href="http://www.anquan.us/static/drops/binary-10638.html">_dl_runtime_resolve</a> 中的 gadget，但实际调试的过程中发现因为版本不一致，这个 gadget 已经不能用了。后来找了很久这样的 gadget 但没找到，就放弃了。再后来偶然发现 angelboy 的 <a href="https://github.com/scwuaptx/Pwngdb">Pwngdb</a> 的 magic 命令中有一个 <code>setcontext+0x35</code>，看一下具体是什么。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly">pwndbg&gt; magic
+========== function ==========
+system:0x42510
+execve:0xc4860
+open:0xe7c20
+read:0xe8050
+write:0xe8120
+gets:0x6ec20
+setcontext+0x35:0x44f05			&lt;== target
+========== variables ==========
+__malloc_hook(0x3b4c30)             : 0x00007ffff789c830
+__free_hook(0x3b68e8)               : 0x0000000000000000
+__realloc_hook(0x3b4c28)            : 0x00007ffff789d0b0
+stdin(0x3b5850)                     : 0x00007ffff7bcea00
+stdout(0x3b5848)                    : 0x00007ffff7bcf760
+_IO_list_all(0x3b5660)              : 0x00007ffff7bcf680
+__after_morecore_hook(0x3b68e0)     : 0x0000000000000000
+pwndbg&gt; libcbase 
+libc : 0x7ffff781a000
+pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
+   0x7ffff785ef05 &lt;setcontext+53&gt;:	mov    rsp,QWORD PTR [rdi+0xa0]
+   0x7ffff785ef0c &lt;setcontext+60&gt;:	mov    rbx,QWORD PTR [rdi+0x80]
+   0x7ffff785ef13 &lt;setcontext+67&gt;:	mov    rbp,QWORD PTR [rdi+0x78]
+   0x7ffff785ef17 &lt;setcontext+71&gt;:	mov    r12,QWORD PTR [rdi+0x48]
+   0x7ffff785ef1b &lt;setcontext+75&gt;:	mov    r13,QWORD PTR [rdi+0x50]
+   0x7ffff785ef1f &lt;setcontext+79&gt;:	mov    r14,QWORD PTR [rdi+0x58]
+   0x7ffff785ef23 &lt;setcontext+83&gt;:	mov    r15,QWORD PTR [rdi+0x60]
+   0x7ffff785ef27 &lt;setcontext+87&gt;:	mov    rcx,QWORD PTR [rdi+0xa8]
+   0x7ffff785ef2e &lt;setcontext+94&gt;:	push   rcx
+   0x7ffff785ef2f &lt;setcontext+95&gt;:	mov    rsi,QWORD PTR [rdi+0x70]
+   0x7ffff785ef33 &lt;setcontext+99&gt;:	mov    rdx,QWORD PTR [rdi+0x88]
+   0x7ffff785ef3a &lt;setcontext+106&gt;:	mov    rcx,QWORD PTR [rdi+0x98]
+   0x7ffff785ef41 &lt;setcontext+113&gt;:	mov    r8,QWORD PTR [rdi+0x28]
+   0x7ffff785ef45 &lt;setcontext+117&gt;:	mov    r9,QWORD PTR [rdi+0x30]
+   0x7ffff785ef49 &lt;setcontext+121&gt;:	mov    rdi,QWORD PTR [rdi+0x68]
+   0x7ffff785ef4d &lt;setcontext+125&gt;:	xor    eax,eax
+   0x7ffff785ef4f &lt;setcontext+127&gt;:	ret    
+   0x7ffff785ef50 &lt;setcontext+128&gt;:	mov    rcx,QWORD PTR [rip+0x36ef11]        # 0x7ffff7bcde68
+   0x7ffff785ef57 &lt;setcontext+135&gt;:	neg    eax
+   0x7ffff785ef59 &lt;setcontext+137&gt;:	mov    DWORD PTR fs:[rcx],eax</code></pre></td></tr></table>
+</div>
+</div>
+<p>一段几乎能控制所有寄存器的 gadget ！前提是能控制 rdi，这个就很容易了，直接使用 <code>pop rdi; ret</code> 即可。</p>
+
+<p>因此我的使用 mmap 的思路是：</p>
+
+<ol>
+<li>第一次 rop 执行 <code>write(1, elf.got['write'], rdx)</code> 来 leak libc，然后返回 <code>_start</code></li>
+<li>第二次 rop<br />
+
+<ul>
+<li>执行 <code>read(0, elf.bss() + 0x300, 0x400)</code>，把寄存器的值读取到 bss 段，方便后续控制</li>
+<li>通过 <code>pop rdi; ret</code> 控制 rdi 指向 bss 段的地址</li>
+<li>返回 <code>setcontext+95</code> 控制 6 个寄存器</li>
+<li>返回 <code>mmap</code>，根据设置的寄存器申请出 rwx 的空间</li>
+<li>返回 <code>_start</code></li>
+</ul></li>
+<li>第三次 rop 执行 <code>read(0, 0x12345000, 0x400)</code> 把 shellcode 读到 0x12345000(我 mmap 出的空间)，然后返回到该地址即可。</li>
+</ol>
+
+<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level5/exp_mmap.py">exploit here</a></p>
 
 <h2 id="add-300">Add (300)</h2>
 
