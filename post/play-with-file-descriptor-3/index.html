@@ -68,7 +68,7 @@
 
 <meta itemprop="datePublished" content="2018-09-12T15:30:01&#43;08:00" />
 <meta itemprop="dateModified" content="2018-09-12T15:30:01&#43;08:00" />
-<meta itemprop="wordCount" content="3868">
+<meta itemprop="wordCount" content="4201">
 
 
 
@@ -313,8 +313,8 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 3868 words </span>
-          <span class="more-meta"> 8 min read </span>
+        <span class="more-meta"> 4201 words </span>
+          <span class="more-meta"> 9 min read </span>
 
         
         
@@ -1049,9 +1049,69 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
 <span class="p">}</span></code></pre></td></tr></table>
 </div>
 </div>
-<p>解法就不说了，可以参考 <a href="https://bysec.io/hctf/writeup.html#the-end">官方 writeup</a>。但更多人用的因该是非预期解直接使用 one_gadget。</p>
+<p>解法就不说了，可以参考 <a href="https://bysec.io/hctf/writeup.html#the-end">官方 writeup</a>。但更多人用的应该是非预期解直接使用 one_gadget。</p>
 
 <p>总之，可以用某种方式拿到一个交互式的 shell （因为 stdout 已经被关闭，所以不会有输出）。可以通过 <code>cat flag &gt;&amp;0</code>， <code>exec 1&gt;&amp;0; cat flag</code> 等方法得到 flag。</p>
+
+<p>为什么可以通过 <code>stdin</code> 来输出呢？因为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ file /proc/self/fd/0
+/proc/self/fd/0: symbolic link to /dev/pts/3</code></pre></td></tr></table>
+</div>
+</div>
+<p><code>stdin</code> 实际也是 pts 的软连接，因此可以输出。</p>
+
+<p>需要注意的是，很多人在做这道题目时可能远程成功了，但本地使用 <code>pwnlib.process</code> 时失败，这是因为在 pwntools 的 <a href="https://github.com/Gallopsled/pwntools/blob/dev/pwnlib/tubes/tube.py#L798-L815">源码</a> 中有这样一段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python">        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">go</span><span class="o">.</span><span class="n">isSet</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">term</span><span class="o">.</span><span class="n">term_mode</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">readline</span><span class="o">.</span><span class="n">readline</span><span class="p">(</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">,</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>	<span class="o">&lt;==</span> <span class="n">exception</span>
+
+                <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+                        <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Got EOF while sending in interactive&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Interrupted&#39;</span><span class="p">)</span>
+            <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><code>interactive()</code> 时程序试图从 1 读取内容，但此时只有 0，于是就触发了异常；但使用 <code>pwnlib.remote</code> 时是直接建立了一个 socket，因此不会触发异常（具体可以分析源码）</p>
+
+<p>还要注意的是，当使用 <code>socat</code>，<code>xinted</code> 等挂载题目时，0, 1, 2 实际上已经不是 <code>stdin, stdout, stderr</code> 而是 socket 了，但因为端口转发的原因我们可以认为仍然是 <code>stdin, stdout, stderr</code>，这也提醒我们遇到和 fd 有关的题目时，可以本地挂载然后使用 <code>pwnlib.remote</code> 测试以减少不必要的麻烦。</p>
 
 <h2 id="references">References</h2>
 
