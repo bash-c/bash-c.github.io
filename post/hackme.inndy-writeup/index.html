@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.48" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/hackme.inndy-writeup/" />
@@ -61,6 +61,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/hackme.inndy-writeup/" /><meta property="article:published_time" content="2018-07-03T12:01:48&#43;08:00"/>
 <meta property="article:modified_time" content="2018-07-03T12:01:48&#43;08:00"/>
+
 <meta itemprop="name" content="Hackme.Inndy 的部分 writeup">
 <meta itemprop="description" content="推荐一下hackme.inndy，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题">
 
@@ -1796,15 +1797,15 @@
 <pre class="chroma"><code class="language-bash" data-lang="bash">b *0x4005F0
 r
 
-<span class="c1">#set args
-</span><span class="c1"></span><span class="nb">set</span> <span class="nv">$rdi</span><span class="o">=</span><span class="m">2018</span>
-<span class="c1">#dumpargs --force
-</span><span class="c1"></span><span class="nb">set</span> *<span class="o">((</span>long *<span class="o">)</span>0x7fffffffe332<span class="o">)=</span>0x0101010101010101
+<span class="c1">#set args</span>
+<span class="nb">set</span> <span class="nv">$rdi</span><span class="o">=</span><span class="m">2018</span>
+<span class="c1">#dumpargs --force</span>
+<span class="nb">set</span> *<span class="o">((</span>long *<span class="o">)</span>0x7fffffffe332<span class="o">)=</span>0x0101010101010101
 <span class="nb">set</span> *<span class="o">((</span>long *<span class="o">)</span>0x7fffffffe34d<span class="o">)=</span>0x0101010101010101
 c
 
-<span class="c1"># zdump /etc/localtime
-</span><span class="c1"></span># 因为ASLR请自行修改对应地址</code></pre></td></tr></table>
+<span class="c1"># zdump /etc/localtime</span>
+<span class="c1"># 因为ASLR请自行修改对应地址</span></code></pre></td></tr></table>
 </div>
 </div>
 <p>第二层验证提示</p>

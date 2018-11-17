@@ -18,7 +18,7 @@
       <pubDate>Sat, 13 Oct 2018 22:29:11 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/hwb2018-pwn-writeup/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;</description>
+      <description>跟学校的队伍参加了又一次 ?网杯，记录一下 pwn 的 writeup。 gettingstart binary &amp;amp; exploit here 这道题没什么好说的（比签到题解出的人还多），(double) 0.1 在内存中</description>
     </item>
     
     <item>
@@ -27,7 +27,7 @@
       <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;</description>
+      <description>这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 Pratical SMEP bypass techniques on Linux。 ret2usr ret2usr 攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向</description>
     </item>
     
     <item>
@@ -36,7 +36,7 @@
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
-      <description>&lt;p&gt;&lt;/p&gt;</description>
+      <description>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读</description>
     </item>
     
     <item>
