@@ -13210,6 +13210,24 @@ listening...
 &lt;/div&gt;
 &lt;p&gt;终于可以正常运行了，虽然还有报错，但只是 64 位系统和 32 位 libc 的兼容问题，影响不大。&lt;/p&gt;
 
+&lt;h2 id=&#34;last&#34;&gt;Last&lt;/h2&gt;
+
+&lt;p&gt;后来又发现只用 user mode 的 qemu 来模拟还是有很多缺陷的。。。像 gdb-multriarch 莫名跑飞或者甚至文件都不能运行。踩了很多次坑后有如下发现：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;可以使用 docker，推荐 &lt;code&gt;skysider/multiarch-docker&lt;/code&gt;。大部分的问题应该都能解决了&lt;/li&gt;
+&lt;li&gt;如果再调试时有问题，可以试下不用 gdb plugin，有些插件对异架构的识别效果并不好&lt;/li&gt;
+&lt;li&gt;如果还有问题，那就只能用系统级的 qemu 来模拟了，推荐一片 &lt;a href=&#34;https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html&#34;&gt;文章&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;如上边链接中所说&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;MIPS system is generally the most effective method of debugging as you do not have to deal with the process being emulated inside of an x86 QEMU User Mode process.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;本文将不再更新(除非遇到很让人眼前一亮的方法)，但欢迎私下交流和介绍经验:)&lt;/p&gt;
+
 &lt;h2 id=&#34;reference-1&#34;&gt;Reference&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h&#34;&gt;https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h&lt;/a&gt;&lt;/p&gt;
@@ -13225,6 +13243,8 @@ listening...
 &lt;p&gt;&lt;a href=&#34;https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606&#34;&gt;https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://superuser.com/a/1183252/960572&#34;&gt;https://superuser.com/a/1183252/960572&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html&#34;&gt;https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html&lt;/a&gt;&lt;/p&gt;
 </description>
       
     </item>
