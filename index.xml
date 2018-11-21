@@ -4515,6 +4515,10 @@ exploit
 / #&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在后来的学习中，发现使用 &lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;SimpleHTTPServer&lt;/a&gt; 来传输文件更加方便快捷。&lt;/p&gt;
+&lt;/blockquote&gt;
+
 &lt;p&gt;当然也可以用 rop 来做，放到下一篇分析&lt;/p&gt;
 
 &lt;h3 id=&#34;kernel-rop-2018强网杯-core&#34;&gt;kernel ROP - 2018强网杯 - core&lt;/h3&gt;
@@ -5956,7 +5960,9 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 
 &lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/gatieme/article/details/78311841&#34;&gt;https://blog.csdn.net/gatieme/article/details/78311841&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://veritas501.space/2018/06/05/qwb2018%20core/&#34;&gt;https://veritas501.space/2018/06/05/qwb2018%20core/&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;a href=&#34;https://veritas501.space/2018/06/05/qwb2018%20core/&#34;&gt;https://veritas501.space/2018/06/05/qwb2018%20core/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&lt;/a&gt;&lt;/p&gt;</description>
       
     </item>
     
@@ -19054,7 +19060,8 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;h2 id=&#34;my-works&#34;&gt;My works&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;one of core contributors of &lt;a href=&#34;https://github.com/ctf-wiki&#34;&gt;ctf-wiki/ctf-tools/ctf-challenges&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gist.github.com/bash-c/eaf1aaa0e21fde5b6a9d0671317cebfa&#34;&gt;CVEs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;one of active contributors of &lt;a href=&#34;https://github.com/ctf-wiki&#34;&gt;ctf-wiki/ctf-tools/ctf-challenges&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/main_arena_offset&#34;&gt;main_arena_offset&lt;/a&gt;: a shell script to get main_arena offset quickly in CTF games.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-CTF&lt;/a&gt;: 用一种很偷鸡的技巧解决一些 CTF 中的 reverse 类题目&lt;/li&gt;
 &lt;/ul&gt;
