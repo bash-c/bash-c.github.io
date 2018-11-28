@@ -3515,7 +3515,11 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 &lt;blockquote&gt;
 &lt;p&gt;在 &lt;em&gt;/usr/include/x86_64-linux-gnu/asm/unistd_64.h&lt;/em&gt; 和 &lt;em&gt;/usr/include/x86_64-linux-gnu/asm/unistd_32.h&lt;/em&gt; 分别可以查看 64 位和 32 位的系统调用号。&lt;/p&gt;
 
-&lt;p&gt;同时推荐一个很好用的网站 &lt;a href=&#34;https://syscalls.kernelgrok.com&#34;&gt;Linux Syscall Reference&lt;/a&gt;，可以查阅 32 位系统调用对应的寄存器含义以及源码。&lt;/p&gt;
+&lt;p&gt;推荐两个查阅系统调用号的网站&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://syscalls32.paolostivanin.com&#34;&gt;syscall-32&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://syscalls64.paolostivanin.com&#34;&gt;syscall-64&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&#34;ioctl&#34;&gt;ioctl&lt;/h3&gt;
