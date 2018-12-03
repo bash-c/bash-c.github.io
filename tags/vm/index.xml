@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vm on localhost - Done with development, it&#39;s time to pwn.</title>
+    <link>https://bash-c.github.io/tags/vm/</link>
+    <description>Recent content in Vm on localhost - Done with development, it&#39;s time to pwn.</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Mon, 03 Dec 2018 20:04:42 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/vm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Escaping the Matrix 1</title>
+      <link>https://bash-c.github.io/post/escaping-the-matrix-1/</link>
+      <pubDate>Mon, 03 Dec 2018 20:04:42 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/escaping-the-matrix-1/</guid>
+      <description>什么是 qemu qemu 是一款由 Fabrice Bellard 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。 qemu 通过动态的二进制转化模拟 C</description>
+    </item>
+    
+  </channel>
+</rss>
