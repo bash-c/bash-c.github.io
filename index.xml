@@ -77,6 +77,8 @@
 
 &lt;p&gt;qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。&lt;/p&gt;
 
+&lt;p&gt;在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。&lt;/p&gt;
+
 &lt;h3 id=&#34;运行模式&#34;&gt;运行模式&lt;/h3&gt;
 
 &lt;p&gt;qemu 有多种运行模式，常用的有 &lt;code&gt;User-mode emulation&lt;/code&gt; 和 &lt;code&gt;System emulation&lt;/code&gt; 两种。&lt;/p&gt;
@@ -19496,6 +19498,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;ul&gt;
+&lt;li&gt;Laptop: Lenovo thinkpad X1-Carbon&lt;/li&gt;
 &lt;li&gt;Distro: latest &lt;a href=&#34;https://linuxmint.com&#34;&gt;Linux Mint&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Vim or Emacs: &lt;a href=&#34;https://www.vim.org&#34;&gt;Vim&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;bash, zsh or fish: &lt;a href=&#34;https://ohmyz.sh&#34;&gt;oh-my-zsh&lt;/a&gt;&lt;/li&gt;
@@ -19543,7 +19546,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;&lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech&lt;/a&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.huawei.com/cn/&#34;&gt;Huawei&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;High-end IT security adviser at &lt;a href=&#34;https://www.huawei.com/cn/&#34;&gt;Huawei&lt;/a&gt; in the filed.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
