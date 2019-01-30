@@ -9,8 +9,8 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/post/escaping-the-matrix-1/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
+    <loc>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</loc>
+    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -134,13 +134,6 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/escaping/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://bash-c.github.io/tags/file-descriptor/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -170,7 +163,7 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/how2/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
+    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -205,7 +198,7 @@
   
   <url>
     <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
+    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
@@ -239,13 +232,6 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/vm/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://bash-c.github.io/tags/whitehat/</loc>
     <lastmod>2018-08-25T20:19:16+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -261,7 +247,7 @@
   
   <url>
     <loc>https://bash-c.github.io/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
+    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0</priority>
   </url>
