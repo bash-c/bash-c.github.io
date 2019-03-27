@@ -19479,7 +19479,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;&lt;p&gt;Like:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;CTF &lt;a href=&#34;https://github.com/bash-c/pwn_repo&#34;&gt;pwn&lt;/a&gt;/&lt;a href=&#34;https://github.com/bash-c/reverse_repo&#34;&gt;reverse&lt;/a&gt;/&lt;a href=&#34;https://github.com/bash-c/crypto_repo&#34;&gt;crypto&lt;/a&gt; games
+&lt;li&gt;CTF &lt;a href=&#34;https://github.com/bash-c/pwn_repo&#34;&gt;pwn&lt;/a&gt;/(&lt;a href=&#34;https://github.com/bash-c/reverse_repo&#34;&gt;reverse&lt;/a&gt;)/(&lt;a href=&#34;https://github.com/bash-c/crypto_repo&#34;&gt;crypto&lt;/a&gt;) games
 
 &lt;ul&gt;
 &lt;li&gt;@10.0.0.55, @北理工的恶龙, @emmmm&lt;/li&gt;
@@ -19495,7 +19495,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;h2 id=&#34;my-works&#34;&gt;My works&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://gist.github.com/bash-c/eaf1aaa0e21fde5b6a9d0671317cebfa&#34;&gt;CVEs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gist.github.com/bash-c/eaf1aaa0e21fde5b6a9d0671317cebfa&#34;&gt;bug list&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;one of active contributors of &lt;a href=&#34;https://github.com/ctf-wiki&#34;&gt;ctf-wiki/ctf-tools/ctf-challenges&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/main_arena_offset&#34;&gt;main_arena_offset&lt;/a&gt;: a shell script to get main_arena offset quickly in CTF games.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-CTF&lt;/a&gt;: 用一种很偷鸡的技巧解决一些 CTF 中的 reverse 类题目&lt;/li&gt;
@@ -19512,11 +19512,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;2018.11 - now:
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech&lt;/a&gt;, Intern Security Researcher
-
-&lt;ul&gt;
-&lt;li&gt;2018.11 - 2019.1: High-end IT security adviser at &lt;a href=&#34;https://www.huawei.com/cn/&#34;&gt;Huawei&lt;/a&gt; in the filed.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech&lt;/a&gt;, Intern Security Researcher&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
