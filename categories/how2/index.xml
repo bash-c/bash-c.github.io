@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>How2 on localhost - Done with development, it&#39;s time to pwn.</title>
+    <title>how2 on localhost - Done with development, it&#39;s time to pwn.</title>
     <link>https://bash-c.github.io/categories/how2/</link>
-    <description>Recent content in How2 on localhost - Done with development, it&#39;s time to pwn.</description>
+    <description>Recent content in how2 on localhost - Done with development, it&#39;s time to pwn.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
@@ -18,7 +18,7 @@
       <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</guid>
-      <description>放假前最后一天看到 exploit-db 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出</description>
+      <description></description>
     </item>
     
     <item>
@@ -27,7 +27,7 @@
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/dive-into-tcache/</guid>
-      <description>tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see commit），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。</description>
+      <description></description>
     </item>
     
     <item>
@@ -36,7 +36,7 @@
       <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
-      <description>这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 Pratical SMEP bypass techniques on Linux。 ret2usr ret2usr 攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向</description>
+      <description></description>
     </item>
     
     <item>
@@ -45,7 +45,7 @@
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
-      <description>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读</description>
+      <description></description>
     </item>
     
     <item>
@@ -90,7 +90,7 @@
       <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/pin-in-ctf/</guid>
-      <description>intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp;amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序 什</description>
+      <description></description>
     </item>
     
   </channel>

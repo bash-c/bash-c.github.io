@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Heap on localhost - Done with development, it&#39;s time to pwn.</title>
+    <title>heap on localhost - Done with development, it&#39;s time to pwn.</title>
     <link>https://bash-c.github.io/tags/heap/</link>
-    <description>Recent content in Heap on localhost - Done with development, it&#39;s time to pwn.</description>
+    <description>Recent content in heap on localhost - Done with development, it&#39;s time to pwn.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
@@ -18,7 +18,7 @@
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/dive-into-tcache/</guid>
-      <description>tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see commit），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。</description>
+      <description></description>
     </item>
     
   </channel>

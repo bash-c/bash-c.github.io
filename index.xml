@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>localhost - Done with development, it&#39;s time to pwn.</title>
@@ -136,7 +135,8 @@
 				&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 			&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 			&lt;span class=&#34;n&#34;&gt;MessageBox&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Show&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Sorry, the user name and key code is not valid!&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
-		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;在 &lt;code&gt;Key Code&lt;/code&gt; 栏中输入一串超长的字符串，然后点 &lt;code&gt;OK&lt;/code&gt; 注册，发现程序直接 crash，既没有注册成功的弹窗，也没有注册失败的弹窗，说明溢出发生在 &lt;code&gt;CallKeyCodeDLL.isRegisterVersion()&lt;/code&gt; 中。查看该函数：&lt;/p&gt;
@@ -171,7 +171,8 @@
 		&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 			&lt;span class=&#34;n&#34;&gt;CallKeyCodeDLL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;funcDLLInitEngine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;SocuJHTY_HTML5VIDEOPLAYER_WIN&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
 			&lt;span class=&#34;n&#34;&gt;CallKeyCodeDLL&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_alreadyInitKeyCodeEngine&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;该函数又调用了&lt;code&gt;makeSureEngineInit()&lt;/code&gt; 和 &lt;code&gt;funcDLLVerifyKeyCode()&lt;/code&gt; 两个函数，其中 &lt;code&gt;CallKeyCodeDLL.funcDLLVerifyKeyCode()&lt;/code&gt; 传递了输入的 &lt;code&gt;userName&lt;/code&gt;  和 &lt;code&gt;keyCode&lt;/code&gt;，从函数名字来看，溢出就发生在这里了。&lt;/p&gt;
@@ -186,7 +187,8 @@
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C#&#34; data-lang=&#34;C#&#34;&gt;		&lt;span class=&#34;c1&#34;&gt;// Token: 0x06000244 RID: 580
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;		[DllImport(&amp;#34;KeyCodeDLL.dll&amp;#34;, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, EntryPoint = &amp;#34;#1&amp;#34;)]&lt;/span&gt;
-		&lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extern&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;funcDLLVerifyKeyCode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;strUserName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;strKeyCode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+		&lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extern&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;funcDLLVerifyKeyCode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;strUserName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;strKeyCode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;通过调试验证了猜想。&lt;/p&gt;
@@ -13925,7 +13927,6 @@ Count &lt;span class=&#34;m&#34;&gt;813449&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;65
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;66
 &lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;67
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;68
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C++&#34; data-lang=&#34;C++&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#include&lt;/span&gt; &lt;span class=&#34;cpf&#34;&gt;&amp;lt;iostream&amp;gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;
@@ -15596,7 +15597,8 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt
 		&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
 	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 	&lt;span class=&#34;n&#34;&gt;Console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WriteLine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Your flag is: &amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;text&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;可以看到,逻辑很简单,对输入进行了32轮验证,通过每一层验证即可得到flag.&lt;/p&gt;
@@ -15961,7 +15963,8 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt
 			&lt;span class=&#34;n&#34;&gt;Console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WriteLine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Your flag is: &amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;text&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
 		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;blockquote&gt;
@@ -19463,21 +19466,23 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 
 &lt;h2 id=&#34;about-me&#34;&gt;About me&lt;/h2&gt;
 
-&lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt; and a security researcher in &lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech.&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Distro: latest &lt;a href=&#34;https://linuxmint.com&#34;&gt;Linux Mint&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Vim or Emacs: &lt;a href=&#34;https://www.vim.org&#34;&gt;Vim&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;bash, zsh or fish: &lt;a href=&#34;https://ohmyz.sh&#34;&gt;oh-my-zsh&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Distro: After almost 4-year full-time use of linux(ubuntu, deepin, manjaro, mint&amp;hellip;), I finally turn to windows 10&lt;/li&gt;
+&lt;li&gt;Laptop: ThinkPad X1 Carbon&lt;/li&gt;
+&lt;li&gt;Vim or Emacs: Vim&lt;/li&gt;
+&lt;li&gt;zsh or fish: Neither, now I use powershell&lt;/li&gt;
 &lt;li&gt;Tabs or spaces: spaces&lt;/li&gt;
 &lt;li&gt;Coffee or tea: both&lt;/li&gt;
-&lt;li&gt;Relationship status: In love&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;Github link: &lt;a href=&#34;https://github.com/bash-c&#34;&gt;bash-c&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Relationship status: In love&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Like:&lt;/p&gt;
 
 &lt;ul&gt;
+&lt;li&gt;My families, my girlfriend and my life&lt;/li&gt;
+&lt;li&gt;binary vulnerabilities, also curious about web security&lt;/li&gt;
 &lt;li&gt;CTF &lt;a href=&#34;https://github.com/bash-c/pwn_repo&#34;&gt;pwn&lt;/a&gt;/(&lt;a href=&#34;https://github.com/bash-c/reverse_repo&#34;&gt;reverse&lt;/a&gt;)/(&lt;a href=&#34;https://github.com/bash-c/crypto_repo&#34;&gt;crypto&lt;/a&gt;) games
 
 &lt;ul&gt;
@@ -19494,6 +19499,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;h2 id=&#34;my-works&#34;&gt;My works&lt;/h2&gt;
 
 &lt;ul&gt;
+&lt;li&gt;Github link: &lt;a href=&#34;https://github.com/bash-c&#34;&gt;bash-c&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://gist.github.com/bash-c/eaf1aaa0e21fde5b6a9d0671317cebfa&#34;&gt;bug list&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;one of active contributors of &lt;a href=&#34;https://github.com/ctf-wiki&#34;&gt;ctf-wiki/ctf-tools/ctf-challenges&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/main_arena_offset&#34;&gt;main_arena_offset&lt;/a&gt;: a shell script to get main_arena offset quickly in CTF games.&lt;/li&gt;
@@ -19508,7 +19514,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;ul&gt;
 &lt;li&gt;I was working in &lt;a href=&#34;https://netsec.ccert.edu.cn&#34;&gt;NISL@THU&lt;/a&gt;, focused on fuzzing.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;2018.11 - now:
+&lt;li&gt;2018.11 - 2019.4:
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech&lt;/a&gt;, Intern Security Researcher&lt;/li&gt;

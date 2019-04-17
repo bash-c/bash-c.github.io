@@ -7,49 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Tue, 31 Jul 2018 20:00:54 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 30 Jan 2019 23:30:42 +0800</lastBuildDate>
     
 	<atom:link href="https://bash-c.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Arm</title>
-      <link>https://bash-c.github.io/tags/arm/</link>
-      <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
+      <title>windows</title>
+      <link>https://bash-c.github.io/tags/windows/</link>
+      <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
       
-      <guid>https://bash-c.github.io/tags/arm/</guid>
+      <guid>https://bash-c.github.io/tags/windows/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Cve</title>
-      <link>https://bash-c.github.io/tags/cve/</link>
-      <pubDate>Mon, 24 Sep 2018 22:23:06 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/cve/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>File Descriptor</title>
-      <link>https://bash-c.github.io/tags/file-descriptor/</link>
-      <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/file-descriptor/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Hackme.inndy</title>
-      <link>https://bash-c.github.io/tags/hackme.inndy/</link>
-      <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/hackme.inndy/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Heap</title>
+      <title>heap</title>
       <link>https://bash-c.github.io/tags/heap/</link>
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
@@ -58,52 +31,7 @@
     </item>
     
     <item>
-      <title>Hitcon Training</title>
-      <link>https://bash-c.github.io/tags/hitcon-training/</link>
-      <pubDate>Mon, 02 Jul 2018 12:05:10 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/hitcon-training/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Intel Pin</title>
-      <link>https://bash-c.github.io/tags/intel-pin/</link>
-      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/intel-pin/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Jarvisoj</title>
-      <link>https://bash-c.github.io/tags/jarvisoj/</link>
-      <pubDate>Sun, 16 Sep 2018 22:09:27 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/jarvisoj/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kernel</title>
-      <link>https://bash-c.github.io/tags/kernel/</link>
-      <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/kernel/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Os</title>
-      <link>https://bash-c.github.io/tags/os/</link>
-      <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/os/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Pwn</title>
+      <title>pwn</title>
       <link>https://bash-c.github.io/tags/pwn/</link>
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
@@ -112,16 +40,7 @@
     </item>
     
     <item>
-      <title>Reverse</title>
-      <link>https://bash-c.github.io/tags/reverse/</link>
-      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/reverse/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tcache</title>
+      <title>tcache</title>
       <link>https://bash-c.github.io/tags/tcache/</link>
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
@@ -130,11 +49,101 @@
     </item>
     
     <item>
-      <title>Whitehat</title>
+      <title>kernel</title>
+      <link>https://bash-c.github.io/tags/kernel/</link>
+      <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/kernel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>os</title>
+      <link>https://bash-c.github.io/tags/os/</link>
+      <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/os/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CVE</title>
+      <link>https://bash-c.github.io/tags/cve/</link>
+      <pubDate>Mon, 24 Sep 2018 22:23:06 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/cve/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>JarvisOJ</title>
+      <link>https://bash-c.github.io/tags/jarvisoj/</link>
+      <pubDate>Sun, 16 Sep 2018 22:09:27 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/jarvisoj/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>file-descriptor</title>
+      <link>https://bash-c.github.io/tags/file-descriptor/</link>
+      <pubDate>Wed, 12 Sep 2018 15:30:01 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/file-descriptor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>WhiteHat</title>
       <link>https://bash-c.github.io/tags/whitehat/</link>
       <pubDate>Sat, 25 Aug 2018 20:19:16 +0800</pubDate>
       
       <guid>https://bash-c.github.io/tags/whitehat/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>arm</title>
+      <link>https://bash-c.github.io/tags/arm/</link>
+      <pubDate>Tue, 31 Jul 2018 20:00:54 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/arm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>intel-pin</title>
+      <link>https://bash-c.github.io/tags/intel-pin/</link>
+      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/intel-pin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>reverse</title>
+      <link>https://bash-c.github.io/tags/reverse/</link>
+      <pubDate>Tue, 03 Jul 2018 12:16:10 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/reverse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hackme.inndy</title>
+      <link>https://bash-c.github.io/tags/hackme.inndy/</link>
+      <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/hackme.inndy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>HITCON-Training</title>
+      <link>https://bash-c.github.io/tags/hitcon-training/</link>
+      <pubDate>Mon, 02 Jul 2018 12:05:10 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/hitcon-training/</guid>
       <description></description>
     </item>
     
