@@ -18,7 +18,7 @@
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/dive-into-tcache/</guid>
-      <description></description>
+      <description>&lt;p&gt;tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see &lt;a href=&#34;https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc&#34;&gt;commit&lt;/a&gt;），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -27,7 +27,7 @@
       <pubDate>Sat, 13 Oct 2018 22:29:11 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/hwb2018-pwn-writeup/</guid>
-      <description></description>
+      <description>&lt;p&gt;跟学校的队伍参加了又一次 &lt;code&gt;?网杯&lt;/code&gt;，记录一下 pwn 的 writeup。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -36,7 +36,7 @@
       <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
-      <description></description>
+      <description>&lt;p&gt;这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -45,7 +45,7 @@
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
-      <description>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读</description>
+      <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;</description>
     </item>
     
     <item>

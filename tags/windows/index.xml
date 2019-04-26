@@ -18,7 +18,11 @@
       <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</guid>
-      <description></description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;放假前最后一天看到 &lt;a href=&#34;https://www.exploit-db.com/exploits/46279&#34;&gt;exploit-db&lt;/a&gt; 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow&#34;&gt;app &amp;amp; exp&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
     </item>
     
   </channel>

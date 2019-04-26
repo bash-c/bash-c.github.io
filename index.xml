@@ -497,6 +497,480 @@ shellcode&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
     </item>
     
     <item>
+      <title>QEMU escape part Ⅰ: qemu 的安装和使用</title>
+      <link>https://bash-c.github.io/post/escaping-the-matrix-1/</link>
+      <pubDate>Mon, 03 Dec 2018 20:04:42 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/escaping-the-matrix-1/</guid>
+      
+        <description>&lt;h2 id=&#34;什么是-qemu&#34;&gt;什么是 qemu&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.qemu.org/&#34;&gt;qemu&lt;/a&gt; 是一款由 &lt;a href=&#34;https://bellard.org/&#34;&gt;Fabrice Bellard&lt;/a&gt; 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。&lt;/p&gt;
+
+&lt;p&gt;qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。&lt;/p&gt;
+
+&lt;p&gt;在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。&lt;/p&gt;
+
+&lt;h3 id=&#34;运行模式&#34;&gt;运行模式&lt;/h3&gt;
+
+&lt;p&gt;qemu 有多种运行模式，常用的有 &lt;code&gt;User-mode emulation&lt;/code&gt; 和 &lt;code&gt;System emulation&lt;/code&gt; 两种。&lt;/p&gt;
+
+&lt;h4 id=&#34;user-mode-emulation&#34;&gt;User-mode emulation&lt;/h4&gt;
+
+&lt;p&gt;用户模式，在这个模式下，qemu 可以运行单个其他指令集的 linux 或者 macOS/darwin 程序，&lt;strong&gt;允许了为一种架构编译的程序在另外一种架构上面运行&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;h4 id=&#34;system-emulation&#34;&gt;System emulation&lt;/h4&gt;
+
+&lt;p&gt;系统模式，在这个模式下，qemu 将模拟一个完整的计算机系统，包括外围设备。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;之后将分别为两种情况举例&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;安装-qemu&#34;&gt;安装 qemu&lt;/h2&gt;
+
+&lt;h3 id=&#34;使用包管理&#34;&gt;使用包管理&lt;/h3&gt;
+
+&lt;p&gt;一般情况下，如无特殊需要（如为了运行某个 CTF 比赛中的异架构程序或者 kernel）直接使用对应的包管理直接安装即可&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;    Arch: pacman -S qemu
+
+    Debian/Ubuntu: apt-get install qemu
+
+    Fedora: dnf install @virtualization
+
+    Gentoo: emerge --ask app-emulation/qemu
+
+    RHEL/CentOS: yum install qemu-kvm
+
+    SUSE: zypper install qemu&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里只说明在 linux 下的安装过程，其他系统的安装过程请参考 &lt;a href=&#34;https://www.qemu.org/download/&#34;&gt;官方网站&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;从源码编译&#34;&gt;从源码编译&lt;/h3&gt;
+
+&lt;p&gt;通过包管理安装的 qemu 版本一般较老，如果需要新版的 qemu，可以从源码编译，这里以编译 &lt;code&gt;3.1.0-rc3&lt;/code&gt; 的 qemu 为例。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;wget https://download.qemu.org/qemu-3.1.0-rc3.tar.xz
+tar xvJf qemu-3.1.0-rc3.tar.xz
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; qemu-3.1.0-rc3&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;通过 &lt;code&gt;./configure --help&lt;/code&gt; 的查看编译时的选项， &lt;code&gt;--target-list&lt;/code&gt; 选项为可选的模拟器，默认全选&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;--target-list&lt;/code&gt; 中的 &lt;code&gt;xxx-soft&lt;/code&gt; 和 &lt;code&gt;xxx-linux-user&lt;/code&gt; 分别指系统模拟器和应用程序模拟器, 生成的二进制文件名字为 &lt;code&gt;qemu-system-xxx&lt;/code&gt; 和 &lt;code&gt;qemu-xxx&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;安装必要依赖&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo apt-get install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libsdl-dev&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;选择安装 &lt;a href=&#34;https://wiki.qemu.org/Hosts/Linux&#34;&gt;可选依赖&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;这里直接使用默认选项进行编译&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;./configure
+make -j8&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;继续安装&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo make install&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;成功安装&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;~ qemu-arm --version
+qemu-arm version &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;.0.93
+Copyright &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;c&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2003&lt;/span&gt;-2018 Fabrice Bellard and the QEMU Project developers&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;使用-qemu&#34;&gt;使用 qemu&lt;/h2&gt;
+
+&lt;p&gt;以 CISCN 2017 的 &lt;a href=&#34;https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/kernel/CISCN2017-babydriver&#34;&gt;babydriver&lt;/a&gt; 举例，查看启动脚本&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; bat boot.sh 
+───────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: boot.sh
+───────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;   │ &lt;span class=&#34;cp&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;   &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;   │ 
+   &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;   │ qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append &lt;span class=&#34;s1&#34;&gt;&amp;#39;console=ttyS0 root=/dev/ram oops=panic panic=1&amp;#39;&lt;/span&gt; -enable-kvm -monitor /dev/null -m 64M -
+       │ -nographic  -smp &lt;span class=&#34;nv&#34;&gt;cores&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;,threads&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; -cpu kvm64,+smep&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;可以看出这道题目是用 &lt;code&gt;qemu-system-x86_64&lt;/code&gt; 启动了以 &lt;code&gt;rootfs.cpio&lt;/code&gt; 为文件系统的 kernel &lt;code&gt;bzImage&lt;/code&gt;，启动时的参数为 &lt;code&gt;console=ttyS0 ... panic=1&lt;/code&gt;，为这个进程分配 64M 内存。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;更多参数的含义请通过 &lt;code&gt;-h&lt;/code&gt; 或者 &lt;a href=&#34;https://qemu.weilnetz.de/doc/qemu-doc.html&#34;&gt;qemu-doc&lt;/a&gt; 查看。&lt;/p&gt;
+
+&lt;p&gt;如果使用包管理安装 qemu，直接安装 &lt;code&gt;qemu-system-x86_64&lt;/code&gt; 即可&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt; sudo apt install qemu-system_x86-64&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/blockquote&gt;
+
+&lt;p&gt;因为使用了 kvm，所以启动时要用 root 权限启动&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;CISCN2017_babydriver &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; sudo ./boot.sh
+......
+......
+/ $ id
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+/ $ ls
+bin      etc      init     linuxrc  root     sys      usr
+dev      home     lib      proc     sbin     tmp&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这道题目的更多分析可以看 &lt;a href=&#34;http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-uaf-ciscn2017-babydriver&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;同样，再看下 Codegate 2018 的&lt;a href=&#34;https://github.com/bash-c/ctf-challenges/tree/master/pwn/arm/Codegate2018_Melong&#34;&gt;Melong&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Codegate2018_Melong &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; check melong
++ file melong
+melong: ELF &lt;span class=&#34;m&#34;&gt;32&lt;/span&gt;-bit LSB executable, ARM, EABI5 version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SYSV&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, dynamically linked, interpreter /lib/ld-linux.so.3, &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; GNU/Linux &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;.2.0, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;2c55e75a072020303e7c802d32a5b82432f329e9, not stripped
++ checksec melong
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;/home/m4x/Projects/pwn_repo/Codegate2018_Melong/melong&amp;#39;&lt;/span&gt;
+    Arch:     arm-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x10000&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;可以看出是 32 位 的 arm 程序，需要安装 &lt;code&gt;qemu-arm&lt;/code&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;如果使用包管理安装，则&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt; $ sudo apt-get install qemu-user
+ $ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;这样就安装了 &lt;code&gt;qemu-arm&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;但同时因为程序是动态链接的，还需要同时安装对应的 libc，可以使用 &lt;code&gt;apt search &amp;quot;libc6-&amp;quot; | grep &amp;quot;ARCH&amp;quot;&lt;/code&gt; 搜索，如&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Codegate2018_Melong &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; apt search &lt;span class=&#34;s2&#34;&gt;&amp;#34;libc6-&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; grep arm
+p   libc6-arm64-cross                                                       - GNU C Library: Shared libraries &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                             
+v   libc6-arm64-dcv1                                                        -                                                                                   
+v   libc6-armel-armel-cross                                                 -                                                                                   
+p   libc6-armel-armhf-cross                                                 - Dummy package to get libc6:armel installed                                        
+p   libc6-armel-cross                                                       - GNU C Library: Shared libraries &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                             
+v   libc6-armel-dcv1                                                        -                                                                                   
+p   libc6-armhf-armel-cross                                                 - Dummy package to get libc6:armhf installed                                        
+v   libc6-armhf-armhf-cross                                                 -                                                                                   
+p   libc6-armhf-cross                                                       - GNU C Library: Shared libraries &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                             
+v   libc6-armhf-dcv1                                                        -                                                                                   
+p   libc6-dbg-arm64-cross                                                   - GNU C Library: detached debugging symbols &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                   
+v   libc6-dbg-arm64-dcv1                                                    -                                                                                   
+p   libc6-dbg-armel-cross                                                   - GNU C Library: detached debugging symbols &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                   
+v   libc6-dbg-armel-dcv1                                                    -                                                                                   
+p   libc6-dbg-armhf-cross                                                   - GNU C Library: detached debugging symbols &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                   
+v   libc6-dbg-armhf-dcv1                                                    -                                                                                   
+p   libc6-dev-arm64-cross                                                   - GNU C Library: Development Libraries and Header Files &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;       
+v   libc6-dev-arm64-cross:i386                                              -                                                                                   
+v   libc6-dev-arm64-dcv1                                                    -                                                                                   
+v   libc6-dev-armel-armel-cross                                             -                                                                                   
+p   libc6-dev-armel-armhf-cross                                             - Dummy package to get libc6-dev:armel installed                                    
+p   libc6-dev-armel-cross                                                   - GNU C Library: Development Libraries and Header Files &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;       
+v   libc6-dev-armel-cross:i386                                              -                                                                                   
+v   libc6-dev-armel-dcv1                                                    -                                                                                   
+p   libc6-dev-armhf-armel-cross                                             - Dummy package to get libc6-dev:armhf installed                                    
+v   libc6-dev-armhf-armhf-cross                                             -                                                                                   
+p   libc6-dev-armhf-cross                                                   - GNU C Library: Development Libraries and Header Files &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; cross-compiling&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;       
+v   libc6-dev-armhf-cross:i386                                              -                                                                                   
+v   libc6-dev-armhf-dcv1                                                    -    &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;只需要安装 &lt;code&gt;libc6-ARCH-cross&lt;/code&gt; 的包即可。&lt;/p&gt;
+
+&lt;p&gt;装好后使用 &lt;code&gt;-L&lt;/code&gt; 指定共享库路径即可运行文件。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ qemu-arm -L /usr/arm-linux-gnueabi ./melong&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这道题目的更多分析可以看 &lt;a href=&#34;http://m4x.fun/post/how-2-pwn-an-arm-binary/#codegate2018-melong&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;如果是静态的程序，不需要 libc，则可以不用 &lt;code&gt;-L&lt;/code&gt; 选项，如 Jarvis-OJ 的 &lt;a href=&#34;https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/arm/jarvisOJ_typo&#34;&gt;typo&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;jarvisOJ_typo &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; check ./typo
++ file ./typo
+./typo: ELF &lt;span class=&#34;m&#34;&gt;32&lt;/span&gt;-bit LSB executable, ARM, EABI5 version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SYSV&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, statically linked, &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; GNU/Linux &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;.6.32, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;211877f58b5a0e8774b8a3a72c83890f8cd38e63, stripped
++ checksec ./typo
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;/home/m4x/Projects/pwn_repo/jarvisOJ_typo/typo&amp;#39;&lt;/span&gt;
+    Arch:     arm-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x8000&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+jarvisOJ_typo &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; qemu-arm ./typo
+Let&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;s Do Some Typing Exercise~
+Press Enter to get start&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+Input ~ &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; you want to quit
+^C&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;如何-debug&#34;&gt;如何 debug&lt;/h2&gt;
+
+&lt;p&gt;分两种情况&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;调试 qemu 这个进程&lt;/li&gt;
+&lt;li&gt;调试 qemu 内运行的程序&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;调试-qemu&#34;&gt;调试 qemu&lt;/h3&gt;
+
+&lt;p&gt;对于第一种情况，直接使用 gdb attach 到 qemu 的进程号即可，为了调试时方便可以在编译时加上 &lt;code&gt;--enable-debug&lt;/code&gt; 选项以保留符号等信息。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;  --enable-debug           enable common debug build options&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;在之后的 qemu 逃逸中会着重介绍这个过程。&lt;/p&gt;
+
+&lt;h3 id=&#34;调试-qemu-中的进程&#34;&gt;调试 qemu 中的进程&lt;/h3&gt;
+
+&lt;p&gt;qemu 提供了 gdb 的接口，通过 &lt;code&gt;-g&lt;/code&gt; 指定端口来调用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;-g port              QEMU_GDB          wait gdb connection to &amp;#39;port&amp;#39;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;同时为了调试异架构的程序，需要安装 &lt;code&gt;gdb-multiarch&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo apt install gdb-multiarch&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;例如 Melong 中，使用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ qemu-arm -g &lt;span class=&#34;m&#34;&gt;1234&lt;/span&gt; -L /usr/arm-linux-gnueabi ./melong&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;启动程序，在另一个 shell 中使用 &lt;code&gt;gdb-multiarch&lt;/code&gt; 启动程序并连接到指定的端口即可调试&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Codegate2018_Melong &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; gdb-multiarch ./melong -q
+pwndbg: loaded &lt;span class=&#34;m&#34;&gt;175&lt;/span&gt; commands. Type pwndbg &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;filter&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; a list.
+pwndbg: created &lt;span class=&#34;nv&#34;&gt;$rebase&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;$ida&lt;/span&gt; gdb functions &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;can be used with print/break&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+Reading symbols from ./melong...&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;...done.
+pwndbg&amp;gt; target remote localhost:1234&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;使用 gdb-multriarch 可以调试大多数的程序。&lt;/p&gt;
+
+&lt;p&gt;但也有部分程序不能使用 gdb-multiarch，这时可以编译对应架构的 Toolchain，如 &lt;code&gt;arm-none-eabi-gdb&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;或者使用系统模式的 qemu 创建一个对应架构的虚拟机，文末放了一片链接，以后也会介绍这种方法。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;特别的是系统模式的 qemu 还提供了另外几个参数&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;-gdb dev        wait for gdb connection on &amp;#39;dev&amp;#39;
+-s              shorthand for -gdb tcp::1234
+-S              freeze CPU at startup (use &amp;#39;c&amp;#39; to start execution)&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;-gdb&lt;/code&gt; 作用类似 &lt;code&gt;-g&lt;/code&gt;，使用 &lt;code&gt;-gdb tcp::1234&lt;/code&gt; 即可在 gdb 中通过 1234 端口调试。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-s&lt;/code&gt; 是 &lt;code&gt;-gdb tcp::1234&lt;/code&gt; 的缩写&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;-S&lt;/code&gt; 让虚拟机停在启动的地方方便调试，类似于 pwntools 的 &lt;a href=&#34;http://docs.pwntools.com/en/stable/gdb.html?highlight=gdb.debug#pwnlib.gdb.debug&#34;&gt;gdb.debug()&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;reference&#34;&gt;Reference&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://wiki.qemu.org/Main_Page&#34;&gt;https://wiki.qemu.org/Main_Page&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://qemu.weilnetz.de/doc/qemu-doc.html&#34;&gt;https://qemu.weilnetz.de/doc/qemu-doc.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://wiki.qemu.org/Documentation&#34;&gt;https://wiki.qemu.org/Documentation&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/QEMU&#34;&gt;https://en.wikipedia.org/wiki/QEMU&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html&#34;&gt;https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://wiki.qemu.org/Hosts/Linux&#34;&gt;https://wiki.qemu.org/Hosts/Linux&lt;/a&gt;&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
       <title>Dive Into Tcache</title>
       <link>https://bash-c.github.io/post/dive-into-tcache/</link>
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
@@ -3873,9 +4347,7 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
       
-        <description>
-
-&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
+        <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
 
 &lt;h2 id=&#34;basic-knowledge&#34;&gt;Basic Knowledge&lt;/h2&gt;
 
@@ -6400,8 +6872,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 
 &lt;p&gt;&lt;a href=&#34;https://veritas501.space/2018/06/05/qwb2018%20core/&#34;&gt;https://veritas501.space/2018/06/05/qwb2018%20core/&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;&lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&lt;/a&gt;&lt;/p&gt;</description>
       
     </item>
     
@@ -6412,9 +6883,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
       
       <guid>https://bash-c.github.io/post/cve-2017-11543-analysis/</guid>
       
-        <description>
-
-&lt;p&gt;最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 &lt;code&gt;tcpdump&lt;/code&gt; 有关的 &lt;a href=&#34;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&#34;&gt;CVE-2017-11543&lt;/a&gt; 来分析，参考资料都放在最后了。&lt;/p&gt;
+        <description>&lt;p&gt;最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 &lt;code&gt;tcpdump&lt;/code&gt; 有关的 &lt;a href=&#34;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&#34;&gt;CVE-2017-11543&lt;/a&gt; 来分析，参考资料都放在最后了。&lt;/p&gt;
 
 &lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
 
@@ -7551,8 +8020,7 @@ pwndbg&amp;gt; &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://tools.ietf.org/html/rfc1055.html&#34;&gt;https://tools.ietf.org/html/rfc1055.html&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&#34;&gt;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&#34;&gt;https://stackoverflow.com/questions/5497855/what-does-value-optimized-out-mean-in-gdb&lt;/a&gt;&lt;/p&gt;</description>
       
     </item>
     

@@ -326,10 +326,56 @@
   <div class="post-content">
     
     <div class="post-summary">
-      
+      <blockquote>
+<p>放假前最后一天看到 <a href="https://www.exploit-db.com/exploits/46279">exploit-db</a> 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。</p>
+
+<p><a href="https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow">app &amp; exp</a></p>
+</blockquote>
     </div>
     <div class="read-more">
       <a href="/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/" class="read-more-link">Read more</a>
+    </div>
+    
+  </div>
+</article>
+
+    
+      <article class="post bg-white">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/post/escaping-the-matrix-1/">QEMU escape part Ⅰ: qemu 的安装和使用</a>
+    </h1>
+    
+    <div class="post-meta">
+      <time datetime="2018-12-03" class="post-time">
+        2018-12-03
+      </time>
+      <div class="post-category">
+          <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
+          
+        </div>
+      <span class="more-meta"> 0 words </span>
+      <span class="more-meta"> 0 min read </span>
+      
+      
+      
+    </div>
+  </header>
+  
+  <div class="post-content">
+    
+    <div class="post-summary">
+      <h2 id="什么是-qemu">什么是 qemu</h2>
+
+<p><a href="https://www.qemu.org/">qemu</a> 是一款由 <a href="https://bellard.org/">Fabrice Bellard</a> 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。</p>
+
+<p>qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。</p>
+
+<p>在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/escaping-the-matrix-1/" class="read-more-link">Read more</a>
     </div>
     
   </div>
@@ -362,7 +408,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      
+      <p>tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see <a href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc">commit</a>），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。</p>
     </div>
     <div class="read-more">
       <a href="/post/dive-into-tcache/" class="read-more-link">Read more</a>
@@ -398,7 +444,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      
+      <p>跟学校的队伍参加了又一次 <code>?网杯</code>，记录一下 pwn 的 writeup。</p>
     </div>
     <div class="read-more">
       <a href="/post/hwb2018-pwn-writeup/" class="read-more-link">Read more</a>
@@ -435,7 +481,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      
+      <p>这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 <a href="https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf">Pratical SMEP bypass techniques on Linux</a>。</p>
     </div>
     <div class="read-more">
       <a href="/post/linux-kernel-pwn-abc-2/" class="read-more-link">Read more</a>
@@ -472,7 +518,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读
+      <p>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。</p>
     </div>
     <div class="read-more">
       <a href="/post/linux-kernel-pwn-abc-1/" class="read-more-link">Read more</a>
@@ -508,7 +554,7 @@
   <div class="post-content">
     
     <div class="post-summary">
-      最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 tcpdump 有关的 CVE-2017-11543 来分析，参考资料都放在最后了。 Overview 漏洞软件 tcpdump 版本：4.9.0 1 2 3
+      <p>最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 <code>tcpdump</code> 有关的 <a href="https://nvd.nist.gov/vuln/detail/CVE-2017-11543">CVE-2017-11543</a> 来分析，参考资料都放在最后了。</p>
     </div>
     <div class="read-more">
       <a href="/post/cve-2017-11543-analysis/" class="read-more-link">Read more</a>
@@ -621,42 +667,6 @@
     </div>
     <div class="read-more">
       <a href="/post/play-with-file-descriptor-2/" class="read-more-link">Read more</a>
-    </div>
-    
-  </div>
-</article>
-
-    
-      <article class="post bg-white">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      <a class="post-link" href="/post/play-with-file-descriptor-1/">Play with file descriptor(Ⅰ)</a>
-    </h1>
-    
-    <div class="post-meta">
-      <time datetime="2018-09-10" class="post-time">
-        2018-09-10
-      </time>
-      <div class="post-category">
-          <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
-          
-        </div>
-      <span class="more-meta"> 2270 words </span>
-      <span class="more-meta"> 5 min read </span>
-      
-      
-      
-    </div>
-  </header>
-  
-  <div class="post-content">
-    
-    <div class="post-summary">
-      本来只是想记录一下 reverse shell 的一些东西，结果越学越觉得什么都不懂，索性深入研究了一下从底层讲一讲 pwnable 中的 fd tricks，预计共分三篇完成。 第一篇主要
-    </div>
-    <div class="read-more">
-      <a href="/post/play-with-file-descriptor-1/" class="read-more-link">Read more</a>
     </div>
     
   </div>

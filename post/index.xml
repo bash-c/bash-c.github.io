@@ -18,7 +18,26 @@
       <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</guid>
-      <description></description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;放假前最后一天看到 &lt;a href=&#34;https://www.exploit-db.com/exploits/46279&#34;&gt;exploit-db&lt;/a&gt; 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow&#34;&gt;app &amp;amp; exp&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>QEMU escape part Ⅰ: qemu 的安装和使用</title>
+      <link>https://bash-c.github.io/post/escaping-the-matrix-1/</link>
+      <pubDate>Mon, 03 Dec 2018 20:04:42 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/escaping-the-matrix-1/</guid>
+      <description>&lt;h2 id=&#34;什么是-qemu&#34;&gt;什么是 qemu&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.qemu.org/&#34;&gt;qemu&lt;/a&gt; 是一款由 &lt;a href=&#34;https://bellard.org/&#34;&gt;Fabrice Bellard&lt;/a&gt; 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。&lt;/p&gt;
+
+&lt;p&gt;qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。&lt;/p&gt;
+
+&lt;p&gt;在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -27,7 +46,7 @@
       <pubDate>Sun, 14 Oct 2018 20:22:25 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/dive-into-tcache/</guid>
-      <description></description>
+      <description>&lt;p&gt;tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see &lt;a href=&#34;https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc&#34;&gt;commit&lt;/a&gt;），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -36,7 +55,7 @@
       <pubDate>Sat, 13 Oct 2018 22:29:11 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/hwb2018-pwn-writeup/</guid>
-      <description></description>
+      <description>&lt;p&gt;跟学校的队伍参加了又一次 &lt;code&gt;?网杯&lt;/code&gt;，记录一下 pwn 的 writeup。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -45,7 +64,7 @@
       <pubDate>Sat, 06 Oct 2018 12:57:09 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-2/</guid>
-      <description></description>
+      <description>&lt;p&gt;这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 &lt;a href=&#34;https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf&#34;&gt;Pratical SMEP bypass techniques on Linux&lt;/a&gt;。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -54,7 +73,7 @@
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
-      <description>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读</description>
+      <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -63,7 +82,7 @@
       <pubDate>Mon, 24 Sep 2018 22:23:06 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/cve-2017-11543-analysis/</guid>
-      <description>最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 tcpdump 有关的 CVE-2017-11543 来分析，参考资料都放在最后了。 Overview 漏洞软件 tcpdump 版本：4.9.0 1 2 3</description>
+      <description>&lt;p&gt;最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 &lt;code&gt;tcpdump&lt;/code&gt; 有关的 &lt;a href=&#34;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&#34;&gt;CVE-2017-11543&lt;/a&gt; 来分析，参考资料都放在最后了。&lt;/p&gt;</description>
     </item>
     
     <item>
