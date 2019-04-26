@@ -18,7 +18,7 @@
       <pubDate>Wed, 03 Oct 2018 19:50:41 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
-      <description></description>
+      <description>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。 Basic Knowledge 主要参考了 Linux Kernel Exploitation，另外强力建议阅读</description>
     </item>
     
     <item>

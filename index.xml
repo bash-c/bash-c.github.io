@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>localhost - Done with development, it&#39;s time to pwn.</title>
@@ -3872,7 +3873,9 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
       
-        <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
+        <description>
+
+&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;
 
 &lt;h2 id=&#34;basic-knowledge&#34;&gt;Basic Knowledge&lt;/h2&gt;
 
@@ -6397,7 +6400,8 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 
 &lt;p&gt;&lt;a href=&#34;https://veritas501.space/2018/06/05/qwb2018%20core/&#34;&gt;https://veritas501.space/2018/06/05/qwb2018%20core/&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;a href=&#34;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&#34;&gt;http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html&lt;/a&gt;&lt;/p&gt;
+</description>
       
     </item>
     
@@ -19469,14 +19473,14 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt; and a security researcher in &lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech.&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Distro: After almost 4-year full-time use of linux(ubuntu, deepin, manjaro, mint&amp;hellip;), I finally turn to windows 10&lt;/li&gt;
-&lt;li&gt;Laptop: ThinkPad X1 Carbon&lt;/li&gt;
-&lt;li&gt;Vim or Emacs: Vim&lt;/li&gt;
-&lt;li&gt;zsh or fish: Neither, now I use powershell&lt;/li&gt;
-&lt;li&gt;Tabs or spaces: spaces&lt;/li&gt;
-&lt;li&gt;Coffee or tea: both&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Distro&lt;/strong&gt;: After almost 4-year full-time use of linux(ubuntu, deepin, manjaro, mint&amp;hellip;), I finally turn to windows 10&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Laptop&lt;/strong&gt;: ThinkPad X1 Carbon&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Vim or Emacs&lt;/strong&gt;: Vim&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;zsh or fish&lt;/strong&gt;: Neither, now I use powershell&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tabs or spaces&lt;/strong&gt;: spaces&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Coffee or tea&lt;/strong&gt;: both&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;Relationship status: In love&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Relationship status&lt;/strong&gt;: In love&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Like:&lt;/p&gt;
 
