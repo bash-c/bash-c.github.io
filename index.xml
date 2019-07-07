@@ -19942,15 +19942,22 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 
 &lt;h2 id=&#34;about-me&#34;&gt;About me&lt;/h2&gt;
 
-&lt;p&gt;&lt;em&gt;An undergraduate in &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt; and a security researcher in &lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech.&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;security researcher in &lt;a href=&#34;https://www.chaitin.cn/zh/&#34;&gt;Chaitin Tech.&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Distro&lt;/strong&gt;: After almost 4-year full-time use of linux(ubuntu, deepin, manjaro, mint&amp;hellip;), I finally turn to windows 10&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Laptop&lt;/strong&gt;: ThinkPad X1 Carbon&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Vim or Emacs&lt;/strong&gt;: Vim&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;zsh or fish&lt;/strong&gt;: Neither, now I use powershell&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Tabs or spaces&lt;/strong&gt;: spaces&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Coffee or tea&lt;/strong&gt;: both&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Bachelor from &lt;a href=&#34;http://www.bit.edu.cn&#34;&gt;Beijing Institute of Technology&lt;/a&gt; (2015-1019)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Distro&lt;/strong&gt;: After almost 4-year full-time use of linux(ubuntu, deepin, manjaro, mint&amp;hellip;), I finally turn to windows 10&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Laptop&lt;/strong&gt;: ThinkPad X1 Carbon&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Vim or Emacs&lt;/strong&gt;: Vim&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;zsh or fish&lt;/strong&gt;: Neither, now I use powershell&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Tabs or spaces&lt;/strong&gt;: spaces&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Coffee or tea&lt;/strong&gt;: both&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Relationship status&lt;/strong&gt;: In love&lt;/p&gt;&lt;/li&gt;
 
@@ -19962,7 +19969,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;CTF &lt;a href=&#34;https://github.com/bash-c/pwn_repo&#34;&gt;pwn&lt;/a&gt;/(&lt;a href=&#34;https://github.com/bash-c/reverse_repo&#34;&gt;reverse&lt;/a&gt;)/(&lt;a href=&#34;https://github.com/bash-c/crypto_repo&#34;&gt;crypto&lt;/a&gt;) games
 
 &lt;ul&gt;
-&lt;li&gt;@10.0.0.55, @北理工的恶龙, @emmmm&lt;/li&gt;
+&lt;li&gt;@10.0.0.55, @北理工的恶龙, @emmmm, @0x300&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;python/shell/assembly/(javascript)&lt;/li&gt;
 &lt;li&gt;Linux&lt;/li&gt;
