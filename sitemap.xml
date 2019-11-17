@@ -9,7 +9,44 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/perf-in-ctf/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/how2/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/perf/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -18,30 +55,6 @@
     <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/categories/how2/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

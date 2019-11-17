@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Wed, 30 Jan 2019 23:30:42 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 18 Nov 2019 00:22:17 +0800</lastBuildDate>
     
         <atom:link href="https://bash-c.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -65,6 +65,473 @@
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://vang3lis.github.io&#34;&gt;vang3lis&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
+      
+    </item>
+    
+    <item>
+      <title>Pin in CTF? No, Perf in CTF!</title>
+      <link>https://bash-c.github.io/post/perf-in-ctf/</link>
+      <pubDate>Mon, 18 Nov 2019 00:22:17 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/perf-in-ctf/</guid>
+      
+        <description>&lt;h1 id=&#34;pin-in-ctf&#34;&gt;pin-in-CTF&lt;/h1&gt;
+
+&lt;p&gt;十几个月前，在学习 fuzz 时，我接触了 &lt;a href=&#34;https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool&#34;&gt;intel-pin&lt;/a&gt; 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 &lt;a href=&#34;http://m4x.fun/post/pin-in-ctf/&#34;&gt;pin-in-ctf: blog&lt;/a&gt;, &lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-ctf: repo&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;但这种方法缺点也很多:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;动态插桩使得程序的 runtime overhead 成倍增长(~%100)&lt;/li&gt;
+&lt;li&gt;对于比较复杂的程序，尤其是系统调用较多的程序，内核态指令数会占总指令数的很大一部分，影响用户判断&lt;/li&gt;
+&lt;li&gt;pintool 编写相对复杂&lt;/li&gt;
+&lt;li&gt;只能对用户态的程序插桩，对内核态程序插桩需要较大的改动&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;intel-pt-and-perf&#34;&gt;intel-pt and perf&lt;/h1&gt;
+
+&lt;p&gt;半年前在做毕设时，我接触了 &lt;a href=&#34;https://software.intel.com/en-us/blogs/2013/09/18/processor-tracing&#34;&gt;intel-pt&lt;/a&gt; 这个硬件级别的 trace 工具，其同样具有记录程序指令的功能，并且由于直接在硬件层面实现，runtime overhead 可以缩小到惊人的 5%，同时通过用户态的系统分析工具 &lt;a href=&#34;https://perf.wiki.kernel.org/index.php/Main_Page&#34;&gt;perf&lt;/a&gt;，用户也可以相当方便的调用 intel pt 的某些功能。而 perf 也就是本篇文章要介绍的主角。&lt;/p&gt;
+
+&lt;p&gt;前几个月的 oGeek 线上赛中，我有一道 pwn 一道 reverse 的出题任务，本来想打算用 intel-pt 的特性出一道逆向题，但因为时间紧张，构思尚不成熟，不想浪费想法，最终出了另外一道 NSIS script 的题目 &lt;a href=&#34;https://github.com/bash-c/reverse_repo/tree/master/oGeekCTF2019_King%20of%20KOF_sourcecode&#34;&gt;King of KoF&lt;/a&gt;。在昨天的 ASIS Final 2019 的比赛中，遇到了一道题目 &lt;a href=&#34;https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app&#34;&gt;Cursed app&lt;/a&gt;，分析之后觉得使用 perf 解决十分合适，于是终于有了分享 perf-in-ctf 这个想法（&lt;del&gt;并打理要长草的博客&lt;/del&gt;）的机会，接下来进入正文。&lt;/p&gt;
+
+&lt;h2 id=&#34;perf&#34;&gt;perf&lt;/h2&gt;
+
+&lt;p&gt;perf 是 Linux 中分析性能的工具，具有很多强大的功能，详见 &lt;a href=&#34;https://perf.wiki.kernel.org/index.php/Tutorial&#34;&gt;linux perf turtorial&lt;/a&gt;。本篇文章只对其统计指令数的用法进行介绍。&lt;/p&gt;
+
+&lt;p&gt;首先需要安装，以 ubuntu 18.04 为例，直接使用包管理安装：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;sudo apt install linux-tools-common&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;查看功能简介：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;~ perf --version
+perf version &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;.0.21
+~ tldr perf
+
+  perf
+
+  Framework &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; linux performance counter measurements.
+
+  - Display basic performance counter stats &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; a command:
+    perf stat gcc hello.c
+
+  - Display system-wide real &lt;span class=&#34;nb&#34;&gt;time&lt;/span&gt; performance counter profile:
+    sudo perf top
+
+  - Run a &lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt; and record its profile into &lt;span class=&#34;s2&#34;&gt;&amp;#34;perf.data&amp;#34;&lt;/span&gt;:
+    sudo perf record &lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt;
+
+  - Read &lt;span class=&#34;s2&#34;&gt;&amp;#34;perf.data&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;created by perf record&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; and display the profile:
+    sudo perf report&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;这里只对 perf stat 功能进行介绍，参考 tldr 的例子，对 id 这个命令进行性能分析&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;~ sudo perf stat id
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+
+ Performance counter stats &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;id&amp;#39;&lt;/span&gt;:
+
+              &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.71 msec task-clock                &lt;span class=&#34;c1&#34;&gt;#    0.710 CPUs utilized&lt;/span&gt;          
+                 &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;      context-switches          &lt;span class=&#34;c1&#34;&gt;#    0.584 K/sec&lt;/span&gt;                  
+                 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;      cpu-migrations            &lt;span class=&#34;c1&#34;&gt;#    0.000 K/sec&lt;/span&gt;                  
+               &lt;span class=&#34;m&#34;&gt;122&lt;/span&gt;      page-faults               &lt;span class=&#34;c1&#34;&gt;#    0.071 M/sec&lt;/span&gt;                  
+         &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;,244,401      cycles                    &lt;span class=&#34;c1&#34;&gt;#    3.647 GHz&lt;/span&gt;                    
+         &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle&lt;/span&gt;         
+           &lt;span class=&#34;m&#34;&gt;459&lt;/span&gt;,910      branches                  &lt;span class=&#34;c1&#34;&gt;#  268.614 M/sec&lt;/span&gt;                  
+            &lt;span class=&#34;m&#34;&gt;18&lt;/span&gt;,201      branch-misses             &lt;span class=&#34;c1&#34;&gt;#    3.96% of all branches&lt;/span&gt;        
+
+       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;.002412965 seconds &lt;span class=&#34;nb&#34;&gt;time&lt;/span&gt; elapsed
+
+       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;.000000000 seconds user
+       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;.002342000 seconds sys
+
+
+~ &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;其中有指令数这个结果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;...
+         &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle&lt;/span&gt;         
+...&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;通过格式化输出简化显示&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;~ sudo perf stat -x : id
+&lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;.17:msec:task-clock:1167180:100.00:0.721:CPUs utilized
+&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;::context-switches:1167180:100.00:0.000:K/sec
+&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;::cpu-migrations:1167180:100.00:0.000:K/sec
+&lt;span class=&#34;m&#34;&gt;121&lt;/span&gt;::page-faults:1167180:100.00:0.104:M/sec
+&lt;span class=&#34;m&#34;&gt;4243048&lt;/span&gt;::cycles:1208711:100.00:3.635:GHz
+&lt;span class=&#34;m&#34;&gt;2388158&lt;/span&gt;::instructions:1208711:100.00:0.56:insn per cycle
+&lt;span class=&#34;m&#34;&gt;461917&lt;/span&gt;::branches:1208711:100.00:395.755:M/sec
+&lt;span class=&#34;m&#34;&gt;18229&lt;/span&gt;::branch-misses:1208711:100.00:3.95:of all branches
+~ &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;只保留 instructions 这一条结果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;~ sudo perf stat -x : -e instructions id 1&amp;gt;/dev/null
+2359978::instructions:1819500:100.00::&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;只保留用户态的结果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;~ sudo perf stat -x : -e instructions:u id &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null
+&lt;span class=&#34;m&#34;&gt;716210&lt;/span&gt;::instructions:u:1532634:100.00::&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;看到这，看过 pin-in-CTF 的朋友可能已经知道怎么做了，接下来通过 ASIS Final 2019 的 &lt;a href=&#34;https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app&#34;&gt;Cursed app&lt;/a&gt; 这个题目进行举例。&lt;/p&gt;
+
+&lt;h1 id=&#34;perf-in-ctf&#34;&gt;perf-in-CTF&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app&#34;&gt;binary here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;64 位 linux 程序，通过读文件验证结果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Desktop check ./cursed_app.elf 
+./cursed_app.elf: ELF &lt;span class=&#34;m&#34;&gt;64&lt;/span&gt;-bit LSB shared object, x86-64, version &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;SYSV&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;, dynamically linked, interpreter /lib64/l, BuildID&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sha1&lt;span class=&#34;o&#34;&gt;]=&lt;/span&gt;7c0031d8c259457ca7f3bab1c5a5f40269167b5f, stripped
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;*&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;/home/m4x/Desktop/cursed_app.elf&amp;#39;&lt;/span&gt;
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+Desktop ./cursed_app.elf 
+please locate license file, run ./app license_key
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;ASIS{&amp;#34;&lt;/span&gt; &amp;gt; flag &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; ltrace ./cursed_app.elf ./flag
+_setjmp&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x7ffc7e160590, 0x7ffc7e160758, 0x7ffc7e160770, 0x559e6789dbb0&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+fopen&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;./flag&amp;#34;&lt;/span&gt;, &lt;span class=&#34;s2&#34;&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                               &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 0x559e68a2d260
+fseek&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x559e68a2d260, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                     &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+ftell&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x559e68a2d260, 0x559e68a2d340, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                        &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+fseek&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x559e68a2d260, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                     &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+malloc&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                                          &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 0x559e68a2e4a0
+fread&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x559e68a2e4a0, &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;, 0x559e68a2d260&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                        &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+fclose&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;0x559e68a2d260&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                             &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+puts&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;Bummer! You got the wrong flag!!&amp;#34;&lt;/span&gt;...Bummer! You got the wrong flag!!
+&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                        &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;33&lt;/span&gt;
++++ exited &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;status &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; +++&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;根据题目描述&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;Description:
+If we want to say 100, should we start at 1 and count until 100?
+
+sha256(flag) = dd791346264fc02ddcd2466b9e8b2b2bba8057d61fbbc824d25c7957c127250d&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;已经可以猜到没必要逆清楚程序的整个逻辑。&lt;/p&gt;
+
+&lt;p&gt;使用 IDA 分析程序，发现程序的逻辑很简单&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://ww1.sinaimg.cn/large/006AWYXBgy1g91jwfxiahj30jl13oaam.jpg&#34; alt=&#34;ida.png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;读取文件内容后有多个判断，都通过才会执行到&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-assembly&#34; data-lang=&#34;assembly&#34;&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-assembly&#34; data-lang=&#34;assembly&#34;&gt;.text:0000000000001F3B lea     rdi, s          ; &amp;#34;Congratz! You got the correct flag!!&amp;#34;
+.text:0000000000001F42 call    _puts
+.text:0000000000001F47 mov     [rsp+0F8h+var_F4]&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;简单调试了几个判断，发现是对文件内容的逐字节判断，因此必然每次输入的正确 flag 长度越长，程序执行的指令数就越多，可以利用这个特性用侧信道的方法得到 flag。&lt;/p&gt;
+
+&lt;p&gt;先使用 perf 验证可行性，已经知道 flag 格式为 &lt;code&gt;ASIS{this_is_flag}&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167612&lt;/span&gt;::instructions:u:1000300:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167614&lt;/span&gt;::instructions:u:1237218:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167614&lt;/span&gt;::instructions:u:967846:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;A&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167628&lt;/span&gt;::instructions:u:934691:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;A0&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167631&lt;/span&gt;::instructions:u:1034616:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;A1&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167629&lt;/span&gt;::instructions:u:1019846:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;A2&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167630&lt;/span&gt;::instructions:u:504064:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;AS&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167648&lt;/span&gt;::instructions:u:955516:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;AS0&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167645&lt;/span&gt;::instructions:u:914409:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;AS1&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167647&lt;/span&gt;::instructions:u:2748495:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;AS2&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167646&lt;/span&gt;::instructions:u:677381:100.00::
+Desktop &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -n &lt;span class=&#34;s2&#34;&gt;&amp;#34;ASI&amp;#34;&lt;/span&gt; &amp;gt; ./license &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; perf stat -x : -e instructions:u ./cursed_app.elf ./license &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&amp;gt;/dev/null 
+&lt;span class=&#34;m&#34;&gt;167664&lt;/span&gt;::instructions:u:564774:100.00::&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;可以看到，当我们猜到下一位正确的 flag 时，指令数会有较为明显的增长（这里只保留用户态的 instructions 提高稳定性）。&lt;/p&gt;
+
+&lt;p&gt;把上述过程封装为脚本，运行即可得到 flag&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/reverse_repo/blob/master/ASIS_Final_2019_cursed_app/solve.py&#34;&gt;exploit here&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;ch&#34;&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# -*- coding: utf-8 -*-&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# ASIS{y0u_c4N_s33_7h15_15_34513R_7h4n_Y0u_7h1nk_r16h7?__!!!}&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;subprocess&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;string&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;sys&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;command&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&amp;gt;/dev/null&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;ASIS{&amp;#39;&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;write_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cont&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;./license&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;wb&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cont&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;write_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;Desktop cat license
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;ASIS{
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;Desktop perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&amp;gt;/dev/null
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;167689::instructions:u:377798:100.00::
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;ins_count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;167689&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;bp&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;delta&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;count_chr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;printable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;write_file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;target&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Popen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;command&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stdout&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PIPE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stdin&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PIPE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stderr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;STDOUT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;shell&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;bp&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;target_output&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;communicate&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;#  import pdb;pdb.set_trace()&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;#  print(target_output)&lt;/span&gt;
+		&lt;span class=&#34;n&#34;&gt;instructions&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;target_output&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ins_count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;instructions&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ins_count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;count_chr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;delta&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;instructions&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ins_count&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;ins_count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;instructions&lt;/span&gt;
+            &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;count_chr&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;delta&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;整个过程耗时不到 1 分钟，远远快于使用 pintool 的方法。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;这里使用了统计用户态总指令数这种相对粗糙的方法，有兴趣的同学还可以试试精确的只统计某种 pt packet（tnt, tip 等）数目来达到更为精准的结果。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;summary&#34;&gt;summary&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;pin-in-CTF is dead, I prefer perf.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;使用 perf 来解决这类问题有以下优点：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;基于硬件，runtime overhead &amp;lt; 5%&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可以通过只保留用户态指令或者只保留某种特定的 pt 数据包来达到更精确的效果&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工具较为成熟，直接使用即可&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;intel pt 本身就是内核模块，可以用于内核态&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前文简单的展示了如何使用 perf 这个工具解决一部分 CTF reverse challenge，但也仅仅展现了 perf/intel pt 这个强大工具的冰山一角，更多的高级用法和 trick 还需要大家一起学习和脑洞。&lt;/p&gt;
+
+&lt;h1 id=&#34;reference&#34;&gt;reference&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://perf.wiki.kernel.org/index.php/Main_Page&#34;&gt;https://perf.wiki.kernel.org/index.php/Main_Page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Perf_(Linux&#34;&gt;https://en.wikipedia.org/wiki/Perf_(Linux&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;</description>
       
     </item>
     
@@ -19969,9 +20436,9 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;CTF &lt;a href=&#34;https://github.com/bash-c/pwn_repo&#34;&gt;pwn&lt;/a&gt;/(&lt;a href=&#34;https://github.com/bash-c/reverse_repo&#34;&gt;reverse&lt;/a&gt;)/(&lt;a href=&#34;https://github.com/bash-c/crypto_repo&#34;&gt;crypto&lt;/a&gt;) games
 
 &lt;ul&gt;
-&lt;li&gt;@10.0.0.55, @北理工的恶龙, @emmmm, @0x300&lt;/li&gt;
+&lt;li&gt;@10.0.0.55, @北理工的恶龙, @emmmm, @0x300, @Tea Deliverers&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;python/shell/assembly/(javascript)&lt;/li&gt;
+&lt;li&gt;python/shell/assembly/go/(javascript)&lt;/li&gt;
 &lt;li&gt;Linux&lt;/li&gt;
 &lt;li&gt;cool and challenging stuff&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -19987,6 +20454,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;li&gt;one of active contributors of &lt;a href=&#34;https://github.com/ctf-wiki&#34;&gt;ctf-wiki/ctf-tools/ctf-challenges&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/main_arena_offset&#34;&gt;main_arena_offset&lt;/a&gt;: a shell script to get main_arena offset quickly in CTF games.&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-CTF&lt;/a&gt;: 用一种很偷鸡的技巧解决一些 CTF 中的 reverse 类题目&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://m4x.fun/post/perf-in-ctf/&#34;&gt;perf-in-CTF&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;intership-experience&#34;&gt;Intership experience&lt;/h2&gt;
@@ -20009,7 +20477,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;ul&gt;
 &lt;li&gt;Static site generator: &lt;a href=&#34;https://gohugo.io&#34;&gt;hugo&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Theme: &lt;a href=&#34;https://github.com/xianmin/hugo-theme-jane&#34;&gt;jane&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/&#34;&gt;My old blog deployed on cnblog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/&#34;&gt;My former blog deployed on cnblog&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       

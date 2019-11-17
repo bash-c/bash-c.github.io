@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Pin in CTF? No, Perf in CTF! - localhost - Done with development, it&#39;s time to pwn.</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="M4x" />
+  <meta name="description" content="pin-in-CTF 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。
+" />
+<meta name="keywords" content="perf" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.55.2" />
+
+
+<link rel="canonical" href="https://bash-c.github.io/post/perf-in-ctf/" />
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.19ae5a432863a072ec64433bb1020bd6d3401129f87d6f2ad5af3bcfd84168a1.css" integrity="sha256-Ga5aQyhjoHLsZEM7sQIL1tNAESn4fW8q1a87z9hBaKE=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Pin in CTF? No, Perf in CTF!" />
+<meta property="og:description" content="pin-in-CTF
+
+十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://bash-c.github.io/post/perf-in-ctf/" />
+<meta property="article:published_time" content="2019-11-18T00:22:17&#43;08:00"/>
+<meta property="article:modified_time" content="2019-11-18T00:22:17&#43;08:00"/>
+
+<meta itemprop="name" content="Pin in CTF? No, Perf in CTF!">
+<meta itemprop="description" content="pin-in-CTF
+
+十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。">
+
+
+<meta itemprop="datePublished" content="2019-11-18T00:22:17&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-18T00:22:17&#43;08:00" />
+<meta itemprop="wordCount" content="0">
+
+
+
+<meta itemprop="keywords" content="perf," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pin in CTF? No, Perf in CTF!"/>
+<meta name="twitter:description" content="pin-in-CTF
+
+十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"># </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd ~</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l /post</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">less /tags</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">tree /categories</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">ping friends</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami</a>
+          
+        
+      </li>
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      # 
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/">cd ~</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/post/">ls -l /post</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/tags/">less /tags</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/categories/">tree /categories</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/link/">ping friends</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://bash-c.github.io/aboutme/">whoami</a>
+          
+
+        
+
+      </li>
+    
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Pin in CTF? No, Perf in CTF!</h1>
+      
+      <div class="post-meta">
+        <time datetime="2019-11-18" class="post-time">
+          2019-11-18
+        </time>
+        <div class="post-category">
+            <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
+            
+          </div>
+        <span class="more-meta"> 0 words </span>
+          <span class="more-meta"> 0 min read </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Table of Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#pin-in-ctf">pin-in-CTF</a></li>
+<li><a href="#intel-pt-and-perf">intel-pt and perf</a>
+<ul>
+<li><a href="#perf">perf</a></li>
+</ul></li>
+<li><a href="#perf-in-ctf">perf-in-CTF</a></li>
+<li><a href="#summary">summary</a></li>
+<li><a href="#reference">reference</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h1 id="pin-in-ctf">pin-in-CTF</h1>
+
+<p>十几个月前，在学习 fuzz 时，我接触了 <a href="https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool">intel-pin</a> 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 <a href="http://m4x.fun/post/pin-in-ctf/">pin-in-ctf: blog</a>, <a href="https://github.com/bash-c/pin-in-CTF">pin-in-ctf: repo</a>。</p>
+
+<p>但这种方法缺点也很多:</p>
+
+<ul>
+<li>动态插桩使得程序的 runtime overhead 成倍增长(~%100)</li>
+<li>对于比较复杂的程序，尤其是系统调用较多的程序，内核态指令数会占总指令数的很大一部分，影响用户判断</li>
+<li>pintool 编写相对复杂</li>
+<li>只能对用户态的程序插桩，对内核态程序插桩需要较大的改动</li>
+</ul>
+
+<h1 id="intel-pt-and-perf">intel-pt and perf</h1>
+
+<p>半年前在做毕设时，我接触了 <a href="https://software.intel.com/en-us/blogs/2013/09/18/processor-tracing">intel-pt</a> 这个硬件级别的 trace 工具，其同样具有记录程序指令的功能，并且由于直接在硬件层面实现，runtime overhead 可以缩小到惊人的 5%，同时通过用户态的系统分析工具 <a href="https://perf.wiki.kernel.org/index.php/Main_Page">perf</a>，用户也可以相当方便的调用 intel pt 的某些功能。而 perf 也就是本篇文章要介绍的主角。</p>
+
+<p>前几个月的 oGeek 线上赛中，我有一道 pwn 一道 reverse 的出题任务，本来想打算用 intel-pt 的特性出一道逆向题，但因为时间紧张，构思尚不成熟，不想浪费想法，最终出了另外一道 NSIS script 的题目 <a href="https://github.com/bash-c/reverse_repo/tree/master/oGeekCTF2019_King%20of%20KOF_sourcecode">King of KoF</a>。在昨天的 ASIS Final 2019 的比赛中，遇到了一道题目 <a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">Cursed app</a>，分析之后觉得使用 perf 解决十分合适，于是终于有了分享 perf-in-ctf 这个想法（<del>并打理要长草的博客</del>）的机会，接下来进入正文。</p>
+
+<h2 id="perf">perf</h2>
+
+<p>perf 是 Linux 中分析性能的工具，具有很多强大的功能，详见 <a href="https://perf.wiki.kernel.org/index.php/Tutorial">linux perf turtorial</a>。本篇文章只对其统计指令数的用法进行介绍。</p>
+
+<p>首先需要安装，以 ubuntu 18.04 为例，直接使用包管理安装：</p>
+
+<blockquote>
+<p>sudo apt install linux-tools-common</p>
+</blockquote>
+
+<p>查看功能简介：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ perf --version
+perf version <span class="m">5</span>.0.21
+~ tldr perf
+
+  perf
+
+  Framework <span class="k">for</span> linux performance counter measurements.
+
+  - Display basic performance counter stats <span class="k">for</span> a command:
+    perf stat gcc hello.c
+
+  - Display system-wide real <span class="nb">time</span> performance counter profile:
+    sudo perf top
+
+  - Run a <span class="nb">command</span> and record its profile into <span class="s2">&#34;perf.data&#34;</span>:
+    sudo perf record <span class="nb">command</span>
+
+  - Read <span class="s2">&#34;perf.data&#34;</span> <span class="o">(</span>created by perf record<span class="o">)</span> and display the profile:
+    sudo perf report</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里只对 perf stat 功能进行介绍，参考 tldr 的例子，对 id 这个命令进行性能分析</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat id
+<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
+
+ Performance counter stats <span class="k">for</span> <span class="s1">&#39;id&#39;</span>:
+
+              <span class="m">1</span>.71 msec task-clock                <span class="c1">#    0.710 CPUs utilized</span>          
+                 <span class="m">1</span>      context-switches          <span class="c1">#    0.584 K/sec</span>                  
+                 <span class="m">0</span>      cpu-migrations            <span class="c1">#    0.000 K/sec</span>                  
+               <span class="m">122</span>      page-faults               <span class="c1">#    0.071 M/sec</span>                  
+         <span class="m">6</span>,244,401      cycles                    <span class="c1">#    3.647 GHz</span>                    
+         <span class="m">2</span>,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
+           <span class="m">459</span>,910      branches                  <span class="c1">#  268.614 M/sec</span>                  
+            <span class="m">18</span>,201      branch-misses             <span class="c1">#    3.96% of all branches</span>        
+
+       <span class="m">0</span>.002412965 seconds <span class="nb">time</span> elapsed
+
+       <span class="m">0</span>.000000000 seconds user
+       <span class="m">0</span>.002342000 seconds sys
+
+
+~ </code></pre></td></tr></table>
+</div>
+</div>
+<p>其中有指令数这个结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+         <span class="m">2</span>,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
+...</code></pre></td></tr></table>
+</div>
+</div>
+<p>通过格式化输出简化显示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat -x : id
+<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
+<span class="m">1</span>.17:msec:task-clock:1167180:100.00:0.721:CPUs utilized
+<span class="m">0</span>::context-switches:1167180:100.00:0.000:K/sec
+<span class="m">0</span>::cpu-migrations:1167180:100.00:0.000:K/sec
+<span class="m">121</span>::page-faults:1167180:100.00:0.104:M/sec
+<span class="m">4243048</span>::cycles:1208711:100.00:3.635:GHz
+<span class="m">2388158</span>::instructions:1208711:100.00:0.56:insn per cycle
+<span class="m">461917</span>::branches:1208711:100.00:395.755:M/sec
+<span class="m">18229</span>::branch-misses:1208711:100.00:3.95:of all branches
+~ </code></pre></td></tr></table>
+</div>
+</div>
+<p>只保留 instructions 这一条结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">~ sudo perf stat -x : -e instructions id 1&gt;/dev/null
+2359978::instructions:1819500:100.00::</pre></td></tr></table>
+</div>
+</div>
+<p>只保留用户态的结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat -x : -e instructions:u id <span class="m">1</span>&gt;/dev/null
+<span class="m">716210</span>::instructions:u:1532634:100.00::</code></pre></td></tr></table>
+</div>
+</div>
+<p>看到这，看过 pin-in-CTF 的朋友可能已经知道怎么做了，接下来通过 ASIS Final 2019 的 <a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">Cursed app</a> 这个题目进行举例。</p>
+
+<h1 id="perf-in-ctf">perf-in-CTF</h1>
+
+<p><a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">binary here</a></p>
+
+<p>64 位 linux 程序，通过读文件验证结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Desktop check ./cursed_app.elf 
+./cursed_app.elf: ELF <span class="m">64</span>-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/l, BuildID<span class="o">[</span>sha1<span class="o">]=</span>7c0031d8c259457ca7f3bab1c5a5f40269167b5f, stripped
+<span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/Desktop/cursed_app.elf&#39;</span>
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+Desktop ./cursed_app.elf 
+please locate license file, run ./app license_key
+Desktop <span class="nb">echo</span> <span class="s2">&#34;ASIS{&#34;</span> &gt; flag <span class="o">&amp;&amp;</span> ltrace ./cursed_app.elf ./flag
+_setjmp<span class="o">(</span>0x7ffc7e160590, 0x7ffc7e160758, 0x7ffc7e160770, 0x559e6789dbb0<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+fopen<span class="o">(</span><span class="s2">&#34;./flag&#34;</span>, <span class="s2">&#34;r&#34;</span><span class="o">)</span>                                               <span class="o">=</span> 0x559e68a2d260
+fseek<span class="o">(</span>0x559e68a2d260, <span class="m">0</span>, <span class="m">2</span>, <span class="m">0</span><span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
+ftell<span class="o">(</span>0x559e68a2d260, 0x559e68a2d340, <span class="m">0</span>, <span class="m">6</span><span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
+fseek<span class="o">(</span>0x559e68a2d260, <span class="m">0</span>, <span class="m">0</span>, <span class="m">0</span><span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
+malloc<span class="o">(</span><span class="m">6</span><span class="o">)</span>                                                          <span class="o">=</span> 0x559e68a2e4a0
+fread<span class="o">(</span>0x559e68a2e4a0, <span class="m">1</span>, <span class="m">6</span>, 0x559e68a2d260<span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
+fclose<span class="o">(</span>0x559e68a2d260<span class="o">)</span>                                             <span class="o">=</span> <span class="m">0</span>
+puts<span class="o">(</span><span class="s2">&#34;Bummer! You got the wrong flag!!&#34;</span>...Bummer! You got the wrong flag!!
+<span class="o">)</span>                        <span class="o">=</span> <span class="m">33</span>
++++ exited <span class="o">(</span>status <span class="m">0</span><span class="o">)</span> +++</code></pre></td></tr></table>
+</div>
+</div>
+<p>根据题目描述</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">Description:
+If we want to say 100, should we start at 1 and count until 100?
+
+sha256(flag) = dd791346264fc02ddcd2466b9e8b2b2bba8057d61fbbc824d25c7957c127250d</pre></td></tr></table>
+</div>
+</div>
+<p>已经可以猜到没必要逆清楚程序的整个逻辑。</p>
+
+<p>使用 IDA 分析程序，发现程序的逻辑很简单</p>
+
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBgy1g91jwfxiahj30jl13oaam.jpg" alt="ida.png" /></p>
+
+<p>读取文件内容后有多个判断，都通过才会执行到</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:0000000000001F3B lea     rdi, s          ; &#34;Congratz! You got the correct flag!!&#34;
+.text:0000000000001F42 call    _puts
+.text:0000000000001F47 mov     [rsp+0F8h+var_F4]</code></pre></td></tr></table>
+</div>
+</div>
+<p>简单调试了几个判断，发现是对文件内容的逐字节判断，因此必然每次输入的正确 flag 长度越长，程序执行的指令数就越多，可以利用这个特性用侧信道的方法得到 flag。</p>
+
+<p>先使用 perf 验证可行性，已经知道 flag 格式为 <code>ASIS{this_is_flag}</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">Desktop <span class="nb">echo</span> -n <span class="s2">&#34;0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167612</span>::instructions:u:1000300:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167614</span>::instructions:u:1237218:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167614</span>::instructions:u:967846:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167628</span>::instructions:u:934691:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167631</span>::instructions:u:1034616:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167629</span>::instructions:u:1019846:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167630</span>::instructions:u:504064:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167648</span>::instructions:u:955516:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167645</span>::instructions:u:914409:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167647</span>::instructions:u:2748495:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167646</span>::instructions:u:677381:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
+<span class="m">167664</span>::instructions:u:564774:100.00::</code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看到，当我们猜到下一位正确的 flag 时，指令数会有较为明显的增长（这里只保留用户态的 instructions 提高稳定性）。</p>
+
+<p>把上述过程封装为脚本，运行即可得到 flag</p>
+
+<p><a href="https://github.com/bash-c/reverse_repo/blob/master/ASIS_Final_2019_cursed_app/solve.py">exploit here</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># ASIS{y0u_c4N_s33_7h15_15_34513R_7h4n_Y0u_7h1nk_r16h7?__!!!}</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">command</span> <span class="o">=</span> <span class="s2">&#34;perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null&#34;</span>
+
+<span class="n">flag</span> <span class="o">=</span> <span class="s1">&#39;ASIS{&#39;</span>
+
+<span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">cont</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;./license&#34;</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cont</span><span class="p">)</span>
+
+<span class="n">write_file</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+<span class="s1">&#39;&#39;&#39;
+</span><span class="s1">Desktop cat license
+</span><span class="s1">ASIS{
+</span><span class="s1">Desktop perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null
+</span><span class="s1">167689::instructions:u:377798:100.00::
+</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="n">ins_count</span> <span class="o">=</span> <span class="mi">167689</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">count_chr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">printable</span><span class="p">:</span>
+        <span class="n">write_file</span><span class="p">(</span><span class="n">flag</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+		<span class="n">target</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="n">target_output</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="c1">#  import pdb;pdb.set_trace()</span>
+        <span class="c1">#  print(target_output)</span>
+		<span class="n">instructions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">if</span> <span class="n">ins_count</span> <span class="o">+</span> <span class="mi">20</span> <span class="o">&gt;</span> <span class="n">instructions</span> <span class="o">&gt;</span> <span class="n">ins_count</span> <span class="o">+</span> <span class="mi">10</span><span class="p">:</span>
+			<span class="n">count_chr</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">instructions</span> <span class="o">-</span> <span class="n">ins_count</span>
+			<span class="n">ins_count</span> <span class="o">=</span> <span class="n">instructions</span>
+            <span class="k">break</span>
+	<span class="n">flag</span> <span class="o">+=</span> <span class="n">count_chr</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>整个过程耗时不到 1 分钟，远远快于使用 pintool 的方法。</p>
+
+<blockquote>
+<p>这里使用了统计用户态总指令数这种相对粗糙的方法，有兴趣的同学还可以试试精确的只统计某种 pt packet（tnt, tip 等）数目来达到更为精准的结果。</p>
+</blockquote>
+
+<h1 id="summary">summary</h1>
+
+<blockquote>
+<p>pin-in-CTF is dead, I prefer perf.</p>
+</blockquote>
+
+<p>使用 perf 来解决这类问题有以下优点：</p>
+
+<ul>
+<li><strong>基于硬件，runtime overhead &lt; 5%</strong></li>
+<li><strong>可以通过只保留用户态指令或者只保留某种特定的 pt 数据包来达到更精确的效果</strong></li>
+<li><strong>工具较为成熟，直接使用即可</strong></li>
+<li><strong>intel pt 本身就是内核模块，可以用于内核态</strong></li>
+</ul>
+
+<p>前文简单的展示了如何使用 perf 这个工具解决一部分 CTF reverse challenge，但也仅仅展现了 perf/intel pt 这个强大工具的冰山一角，更多的高级用法和 trick 还需要大家一起学习和脑洞。</p>
+
+<h1 id="reference">reference</h1>
+
+<ul>
+<li><a href="https://perf.wiki.kernel.org/index.php/Main_Page">https://perf.wiki.kernel.org/index.php/Main_Page</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Perf_(Linux">https://en.wikipedia.org/wiki/Perf_(Linux</a>)</li>
+</ul>
+    </div>
+
+    
+    
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://bash-c.github.io/tags/perf/">perf</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/">
+            <span class="next-text nav-default">HTML5 Video Player 1.2.5 缓冲区溢出分析</span>
+            <span class="prev-text nav-mobile">Next</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "bash-c/bash-c.github.io"
+            issue-term="pathname"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+  
+    
+
+
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="icon-links">
+  
+  
+    <a href="mailto:I_am_M4x@protonmail.com" rel="me noopener" class="iconfont"
+      title="email" >
+      <svg class="icon" viewBox="0 0 1451 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M664.781909 681.472759 0 97.881301C0 3.997201 71.046997 0 71.046997 0L474.477909 0 961.649408 0 1361.641813 0C1361.641813 0 1432.688811 3.997201 1432.688811 97.881301L771.345323 681.472759C771.345323 681.472759 764.482731 685.154773 753.594283 688.65053L753.594283 688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858L682.561621 688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759L664.781909 681.472759ZM718.063616 811.603883C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633 0 212.052267 0 212.052267L0 942.809523C0 942.809523 0 1024 83.726336 1024L682.532949 1024 753.579947 1024 1348.948139 1024C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523L1432.688811 212.052267C1432.688811 212.052267 893.138176 701.759633 817.019477 767.734955 777.248 802.205449 742.347691 811.03081 718.063616 811.603883L718.063616 811.603883Z"></path>
+</svg>
+
+    </a>
+  
+    <a href="http://github.com/bash-c" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://bash-c.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+       -
+    2019
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        M4x
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

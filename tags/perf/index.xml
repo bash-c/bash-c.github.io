@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>perf on localhost - Done with development, it&#39;s time to pwn.</title>
+    <link>https://bash-c.github.io/tags/perf/</link>
+    <description>Recent content in perf on localhost - Done with development, it&#39;s time to pwn.</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>M4x</copyright>
+    <lastBuildDate>Mon, 18 Nov 2019 00:22:17 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/perf/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Pin in CTF? No, Perf in CTF!</title>
+      <link>https://bash-c.github.io/post/perf-in-ctf/</link>
+      <pubDate>Mon, 18 Nov 2019 00:22:17 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/perf-in-ctf/</guid>
+      <description>&lt;h1 id=&#34;pin-in-ctf&#34;&gt;pin-in-CTF&lt;/h1&gt;
+
+&lt;p&gt;十几个月前，在学习 fuzz 时，我接触了 &lt;a href=&#34;https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool&#34;&gt;intel-pin&lt;/a&gt; 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 &lt;a href=&#34;http://m4x.fun/post/pin-in-ctf/&#34;&gt;pin-in-ctf: blog&lt;/a&gt;, &lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-ctf: repo&lt;/a&gt;。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
