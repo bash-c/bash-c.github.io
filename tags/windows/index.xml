@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>windows on localhost - Done with development, it&#39;s time to pwn.</title>
@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Wed, 30 Jan 2019 23:30:42 +0800</lastBuildDate>
-    
-	<atom:link href="https://bash-c.github.io/tags/windows/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 30 Jan 2019 23:30:42 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/windows/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HTML5 Video Player 1.2.5 缓冲区溢出分析</title>
       <link>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</link>
@@ -20,7 +16,6 @@
       <guid>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;放假前最后一天看到 &lt;a href=&#34;https://www.exploit-db.com/exploits/46279&#34;&gt;exploit-db&lt;/a&gt; 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。&lt;/p&gt;
-
 &lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow&#34;&gt;app &amp;amp; exp&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>

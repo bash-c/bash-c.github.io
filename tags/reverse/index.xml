@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>reverse on localhost - Done with development, it&#39;s time to pwn.</title>
@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate>
-    
-	<atom:link href="https://bash-c.github.io/tags/reverse/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 03 Jul 2018 12:16:10 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/reverse/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reverse is Multiplex, You Need Pintools</title>
       <link>https://bash-c.github.io/post/pin-in-ctf/</link>
@@ -27,7 +23,7 @@
       <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/hackme.inndy-writeup/</guid>
-      <description></description>
+      <description>推荐一下hackme.inndy，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题</description>
     </item>
     
     <item>

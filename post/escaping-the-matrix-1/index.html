@@ -35,7 +35,7 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/escaping-the-matrix-1/" />
@@ -62,29 +62,20 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
 
 <meta property="og:title" content="QEMU escape part Ⅰ: qemu 的安装和使用" />
 <meta property="og:description" content="什么是 qemu
-
 qemu 是一款由 Fabrice Bellard 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。
-
 qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。
-
 在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/escaping-the-matrix-1/" />
-<meta property="article:published_time" content="2018-12-03T20:04:42&#43;08:00"/>
-<meta property="article:modified_time" content="2018-12-03T20:04:42&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-12-03T20:04:42+08:00" />
+<meta property="article:modified_time" content="2018-12-03T20:04:42+08:00" />
 <meta itemprop="name" content="QEMU escape part Ⅰ: qemu 的安装和使用">
 <meta itemprop="description" content="什么是 qemu
-
 qemu 是一款由 Fabrice Bellard 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。
-
 qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。
-
 在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。">
-
-
-<meta itemprop="datePublished" content="2018-12-03T20:04:42&#43;08:00" />
-<meta itemprop="dateModified" content="2018-12-03T20:04:42&#43;08:00" />
+<meta itemprop="datePublished" content="2018-12-03T20:04:42+08:00" />
+<meta itemprop="dateModified" content="2018-12-03T20:04:42+08:00" />
 <meta itemprop="wordCount" content="2208">
 
 
@@ -93,11 +84,8 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="QEMU escape part Ⅰ: qemu 的安装和使用"/>
 <meta name="twitter:description" content="什么是 qemu
-
 qemu 是一款由 Fabrice Bellard 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。
-
 qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。
-
 在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。"/>
 
 <!--[if lte IE 9]>
@@ -359,31 +347,27 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#什么是-qemu">什么是 qemu</a>
-<ul>
-<li><a href="#运行模式">运行模式</a>
-<ul>
-<li><a href="#user-mode-emulation">User-mode emulation</a></li>
-<li><a href="#system-emulation">System emulation</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#安装-qemu">安装 qemu</a>
-<ul>
-<li><a href="#使用包管理">使用包管理</a></li>
-<li><a href="#从源码编译">从源码编译</a></li>
-</ul></li>
-<li><a href="#使用-qemu">使用 qemu</a></li>
-<li><a href="#如何-debug">如何 debug</a>
-<ul>
-<li><a href="#调试-qemu">调试 qemu</a></li>
-<li><a href="#调试-qemu-中的进程">调试 qemu 中的进程</a></li>
-</ul></li>
-<li><a href="#reference">Reference</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#什么是-qemu">什么是 qemu</a>
+      <ul>
+        <li><a href="#运行模式">运行模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#安装-qemu">安装 qemu</a>
+      <ul>
+        <li><a href="#使用包管理">使用包管理</a></li>
+        <li><a href="#从源码编译">从源码编译</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用-qemu">使用 qemu</a></li>
+    <li><a href="#如何-debug">如何 debug</a>
+      <ul>
+        <li><a href="#调试-qemu">调试 qemu</a></li>
+        <li><a href="#调试-qemu-中的进程">调试 qemu 中的进程</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -391,37 +375,24 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
     
     <div class="post-content">
       <h2 id="什么是-qemu">什么是 qemu</h2>
-
 <p><a href="https://www.qemu.org/">qemu</a> 是一款由 <a href="https://bellard.org/">Fabrice Bellard</a> 等人编写的可以执行硬件虚拟化的开源托管虚拟机，具有运行速度快（配合 kvm），跨平台等优点。</p>
-
 <p>qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型，使其能够运行多种未修改的客户机OS。</p>
-
 <p>在 ctf 比赛中，qemu 多用于启动异架构(mips, arm 等)的程序、kernel 和 bootloader 等二进制程序，有时也会作为要 pwn 掉的目标。</p>
-
 <h3 id="运行模式">运行模式</h3>
-
 <p>qemu 有多种运行模式，常用的有 <code>User-mode emulation</code> 和 <code>System emulation</code> 两种。</p>
-
 <h4 id="user-mode-emulation">User-mode emulation</h4>
-
 <p>用户模式，在这个模式下，qemu 可以运行单个其他指令集的 linux 或者 macOS/darwin 程序，<strong>允许了为一种架构编译的程序在另外一种架构上面运行</strong>。</p>
-
 <h4 id="system-emulation">System emulation</h4>
-
 <p>系统模式，在这个模式下，qemu 将模拟一个完整的计算机系统，包括外围设备。</p>
-
 <blockquote>
 <p>之后将分别为两种情况举例</p>
 </blockquote>
-
 <h2 id="安装-qemu">安装 qemu</h2>
-
 <h3 id="使用包管理">使用包管理</h3>
-
 <p>一般情况下，如无特殊需要（如为了运行某个 CTF 比赛中的异架构程序或者 kernel）直接使用对应的包管理直接安装即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -444,84 +415,78 @@ qemu 通过动态的二进制转化模拟 CPU，并且提供一组设备模型�
 
     RHEL/CentOS: yum install qemu-kvm
 
-    SUSE: zypper install qemu</code></pre></td></tr></table>
+    SUSE: zypper install qemu
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>这里只说明在 linux 下的安装过程，其他系统的安装过程请参考 <a href="https://www.qemu.org/download/">官方网站</a></p>
 </blockquote>
-
 <h3 id="从源码编译">从源码编译</h3>
-
 <p>通过包管理安装的 qemu 版本一般较老，如果需要新版的 qemu，可以从源码编译，这里以编译 <code>3.1.0-rc3</code> 的 qemu 为例。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">wget https://download.qemu.org/qemu-3.1.0-rc3.tar.xz
 tar xvJf qemu-3.1.0-rc3.tar.xz
-<span class="nb">cd</span> qemu-3.1.0-rc3</code></pre></td></tr></table>
+<span class="nb">cd</span> qemu-3.1.0-rc3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过 <code>./configure --help</code> 的查看编译时的选项， <code>--target-list</code> 选项为可选的模拟器，默认全选</p>
-
+</div><p>通过 <code>./configure --help</code> 的查看编译时的选项， <code>--target-list</code> 选项为可选的模拟器，默认全选</p>
 <blockquote>
 <p><code>--target-list</code> 中的 <code>xxx-soft</code> 和 <code>xxx-linux-user</code> 分别指系统模拟器和应用程序模拟器, 生成的二进制文件名字为 <code>qemu-system-xxx</code> 和 <code>qemu-xxx</code></p>
 </blockquote>
-
 <p>安装必要依赖</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt-get install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libsdl-dev</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt-get install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libsdl-dev
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>选择安装 <a href="https://wiki.qemu.org/Hosts/Linux">可选依赖</a></p>
-
+</div><p>选择安装 <a href="https://wiki.qemu.org/Hosts/Linux">可选依赖</a></p>
 <p>这里直接使用默认选项进行编译</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">./configure
-make -j8</pre></td></tr></table>
-</div>
-</div>
-<p>继续安装</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo make install</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">./configure
+make -j8
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>成功安装</p>
+</div><p>继续安装</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo make install
+</code></pre></td></tr></table>
+</div>
+</div><p>成功安装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">~ qemu-arm --version
-qemu-arm version <span class="m">3</span>.0.93
-Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003</span>-2018 Fabrice Bellard and the QEMU Project developers</code></pre></td></tr></table>
+qemu-arm version 3.0.93
+Copyright <span class="o">(</span>c<span class="o">)</span> 2003-2018 Fabrice Bellard and the QEMU Project developers
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="使用-qemu">使用 qemu</h2>
-
+</div><h2 id="使用-qemu">使用 qemu</h2>
 <p>以 CISCN 2017 的 <a href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/kernel/CISCN2017-babydriver">babydriver</a> 举例，查看启动脚本</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -535,31 +500,31 @@ Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003
 ───────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
        │ File: boot.sh
 ───────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/bin/bash
-</span><span class="cp"></span>   <span class="m">2</span>   │ 
+   <span class="m">1</span>   │ <span class="c1">#!/bin/bash</span>
+   <span class="m">2</span>   │ 
    <span class="m">3</span>   │ qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append <span class="s1">&#39;console=ttyS0 root=/dev/ram oops=panic panic=1&#39;</span> -enable-kvm -monitor /dev/null -m 64M -
-       │ -nographic  -smp <span class="nv">cores</span><span class="o">=</span><span class="m">1</span>,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep</code></pre></td></tr></table>
+       │ -nographic  -smp <span class="nv">cores</span><span class="o">=</span>1,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出这道题目是用 <code>qemu-system-x86_64</code> 启动了以 <code>rootfs.cpio</code> 为文件系统的 kernel <code>bzImage</code>，启动时的参数为 <code>console=ttyS0 ... panic=1</code>，为这个进程分配 64M 内存。</p>
-
+</div><p>可以看出这道题目是用 <code>qemu-system-x86_64</code> 启动了以 <code>rootfs.cpio</code> 为文件系统的 kernel <code>bzImage</code>，启动时的参数为 <code>console=ttyS0 ... panic=1</code>，为这个进程分配 64M 内存。</p>
 <blockquote>
 <p>更多参数的含义请通过 <code>-h</code> 或者 <a href="https://qemu.weilnetz.de/doc/qemu-doc.html">qemu-doc</a> 查看。</p>
-
+</blockquote>
+<blockquote>
 <p>如果使用包管理安装 qemu，直接安装 <code>qemu-system-x86_64</code> 即可</p>
+</blockquote>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"> sudo apt install qemu-system_x86-64</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt install qemu-system_x86-64
+</code></pre></td></tr></table>
 </div>
-</div></blockquote>
-
-<p>因为使用了 kvm，所以启动时要用 root 权限启动</p>
+</div><p>因为使用了 kvm，所以启动时要用 root 权限启动</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -573,20 +538,19 @@ Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003
 ......
 ......
 / $ id
-<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span>
+<span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span>
 / $ ls
 bin      etc      init     linuxrc  root     sys      usr
-dev      home     lib      proc     sbin     tmp</code></pre></td></tr></table>
+dev      home     lib      proc     sbin     tmp
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>这道题目的更多分析可以看 <a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-uaf-ciscn2017-babydriver">link</a></p>
 </blockquote>
-
 <p>同样，再看下 Codegate 2018 的<a href="https://github.com/bash-c/ctf-challenges/tree/master/pwn/arm/Codegate2018_Melong">Melong</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -600,37 +564,35 @@ dev      home     lib      proc     sbin     tmp</code></pre></td></tr></table>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">Codegate2018_Melong <span class="o">[</span>master<span class="o">]</span> check melong
 + file melong
-melong: ELF <span class="m">32</span>-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux.so.3, <span class="k">for</span> GNU/Linux <span class="m">3</span>.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>2c55e75a072020303e7c802d32a5b82432f329e9, not stripped
+melong: ELF 32-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux.so.3, <span class="k">for</span> GNU/Linux 3.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>2c55e75a072020303e7c802d32a5b82432f329e9, not stripped
 + checksec melong
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/Projects/pwn_repo/Codegate2018_Melong/melong&#39;</span>
     Arch:     arm-32-little
     RELRO:    Partial RELRO
     Stack:    No canary found
     NX:       NX enabled
-    PIE:      No PIE <span class="o">(</span>0x10000<span class="o">)</span></code></pre></td></tr></table>
+    PIE:      No PIE <span class="o">(</span>0x10000<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出是 32 位 的 arm 程序，需要安装 <code>qemu-arm</code></p>
-
+</div><p>可以看出是 32 位 的 arm 程序，需要安装 <code>qemu-arm</code></p>
 <blockquote>
 <p>如果使用包管理安装，则</p>
+</blockquote>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"> $ sudo apt-get install qemu-user
- $ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get install qemu-user
+$ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样就安装了 <code>qemu-arm</code></p>
-</blockquote>
-
+</div><p>这样就安装了 <code>qemu-arm</code></p>
 <p>但同时因为程序是动态链接的，还需要同时安装对应的 libc，可以使用 <code>apt search &quot;libc6-&quot; | grep &quot;ARCH&quot;</code> 搜索，如</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -691,28 +653,26 @@ p   libc6-dev-armhf-armel-cross                                             - Du
 v   libc6-dev-armhf-armhf-cross                                             -                                                                                   
 p   libc6-dev-armhf-cross                                                   - GNU C Library: Development Libraries and Header Files <span class="o">(</span><span class="k">for</span> cross-compiling<span class="o">)</span>       
 v   libc6-dev-armhf-cross:i386                                              -                                                                                   
-v   libc6-dev-armhf-dcv1                                                    -    </code></pre></td></tr></table>
+v   libc6-dev-armhf-dcv1                                                    -    
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只需要安装 <code>libc6-ARCH-cross</code> 的包即可。</p>
-
+</div><p>只需要安装 <code>libc6-ARCH-cross</code> 的包即可。</p>
 <p>装好后使用 <code>-L</code> 指定共享库路径即可运行文件。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-arm -L /usr/arm-linux-gnueabi ./melong</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-arm -L /usr/arm-linux-gnueabi ./melong
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>这道题目的更多分析可以看 <a href="http://m4x.fun/post/how-2-pwn-an-arm-binary/#codegate2018-melong">link</a></p>
 </blockquote>
-
 <p>如果是静态的程序，不需要 libc，则可以不用 <code>-L</code> 选项，如 Jarvis-OJ 的 <a href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/arm/jarvisOJ_typo">typo</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -731,7 +691,7 @@ v   libc6-dev-armhf-dcv1                                                    -   
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">jarvisOJ_typo <span class="o">[</span>master<span class="o">]</span> check ./typo
 + file ./typo
-./typo: ELF <span class="m">32</span>-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux <span class="m">2</span>.6.32, BuildID<span class="o">[</span>sha1<span class="o">]=</span>211877f58b5a0e8774b8a3a72c83890f8cd38e63, stripped
+./typo: ELF 32-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux 2.6.32, BuildID<span class="o">[</span>sha1<span class="o">]=</span>211877f58b5a0e8774b8a3a72c83890f8cd38e63, stripped
 + checksec ./typo
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/Projects/pwn_repo/jarvisOJ_typo/typo&#39;</span>
     Arch:     arm-32-little
@@ -743,64 +703,58 @@ jarvisOJ_typo <span class="o">[</span>master<span class="o">]</span> qemu-arm ./
 Let<span class="err">&#39;</span>s Do Some Typing Exercise~
 Press Enter to get start<span class="p">;</span>
 Input ~ <span class="k">if</span> you want to quit
-^C</code></pre></td></tr></table>
+^C
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="如何-debug">如何 debug</h2>
-
+</div><h2 id="如何-debug">如何 debug</h2>
 <p>分两种情况</p>
-
 <ol>
 <li>调试 qemu 这个进程</li>
 <li>调试 qemu 内运行的程序</li>
 </ol>
-
 <h3 id="调试-qemu">调试 qemu</h3>
-
 <p>对于第一种情况，直接使用 gdb attach 到 qemu 的进程号即可，为了调试时方便可以在编译时加上 <code>--enable-debug</code> 选项以保留符号等信息。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">  --enable-debug           enable common debug build options</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">  --enable-debug           enable common debug build options
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在之后的 qemu 逃逸中会着重介绍这个过程。</p>
-
+</div><p>在之后的 qemu 逃逸中会着重介绍这个过程。</p>
 <h3 id="调试-qemu-中的进程">调试 qemu 中的进程</h3>
-
 <p>qemu 提供了 gdb 的接口，通过 <code>-g</code> 指定端口来调用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">-g port              QEMU_GDB          wait gdb connection to &#39;port&#39;</pre></td></tr></table>
-</div>
-</div>
-<p>同时为了调试异架构的程序，需要安装 <code>gdb-multiarch</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt install gdb-multiarch</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">-g port              QEMU_GDB          wait gdb connection to &#39;port&#39;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>例如 Melong 中，使用</p>
+</div><p>同时为了调试异架构的程序，需要安装 <code>gdb-multiarch</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-arm -g <span class="m">1234</span> -L /usr/arm-linux-gnueabi ./melong</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt install gdb-multiarch
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>启动程序，在另一个 shell 中使用 <code>gdb-multiarch</code> 启动程序并连接到指定的端口即可调试</p>
+</div><p>例如 Melong 中，使用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-arm -g <span class="m">1234</span> -L /usr/arm-linux-gnueabi ./melong
+</code></pre></td></tr></table>
+</div>
+</div><p>启动程序，在另一个 shell 中使用 <code>gdb-multiarch</code> 启动程序并连接到指定的端口即可调试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -811,48 +765,36 @@ Input ~ <span class="k">if</span> you want to quit
 pwndbg: loaded <span class="m">175</span> commands. Type pwndbg <span class="o">[</span>filter<span class="o">]</span> <span class="k">for</span> a list.
 pwndbg: created <span class="nv">$rebase</span>, <span class="nv">$ida</span> gdb functions <span class="o">(</span>can be used with print/break<span class="o">)</span>
 Reading symbols from ./melong...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
-pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
+pwndbg&gt; target remote localhost:1234
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>使用 gdb-multriarch 可以调试大多数的程序。</p>
-
 <p>但也有部分程序不能使用 gdb-multiarch，这时可以编译对应架构的 Toolchain，如 <code>arm-none-eabi-gdb</code></p>
-
 <p>或者使用系统模式的 qemu 创建一个对应架构的虚拟机，文末放了一片链接，以后也会介绍这种方法。</p>
 </blockquote>
-
 <p>特别的是系统模式的 qemu 还提供了另外几个参数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">-gdb dev        wait for gdb connection on &#39;dev&#39;
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">-gdb dev        wait for gdb connection on &#39;dev&#39;
 -s              shorthand for -gdb tcp::1234
--S              freeze CPU at startup (use &#39;c&#39; to start execution)</pre></td></tr></table>
+-S              freeze CPU at startup (use &#39;c&#39; to start execution)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>-gdb</code> 作用类似 <code>-g</code>，使用 <code>-gdb tcp::1234</code> 即可在 gdb 中通过 1234 端口调试。</p>
-
+</div><p><code>-gdb</code> 作用类似 <code>-g</code>，使用 <code>-gdb tcp::1234</code> 即可在 gdb 中通过 1234 端口调试。</p>
 <p><code>-s</code> 是 <code>-gdb tcp::1234</code> 的缩写</p>
-
 <p><code>-S</code> 让虚拟机停在启动的地方方便调试，类似于 pwntools 的 <a href="http://docs.pwntools.com/en/stable/gdb.html?highlight=gdb.debug#pwnlib.gdb.debug">gdb.debug()</a></p>
-
 <h2 id="reference">Reference</h2>
-
 <p><a href="https://wiki.qemu.org/Main_Page">https://wiki.qemu.org/Main_Page</a></p>
-
 <p><a href="https://qemu.weilnetz.de/doc/qemu-doc.html">https://qemu.weilnetz.de/doc/qemu-doc.html</a></p>
-
 <p><a href="https://wiki.qemu.org/Documentation">https://wiki.qemu.org/Documentation</a></p>
-
 <p><a href="https://en.wikipedia.org/wiki/QEMU">https://en.wikipedia.org/wiki/QEMU</a></p>
-
 <p><a href="https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html">https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html</a></p>
-
 <p><a href="https://wiki.qemu.org/Hosts/Linux">https://wiki.qemu.org/Hosts/Linux</a></p>
     </div>
 
@@ -987,7 +929,7 @@ pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

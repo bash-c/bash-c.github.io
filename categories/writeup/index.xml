@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>writeup on localhost - Done with development, it&#39;s time to pwn.</title>
@@ -7,10 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sat, 13 Oct 2018 22:29:11 +0800</lastBuildDate>
-    
-	<atom:link href="https://bash-c.github.io/categories/writeup/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sun, 20 Sep 2020 11:01:14 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/categories/writeup/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exploiting AX3600 Using Logical Bugs</title>
+      <link>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</link>
+      <pubDate>Sun, 20 Sep 2020 11:01:14 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>2018护网杯 - pwn - writeup</title>
@@ -37,15 +42,6 @@
       
       <guid>https://bash-c.github.io/post/linux-kernel-pwn-abc-1/</guid>
       <description>&lt;p&gt;记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>CVE-2017-11543 Analysis</title>
-      <link>https://bash-c.github.io/post/cve-2017-11543-analysis/</link>
-      <pubDate>Mon, 24 Sep 2018 22:23:06 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/post/cve-2017-11543-analysis/</guid>
-      <description>&lt;p&gt;最近觉得打比赛打多了，想分析一些实际的漏洞，于是挑了一个易上手的和 &lt;code&gt;tcpdump&lt;/code&gt; 有关的 &lt;a href=&#34;https://nvd.nist.gov/vuln/detail/CVE-2017-11543&#34;&gt;CVE-2017-11543&lt;/a&gt; 来分析，参考资料都放在最后了。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -81,7 +77,7 @@
       <pubDate>Tue, 03 Jul 2018 12:01:48 +0800</pubDate>
       
       <guid>https://bash-c.github.io/post/hackme.inndy-writeup/</guid>
-      <description></description>
+      <description>推荐一下hackme.inndy，上边有一些很好的针对新手的题目，但网上能搜到的Writeup很少，因此开了这篇博文记录一下部分目前解出的题</description>
     </item>
     
     <item>

