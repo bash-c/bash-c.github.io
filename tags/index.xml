@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sun, 20 Sep 2020 11:01:14 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 06 Feb 2021 17:40:46 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>IoT</title>
+      <link>https://bash-c.github.io/tags/iot/</link>
+      <pubDate>Sat, 06 Feb 2021 17:40:46 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/tags/iot/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>exploit</title>
       <link>https://bash-c.github.io/tags/exploit/</link>
@@ -18,29 +27,11 @@
     </item>
     
     <item>
-      <title>IoT</title>
-      <link>https://bash-c.github.io/tags/iot/</link>
-      <pubDate>Sun, 20 Sep 2020 11:01:14 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/iot/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>perf</title>
       <link>https://bash-c.github.io/tags/perf/</link>
       <pubDate>Mon, 18 Nov 2019 00:22:17 +0800</pubDate>
       
       <guid>https://bash-c.github.io/tags/perf/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>windows</title>
-      <link>https://bash-c.github.io/tags/windows/</link>
-      <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/tags/windows/</guid>
       <description></description>
     </item>
     

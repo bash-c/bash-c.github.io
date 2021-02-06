@@ -9,7 +9,49 @@
   
   <url>
     <loc>https://bash-c.github.io/categories/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/iot/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/post/rwctf-3rd_router3__cve-2020-14104-writeup/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/tags/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://bash-c.github.io/categories/writeup/</loc>
+    <lastmod>2021-02-06T17:40:46+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -23,41 +65,6 @@
   
   <url>
     <loc>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/iot/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/post/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/</loc>
-    <lastmod>2020-09-20T11:01:14+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/categories/writeup/</loc>
     <lastmod>2020-09-20T11:01:14+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -80,20 +87,6 @@
   <url>
     <loc>https://bash-c.github.io/post/perf-in-ctf/</loc>
     <lastmod>2019-11-18T00:22:17+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://bash-c.github.io/tags/windows/</loc>
-    <lastmod>2019-01-30T23:30:42+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

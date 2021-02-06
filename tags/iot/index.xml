@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sun, 20 Sep 2020 11:01:14 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/iot/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 06 Feb 2021 17:40:46 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/iot/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RWCTF-3rd router3 &amp; CVE-2020-14104 writeup</title>
+      <link>https://bash-c.github.io/post/rwctf-3rd_router3__cve-2020-14104-writeup/</link>
+      <pubDate>Sat, 06 Feb 2021 17:40:46 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/rwctf-3rd_router3__cve-2020-14104-writeup/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Exploiting AX3600 Using Logical Bugs</title>
       <link>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</link>

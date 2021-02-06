@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Sun, 20 Sep 2020 11:01:14 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 06 Feb 2021 17:40:46 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RWCTF-3rd router3 &amp; CVE-2020-14104 writeup</title>
+      <link>https://bash-c.github.io/post/rwctf-3rd_router3__cve-2020-14104-writeup/</link>
+      <pubDate>Sat, 06 Feb 2021 17:40:46 +0800</pubDate>
+      
+      <guid>https://bash-c.github.io/post/rwctf-3rd_router3__cve-2020-14104-writeup/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Exploiting AX3600 Using Logical Bugs</title>
       <link>https://bash-c.github.io/post/exploiting-ax3600-using-logical-bugs/</link>
@@ -25,18 +34,6 @@
       <guid>https://bash-c.github.io/post/perf-in-ctf/</guid>
       <description>&lt;h1 id=&#34;pin-in-ctf&#34;&gt;pin-in-CTF&lt;/h1&gt;
 &lt;p&gt;十几个月前，在学习 fuzz 时，我接触了 &lt;a href=&#34;https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool&#34;&gt;intel-pin&lt;/a&gt; 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 &lt;a href=&#34;http://m4x.fun/post/pin-in-ctf/&#34;&gt;pin-in-ctf: blog&lt;/a&gt;, &lt;a href=&#34;https://github.com/bash-c/pin-in-CTF&#34;&gt;pin-in-ctf: repo&lt;/a&gt;。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>HTML5 Video Player 1.2.5 缓冲区溢出分析</title>
-      <link>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</link>
-      <pubDate>Wed, 30 Jan 2019 23:30:42 +0800</pubDate>
-      
-      <guid>https://bash-c.github.io/post/html5-video-player-1.2.5-local-buffer-overflow-analysis/</guid>
-      <description>&lt;blockquote&gt;
-&lt;p&gt;放假前最后一天看到 &lt;a href=&#34;https://www.exploit-db.com/exploits/46279&#34;&gt;exploit-db&lt;/a&gt; 上出了一个 HTML5 Video Player 的缓冲区溢出的 exploit，版本是 1.2.5，（无心工作）就分析了一下这个漏洞，是一个比较简单的栈溢出漏洞，简单记录一下。&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/VULs-analysis/tree/master/HTML5-Video-Player-1.2.5-Local-Buffer-Overflow&#34;&gt;app &amp;amp; exp&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</description>
     </item>
     
     <item>
