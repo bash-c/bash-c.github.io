@@ -80,7 +80,7 @@
       
         <description>&lt;h1 id=&#34;writeup-for-rwctf-3rd-router3-and-real-writeup-for-cve-2020-14104&#34;&gt;Writeup for RWCTF-3rd router3 and real writeup for CVE-2020-14104&lt;/h1&gt;
 &lt;p&gt;I made a challenge named &lt;a href=&#34;https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/router3&#34;&gt;router3&lt;/a&gt; for &lt;a href=&#34;https://ctftime.org/event/1198&#34;&gt;RWCTF-3rd&lt;/a&gt;. Team &lt;a href=&#34;https://ctftime.org/team/143448&#34;&gt;CodeR00t&lt;/a&gt; ,&lt;a href=&#34;https://blog.bushwhackers.ru/&#34;&gt;Bushwhackers&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/Sauercl0ud&#34;&gt;Sauercloud&lt;/a&gt; solved it during the game, congratulations to them!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;first blood was taken by &lt;code&gt;CodeR00t&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -247,7 +247,7 @@ cgi-backup    cgi-download  cgi-exec      cgi-upload    luci
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Basically, &lt;strong&gt;luci = &lt;a href=&#34;http://www.lua.org/&#34;&gt;lua&lt;/a&gt; + &lt;a href=&#34;https://openwrt.org/docs/techref/uci&#34;&gt;uci&lt;/a&gt;&lt;/strong&gt;. In short, luci uses the Lua programming language and is based on some &lt;a href=&#34;https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller&#34;&gt;MVC&lt;/a&gt;-Webframework.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/MVC.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/MVC.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;So users can interact with &lt;code&gt;controller&lt;/code&gt;. Let&amp;rsquo;s focus on the &lt;code&gt;controller&lt;/code&gt; code, which is located in &lt;code&gt;/usr/lib/lua/luci/controller&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -298,7 +298,7 @@ Hello world
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;Should we fire up &lt;code&gt;IDA pro&lt;/code&gt; or some other decompilers? Of course not, we have known that luci heavily depends on lua. if we have checked &lt;code&gt;lua&lt;/code&gt; version in the mips-system, we&amp;rsquo;ll immediately realize that the lua binary is modified so the magic ELF header doesn&amp;rsquo;t mean it&amp;rsquo;s a real ELF file.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/lua.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/lua.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;And that&amp;rsquo;s why there is a tag &lt;code&gt;reverse&lt;/code&gt; for the challenge. Players must do some reverse work and write a decompiler before auditing the lua code. I won&amp;rsquo;t show you how to write a decompiler step by step because there have been lots of resources. But I can provide some good references&lt;!-- raw HTML omitted --&gt;&lt;a href=&#34;https://github.com/feicong/lua_re&#34;&gt;1&lt;/a&gt; &lt;a href=&#34;https://bbs.pediy.com/thread-216969.htm&#34;&gt;2&lt;/a&gt;&lt;!-- raw HTML omitted --&gt;(only in Chinese, sorry) and the &lt;a href=&#34;https://github.com/chaitin/Real-World-CTF-3rd-Challenge-Attachments/tree/main/router3/files/310-rwctf-router3.patch&#34;&gt;diff file&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Next, let&amp;rsquo;s take a break from the challenge and have a glance at &lt;a href=&#34;https://privacy.mi.com/trust#/security/vulnerability-management/vulnerability-announcement/detail?id=15&amp;amp;locale=en&#34;&gt;CVE-2020-11960&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;brief-introduction-to-cve-2020-11960&#34;&gt;brief introduction to CVE-2020-11960&lt;/h3&gt;
@@ -437,18 +437,18 @@ Hello world
 &lt;p&gt;Part &lt;strong&gt;(c)&lt;/strong&gt; is copied from &lt;code&gt;CVE-2020-11960&lt;/code&gt;. The check here only checks whether the filename contains &lt;code&gt;mbu&lt;/code&gt; or &lt;code&gt;des&lt;/code&gt;, rather than ends with &lt;code&gt;.mbu&lt;/code&gt; or &lt;code&gt;.des&lt;/code&gt;. You can also check &lt;a href=&#34;https://zhuanlan.zhihu.com/p/245070099&#34;&gt;实战逻辑漏洞：三个漏洞搞定一台路由器&lt;/a&gt; for the details and again, only in Chinese.&lt;/p&gt;
 &lt;p&gt;Compared with &lt;code&gt;CVE-2020-11960&lt;/code&gt;, the extraction is in &lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;. Files won&amp;rsquo;t be released to &lt;code&gt;/tmp&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s reflect more on part &lt;strong&gt;(e)&lt;/strong&gt; &amp;amp; &lt;strong&gt;(f)&lt;/strong&gt;, if we upload an archive, in which there are two files named exactly as &lt;code&gt;cfg_backup.des&lt;/code&gt; and &lt;code&gt;cfg_backup.mbu&lt;/code&gt;, the &lt;strong&gt;(e)&lt;/strong&gt; part check will pass and files will be moved from &lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt; to &lt;code&gt;/tmp&lt;/code&gt; at part &lt;strong&gt;(f)&lt;/strong&gt;. And then the rest exploitation is as same as &lt;code&gt;CVE-2020-11960&lt;/code&gt;. The following image is the exploit file from &lt;code&gt;Bushwhackers&lt;/code&gt; .&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/bushwhackers.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/bushwhackers.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;And &lt;code&gt;Sauercloud&lt;/code&gt; used similar method.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/sauercloud.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/sauercloud.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;As you may have known, this is not the intended solution because I made some mistakes. But I still want to praise these teams for they solving this challenge in such a short time!&lt;/p&gt;
 &lt;h3 id=&#34;the-unintended-solution-in-the-unintended-solutions&#34;&gt;The unintended solution in the unintended solutions&lt;/h3&gt;
 &lt;p&gt;When hosting a CTF game, we&amp;rsquo;re always willing to see unintended solutions, especially which we can learn from.&lt;/p&gt;
 &lt;p&gt;So team &lt;code&gt;CodeR00t&lt;/code&gt; totally didn&amp;rsquo;t use the &lt;code&gt;dnsmasq&lt;/code&gt; thing. They chose a different way as the following image shows:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t_exp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t_exp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;They used &lt;a href=&#34;https://en.wikipedia.org/wiki/Hard_link&#34;&gt;hard link&lt;/a&gt;, which begins with &lt;code&gt;h&lt;/code&gt; instead of &lt;code&gt;l&lt;/code&gt; in the result of &lt;code&gt;tar -tzvf&lt;/code&gt;, to bypass the check of &lt;strong&gt;(b)&lt;/strong&gt; to achieve &lt;strong&gt;arbitrary-file-write&lt;/strong&gt; in &lt;code&gt;/tmp&lt;/code&gt;(not almost-arbitrary, literally arbitrary). Then load the content of &lt;code&gt;iperf_script_pid&lt;/code&gt; into shell command via some other interface.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;busybox&lt;/code&gt; simplified most commands. From the result of &lt;code&gt;tar -tzvf&lt;/code&gt; from &lt;code&gt;busybox&lt;/code&gt;, we can&amp;rsquo;t even see hardlink file begins with &lt;code&gt;h&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/hardlink.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/hardlink.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;This trick can also be used for &lt;code&gt;CVE-2020-11960&lt;/code&gt;. Good for you, &lt;code&gt;CodeR00t&lt;/code&gt;!&lt;/p&gt;
 &lt;h2 id=&#34;writeup-for-cve-2020-14104&#34;&gt;Writeup for CVE-2020-14104&lt;/h2&gt;
@@ -553,15 +553,15 @@ Hello world
 &lt;p&gt;I will give you a minute to try to pwn this new version challenge.&lt;/p&gt;
 &lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
 &lt;p&gt;OK, let&amp;rsquo;s continue. When we upload a normal archive(all checks passed), the above steps can be presented as follow:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/normal.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/normal.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;But when some checks failed(for example, there is no &lt;code&gt;cfg_backup.des&lt;/code&gt;), there will be an extra &lt;code&gt;rm&lt;/code&gt; operation:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/fail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/fail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;See the problem? If we have two threads T1 and T2, T2&amp;rsquo;s &lt;code&gt;rm -rf /tmp/bkcfg_tmp&lt;/code&gt; happens right before T1&amp;rsquo;s &lt;code&gt;cd bkcfg_tmp&lt;/code&gt;, the &lt;code&gt;cd &lt;/code&gt; operation of T1 will fail and the actual extraction will be in directory &lt;code&gt;/tmp/&lt;/code&gt; again&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/race.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/race.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;So it&amp;rsquo;s a race-condition bug in the file system. That&amp;rsquo;s why I give teams huge number of times to try for demo(5 minutes * 2 attempts * 5 times).&lt;/p&gt;
 &lt;p&gt;Plus, for this vuln, too many concurrent requests will have lower success rate because every upload request will do &lt;code&gt;mkdir&lt;/code&gt; operation at first and change the existence of the directory  &lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;And here is my demo-show screenshot!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/demo.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/demo.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;See you in RWCTF 4th!&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;For those who are curious about how to fix this vuln. Using the &lt;code&gt;-C&lt;/code&gt; parameter of &lt;code&gt;tar&lt;/code&gt; should be good.&lt;/p&gt;
@@ -583,7 +583,7 @@ Hello world
 &lt;hr&gt;
 &lt;h1 id=&#34;rwctf-3rd-router3--cve-2020-14104-writeup&#34;&gt;RWCTF-3rd router3 &amp;amp; CVE-2020-14104 writeup&lt;/h1&gt;
 &lt;p&gt;在第三届RWCTF&lt;!-- raw HTML omitted --&gt;[1]&lt;!-- raw HTML omitted --&gt;中，我出了一道名为router3&lt;!-- raw HTML omitted --&gt;[2]&lt;!-- raw HTML omitted --&gt;的题目，考察了选手的逆向能力和漏洞挖掘能力。恭喜CodeR00t&lt;!-- raw HTML omitted --&gt;[3]&lt;!-- raw HTML omitted --&gt;，Bushwhackers&lt;!-- raw HTML omitted --&gt;[4]&lt;!-- raw HTML omitted --&gt;和Sauercloud&lt;!-- raw HTML omitted --&gt;[5]&lt;!-- raw HTML omitted --&gt;在比赛中解出了这道题目。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;CodeR00t&lt;/code&gt;拿到一血&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -748,7 +748,7 @@ cgi-backup    cgi-download  cgi-exec      cgi-upload    luci
 &lt;/div&gt;
 &lt;/div&gt;&lt;h4 id=&#34;luci--luasup9sup--ucisup10sup&#34;&gt;luci = lua&lt;!-- raw HTML omitted --&gt;[9]&lt;!-- raw HTML omitted --&gt; + uci&lt;!-- raw HTML omitted --&gt;[10]&lt;!-- raw HTML omitted --&gt;&lt;/h4&gt;
 &lt;p&gt;简单来说，luci是一种MVC&lt;!-- raw HTML omitted --&gt;[11]&lt;!-- raw HTML omitted --&gt;框架，主要使用了Lua语言实现后端（更多的细节请参考官方文档）&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/MVC.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/MVC.svg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;在MVC框架中，用户可以直接交互的是&lt;code&gt;controller&lt;/code&gt;，对应到题目也就是&lt;code&gt;/usr/lib/lua/luci/controller&lt;/code&gt;部分的代码&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -799,7 +799,7 @@ Hello world
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;之前已经说过&lt;code&gt;luci&lt;/code&gt;的后端多是由lua实现的，如果我们在虚拟机中查看lua版本的话，立刻就可以发现虚拟机中使用了一个更改过的lua binary&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/lua.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/lua.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;这里也就是题目标签&lt;code&gt;reverse&lt;/code&gt;所设立的考点了。选手在审计lua代码挖掘漏洞之前，必须先做一些逆向工作找到lua被改了哪些部分并写出反编译器。网上已经有很多详细的教程，我在这里就不再赘述如何一步一步逆向并写反编译器了。在文末有一些参考链接&lt;!-- raw HTML omitted --&gt;[11] [12]&lt;!-- raw HTML omitted --&gt;和题目中应用的diff文件&lt;!-- raw HTML omitted --&gt;[13]&lt;!-- raw HTML omitted --&gt;。&lt;/p&gt;
 &lt;h3 id=&#34;cve-2020-11960sup14sup&#34;&gt;CVE-2020-11960&lt;!-- raw HTML omitted --&gt;[14]&lt;!-- raw HTML omitted --&gt;&lt;/h3&gt;
 &lt;p&gt;在更进一步分析题目之前，我们先看一下另一个相关的漏洞CVE-2020-11960。我在去年的HITCON会议上展示过该漏洞的挖掘和利用过程（slides&lt;!-- raw HTML omitted --&gt;[15]&lt;!-- raw HTML omitted --&gt;的33~55页）。这里简要叙述一下如何利用该漏洞：&lt;/p&gt;
@@ -920,22 +920,22 @@ Hello world
 &lt;p&gt;&lt;strong&gt;(f)&lt;/strong&gt;. 拷贝&lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;下的文件到&lt;code&gt;/tmp/&lt;/code&gt;，然后删除&lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;其中**(c)**部分的代码包含与&lt;code&gt;CVE-2020-11960&lt;/code&gt;一样的缺陷，只检查了文件名中是否包含&lt;code&gt;des&lt;/code&gt;和&lt;code&gt;mbu&lt;/code&gt;字符串而非检查是否以&lt;code&gt;.des&lt;/code&gt;或&lt;code&gt;.mbu&lt;/code&gt;结尾，关于这一点，也可以参考&lt;a href=&#34;https://zhuanlan.zhihu.com/p/245070099&#34;&gt;实战逻辑漏洞：三个漏洞搞定一台路由器&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;和&lt;code&gt;CVE-2020-11960&lt;/code&gt;相比，文件的解压都在&lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;下完成，看起来&lt;code&gt;CVE-2020-11960&lt;/code&gt;的利用手法在这里不适用。但仔细检查**(e)**和**(f)**部分的代码，如果我们上传一个压缩包，压缩包中刚好有两个文件名为&lt;code&gt;cfg_backup.mbu&lt;/code&gt;和&lt;code&gt;cfg_backup.des&lt;/code&gt;的文件，**(e)**处的检查就会通过，进而在**(f)**处，&lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;下的文件又被重新拷贝回&lt;code&gt;/tmp&lt;/code&gt;。通过构造特殊的压缩包，我们就可以再次获得在&lt;code&gt;/tmp&lt;/code&gt;目录下上传特殊文件的能力，接下来的利用也就和&lt;code&gt;CVE-2020-11960&lt;/code&gt;一样了。而比赛中&lt;code&gt;Bushwhackers&lt;/code&gt;和&lt;code&gt;Sauercloud&lt;/code&gt;正是使用了这样的方法。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/bushwhackers.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/bushwhackers.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Bushwhackers的exploit&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/sauercloud.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/sauercloud.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Sauercloud的黑页&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;这种解法并不是预期解，出题的过程中我犯了一些错误导致所有的队伍都使用了非预期解法。但解出题目的队伍在短短48h就写出了反编译器并找到了漏洞，证明了他们身为世界顶级战队的实力。&lt;/p&gt;
 &lt;h3 id=&#34;非预期中的非预期&#34;&gt;非预期中的非预期&lt;/h3&gt;
 &lt;p&gt;在举办CTF比赛时，我们很乐意看到非预期解，尤其是能让我们学到东西的非预期解法。在比赛中，&lt;code&gt;CodeR00t&lt;/code&gt;虽然也使用了同一个bug，但他们完全没有使用&lt;code&gt;dnsmasq&lt;/code&gt;相关的利用手法，而是找到了一种新的利用思路。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t_exp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/coder00t_exp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;上图是&lt;code&gt;CodeR00t&lt;/code&gt;的exploit，他们使用了硬链接&lt;!-- raw HTML omitted --&gt;[17]&lt;!-- raw HTML omitted --&gt;来绕过**(b)**处的检查，在&lt;code&gt;tar -tzvf&lt;/code&gt;的结果中，硬链接以&lt;code&gt;h&lt;/code&gt;开头，而**(b)**处只检查了是否以&lt;code&gt;l&lt;/code&gt;开头。**(b)**处的检查绕过后，利用硬链接的特性，攻击者可以实现**完整的任意写文件**。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;busybox精简了大量的命令，在虚拟机中使用&lt;code&gt;tar -tzvf&lt;/code&gt;时甚至看不到硬链接以&lt;code&gt;h&lt;/code&gt;开头&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/hardlink.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/hardlink.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;这种利用方法也能用到&lt;code&gt;CVE-2020-11960&lt;/code&gt;上:P&lt;/p&gt;
 &lt;h2 id=&#34;writeup-for-cve-2020-14104-1&#34;&gt;Writeup for CVE-2020-14104&lt;/h2&gt;
@@ -1038,16 +1038,16 @@ Hello world
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;**(x)**部分的代码检查了上传的压缩包中是否只有两个文件，理论上应该会缓解上一节介绍的非预期解。&lt;/p&gt;
 &lt;p&gt;有了以上的基础，我在这里暂停一下看读者能否发现新版代码中的漏洞。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/1minute.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/1minute.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;继续分析，当用户上传一个正常的压缩包时，对该压缩包的处理逻辑可以用下图来表示&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/normal.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/normal.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;但如果某些检查没有通过(比如压缩包中没有&lt;code&gt;cfg_backup.des&lt;/code&gt;)，就会额外有一步&lt;code&gt;rm&lt;/code&gt;的操作&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/fail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/fail.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;而多出的这一步&lt;code&gt;rm&lt;/code&gt;也就是关键点。让我们思考这样一种情况：当虚拟机同时处理多个请求时，若一个请求中的&lt;code&gt;rm -rf /tmp/bkcfg_tmp&lt;/code&gt;刚好发生在另一个请求的&lt;code&gt;cd bkcfg_tmp&lt;/code&gt;之前时，因为&lt;code&gt;/tmp/bkcfg_tmp&lt;/code&gt;已经不存在了，因此&lt;code&gt;cd&lt;/code&gt;会失败，当前请求的CWD仍然是&lt;code&gt;/tmp&lt;/code&gt;，整个流程可以用下图来表示&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/race.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/race.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;因此通过文件系统中的条件竞争，攻击者再一次获得了在&lt;code&gt;/tmp&lt;/code&gt;目录下上传特定文件的能力，接下来的利用就可以参考上文介绍的方法了。比赛中为了我给了选手大量的试错机会赢得竞争（5分钟*2次机会*5次尝试），但因为所有的队伍都用了非预期解，所以他们都在20秒内就实现了RCE.&lt;/p&gt;
 &lt;p&gt;下图是我的demo截图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;././pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/demo.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/RWCTF-3rd_router3_&amp;amp;_CVE_2020_14104/demo.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;修复该漏洞可以使用&lt;code&gt;tar&lt;/code&gt;的&lt;code&gt;-C&lt;/code&gt;参数&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -1111,16 +1111,16 @@ Hello world
 &lt;/div&gt;&lt;h2 id=&#34;一串漏洞来袭&#34;&gt;一串漏洞来袭&lt;/h2&gt;
 &lt;h3 id=&#34;漏洞一有限的路径穿越漏洞&#34;&gt;漏洞一：有限的路径穿越漏洞&lt;/h3&gt;
 &lt;p&gt;从官网下载并解出固件后，通过浏览 AX3600 各种服务的配置文件，很快找到了第一个由于 nginx 误配置导致的路径穿越漏洞&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/nginx_conf.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/nginx_conf.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;如上图所示，当用户使用过配置备份功能后，攻击者访问 &lt;code&gt;http://AX3600-ip/backup/log../test&lt;/code&gt; 时，由于 &lt;code&gt;alias&lt;/code&gt; 的作用，实际访问的文件为 &lt;code&gt;/tmp/syslogbackup/../test&lt;/code&gt; 也即是 &lt;code&gt;/tmp/test&lt;/code&gt;，攻击者可以通过实现从 &lt;code&gt;/tmp/syslogbackup&lt;/code&gt; 穿越至 &lt;code&gt;/tmp&lt;/code&gt; 目录，读取 &lt;code&gt;/tmp&lt;/code&gt; 任意文件。&lt;/p&gt;
 &lt;p&gt;经过观察，在 &lt;code&gt;/tmp/messages&lt;/code&gt; 文件中保留了较多的敏感信息&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/messages.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/messages.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;攻击者可以通过访问 &lt;code&gt;http://AX3600-ip/backup/log../messages&lt;/code&gt; 读取 &lt;code&gt;/tmp/messages&lt;/code&gt; 中的内容，获取明文的 wifi 密码，PPPoE 账号和密码，vpn 用户名和密码，stok 等信息。&lt;/p&gt;
 &lt;p&gt;其中，使用泄露的 stok 可以在一定时间内登录到后台，实现后台登录绕过。&lt;/p&gt;
 &lt;p&gt;这个漏洞的CVE编号是 &lt;a href=&#34;https://privacy.mi.com/trust#/security/vulnerability-management/vulnerability-announcement/detail?id=14&amp;amp;locale=zh&#34;&gt;CVE-2020-11959&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;漏洞二后台解压逻辑错误&#34;&gt;漏洞二：后台解压逻辑错误&lt;/h3&gt;
 &lt;p&gt;AX3600 后台存在上传路由器配置文件的功能，用户可以通过上传包含配置文件的 &lt;code&gt;.tar.gz&lt;/code&gt; 压缩包来恢复路由器设置
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/backup.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/backup.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;上传后的文件在路由器的 &lt;code&gt;/tmp&lt;/code&gt; 目录下被解压，只有合法的文件会被继续处理，不合法的文件报错不再处理，相关的 lua 代码经过整理后如下。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1183,14 +1183,14 @@ Hello world
 &lt;li&gt;使用 &lt;code&gt;grep -v .des | grep -v .mbu&lt;/code&gt; 判断压缩包内是否包含且仅包含后缀为 &lt;code&gt;.des&lt;/code&gt; 和 &lt;code&gt;.mbu&lt;/code&gt; 的两个文件，不满足条件时删除压缩包，函数退出，流程结束&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;如下图，&lt;code&gt;test.tar.gz&lt;/code&gt; 中只有一个 &lt;code&gt;.des&lt;/code&gt; 文件，不满足需要同时包含 &lt;code&gt;.mbu&lt;/code&gt; 和 &lt;code&gt;.des&lt;/code&gt; 文件的限制
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/des.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/des.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;上传后提示解压失败，不对上传的 &lt;code&gt;.des&lt;/code&gt; 文件做进一步处理
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/error.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/error.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;在解压失败逻辑中，存在一个细微的逻辑问题：&lt;strong&gt;未删除解压后不合法的配置文件&lt;/strong&gt;。如上图的例子中，在路由器上解压得到的 &lt;code&gt;test.des&lt;/code&gt; 文件虽然没有被进一步处理，但仍然保留在了 &lt;code&gt;/tmp&lt;/code&gt; 目录下
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/still_here.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/still_here.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;同时因为压缩包可以保留路径信息，用户可以上传保留了路径信息的 &lt;code&gt;.des&lt;/code&gt; 或者 &lt;code&gt;.mbu&lt;/code&gt; 文件至 &lt;code&gt;/tmp&lt;/code&gt; 下的任意路径
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/new_dir.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/new_dir_.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/new_dir.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/new_dir_.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;攻击者可以利用这个逻辑缺陷在 &lt;code&gt;/tmp&lt;/code&gt; 下写任意后缀为 &lt;code&gt;.mbu&lt;/code&gt; 或者 &lt;code&gt;.des&lt;/code&gt; 的文件。单独来看，这个问题并不严重，但与下文的逻辑漏洞连用，攻击者可以实现后台的任意命令执行。&lt;/p&gt;
 &lt;p&gt;仔细阅读解压逻辑中判断文件是否为合法的代码&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -1234,9 +1234,9 @@ NAME
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;code&gt;grep&lt;/code&gt; 在进行模式匹配时，是以行为单位进行的，如下图，只要整行中包含特定的字符串即可通过 &lt;code&gt;grep&lt;/code&gt; 的检查
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/grep.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/grep.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;同时，因为 &lt;code&gt;grep&lt;/code&gt; 在模式匹配时使用 &lt;code&gt;.&lt;/code&gt; 可以代替任意字符，所以文件名只需包含 &lt;code&gt;mbu&lt;/code&gt; 和 &lt;code&gt;des&lt;/code&gt; 即可，而不必要必须以 &lt;code&gt;.mbu&lt;/code&gt; 或 &lt;code&gt;.des&lt;/code&gt; 结尾&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/mbu.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/mbu.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;这也是一个很微小的逻辑漏洞，比起上一步，攻击者能多造成的影响仅仅是可以部分改变上传文件的文件名（从必须是 &lt;code&gt;.des&lt;/code&gt; 或 &lt;code&gt;.mbu&lt;/code&gt; 后缀改为文件名中包含 &lt;code&gt;des&lt;/code&gt; 或 &lt;code&gt;mbu&lt;/code&gt; 即可），但从攻击者的角度而言，漏洞的影响已经大大上升了一个等级，如在正常的渗透测试中，上传 &lt;code&gt;.php&lt;/code&gt;, &lt;code&gt;.jsp&lt;/code&gt; 等可写webshell。&lt;/p&gt;
 &lt;p&gt;但对于 AX3600，攻击者可以控制的文件在 &lt;code&gt;/tmp&lt;/code&gt; 下，&lt;code&gt;/tmp&lt;/code&gt; 下可选的目标并不多。继续浏览 &lt;code&gt;/tmp&lt;/code&gt; 下的文件，发现存在 &lt;code&gt;/tmp/dnsmasq.d&lt;/code&gt; 文件夹，分析 &lt;code&gt;dnsmasq&lt;/code&gt; 的运行逻辑&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -1390,25 +1390,25 @@ Valid options are:
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;先在 &lt;code&gt;/tmp&lt;/code&gt; 下上传包含攻击者命令的 shell 脚本(文件名包含 des 或者 mbu)
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/sh.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/sh.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;再上传 &lt;code&gt;.conf&lt;/code&gt; 结尾的 dnsmasq 配置文件至 &lt;code&gt;/tmp/dnsmasq.d&lt;/code&gt;（文件名同样包括 des 或者 mbu）
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/conf.png&#34; alt=&#34;&#34;&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/conf.png&#34; alt=&#34;&#34;&gt;
 如下图表示成功上传
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/upload.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/upload.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;重启 dnsmasq，方法有很多，基本所有更改网络状态的操作都可以实现，这里通过开/关 ipv6 支持来实现
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/dnsmasq.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/dnsmasq.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;然后通过 tftp 触发 dhcp-script，实现代码执行
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/tftp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/tftp.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;最终可以观察到 hackdes.sh 中的命令被执行
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/rce.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/rce.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;这个漏洞的CVE编号是 &lt;a href=&#34;https://privacy.mi.com/trust#/security/vulnerability-management/vulnerability-announcement/detail?id=15&amp;amp;locale=zh&#34;&gt;CVE-2020-11960&lt;/a&gt;&lt;/p&gt;
@@ -1466,7 +1466,7 @@ Compile time options: IPv6 GNU-getopt no-DBus no-i18n no-IDN DHCP no-DHCPv6 no-L
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;因此攻击者可以通过上传具有 &lt;code&gt;suid&lt;/code&gt; 权限的后门程序到路由器文件系统中，低权限的攻击者通过执行后门来获取高权限的 shell。&lt;/p&gt;
 &lt;p&gt;上传文件时对文件大小有限制，直接使用 C\C++ 等语言编写后门时，会超过最大限制。
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/oversize.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/oversize.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;对于二进制选手而言，缩小可执行程序的体积就很简单了，如使用汇编写 binary 可以很大程度的缩小程序的体积，使用 pwntools 可以很方便的完成&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -1521,14 +1521,14 @@ Compile time options: IPv6 GNU-getopt no-DBus no-i18n no-IDN DHCP no-DHCPv6 no-L
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;最终体积生成符合要求的程序
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/small_elf.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/small_elf.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;并打包上传
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/pack.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/pack.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;这里需要注意，因为 &lt;code&gt;/tmp&lt;/code&gt; 挂载的标志位为 &lt;code&gt;nosuid&lt;/code&gt;，所以在 &lt;code&gt;/tmp&lt;/code&gt; 下运行有 &lt;code&gt;suid&lt;/code&gt; 权限的 binary 并不会生效
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/nosuid.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/nosuid.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;但可以上传 binary 至 &lt;code&gt;/tmp/spool/cron/crontabs&lt;/code&gt; 即 &lt;code&gt;/etc/crontabs&lt;/code&gt; 下实现通过 suid 提权 —— 这也是唯一一个突破点&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/suid.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/lpe.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/suid.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/lpe.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;这个问题在当前的AX3600中并不能称之为安全漏洞，因为AX3600中的所有进程都是以root权限运行的。但 &lt;a href=&#34;https://sec.xiaomi.com/&#34;&gt;MiSRC&lt;/a&gt; 仍然承认了这个问题，并且额外为这个问题支付了漏洞奖金。&lt;/p&gt;
 &lt;h4 id=&#34;q--a-1&#34;&gt;Q &amp;amp; A&lt;/h4&gt;
 &lt;ul&gt;
@@ -1541,7 +1541,7 @@ Compile time options: IPv6 GNU-getopt no-DBus no-i18n no-IDN DHCP no-DHCPv6 no-L
 &lt;h2 id=&#34;后记&#34;&gt;后记&lt;/h2&gt;
 &lt;p&gt;在对AX3600路由器进行研究的过程中，我们发现了十余个逻辑漏洞，并获得了多个CVE编号，组合可以完成多套利用链，本文只分析了其中的一套利用链。如果读者对于其他的漏洞感兴趣，可以参考我们在HITCON 2020的议题 &lt;code&gt;Exploit (Almost) All Xiaomi Routers Using Logical Bugs&lt;/code&gt;，在议题中，我们还会展示我们是如何从零开始解固件以及如何解密小米自定义的luac等细节。
 扫描二维码可以下载议题slide：
-&lt;img src=&#34;./pic/Exploit-AX3600-using-logical-bugs/qrcode.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../pic/Exploit-AX3600-using-logical-bugs/qrcode.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;在提交 AX3600 相关漏洞的过程中，收到了 &lt;a href=&#34;https://sec.xiaomi.com/&#34;&gt;MiSRC&lt;/a&gt; 迅速、专业的回复和支持，这里对 &lt;a href=&#34;https://sec.xiaomi.com/&#34;&gt;MiSRC&lt;/a&gt; 表示感谢。&lt;/p&gt;
 &lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
 &lt;ul&gt;
