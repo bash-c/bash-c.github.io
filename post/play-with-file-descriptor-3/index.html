@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/play-with-file-descriptor-3/" />
@@ -52,7 +52,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -66,14 +66,13 @@
 <meta property="article:modified_time" content="2018-09-12T15:30:01+08:00" />
 <meta itemprop="name" content="Play with file descriptor(Ⅲ)">
 <meta itemprop="description" content="接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13">
-<meta itemprop="datePublished" content="2018-09-12T15:30:01+08:00" />
-<meta itemprop="dateModified" content="2018-09-12T15:30:01+08:00" />
-<meta itemprop="wordCount" content="4201">
+<meta itemprop="datePublished" content="2018-09-12T15:30:01&#43;08:00" />
+<meta itemprop="dateModified" content="2018-09-12T15:30:01&#43;08:00" />
+<meta itemprop="wordCount" content="4202">
 
 
 
-<meta itemprop="keywords" content="file-descriptor,pwn,os," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="file-descriptor,pwn,os," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Play with file descriptor(Ⅲ)"/>
 <meta name="twitter:description" content="接下来以一些 pwnable 题目为例分析一些 fd tricks，如果以后遇到新的操作会继续更新。 同样感谢大佬们的无私分享。 level 0: pwnable.kr - fd 1 2 3 4 5 6 7 8 9 10 11 12 13"/>
 
@@ -324,7 +323,7 @@
             <a href="https://bash-c.github.io/categories/writeup/"> writeup </a>
             
           </div>
-        <span class="more-meta"> 4201 words </span>
+        <span class="more-meta"> 4202 words </span>
           <span class="more-meta"> 9 min read </span>
 
         
@@ -458,9 +457,9 @@
   <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>仔细看这段代码，open(&quot;/dev/urandom&quot;, 0); 后并没有对应的 close 操作。
-因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 <code>ulimit -a</code> 查看），下一次 open(&quot;/dev/urandom&quot;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 <code>\0</code> 即可通过 memcmp 的验证；</p>
-<p>还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 <code>open(&quot;./flag&quot;, 0); read(0, addr, 0x100); puts(addr)</code> 的 ropchain 就可以得到 flag （因为 close(0)， open(&quot;./flag&quot;, 0) 返回的 fd 将为 0)。</p>
+</div><p>仔细看这段代码，open(&quot;/dev/urandom&rdquo;, 0); 后并没有对应的 close 操作。
+因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 <code>ulimit -a</code> 查看），下一次 open(&quot;/dev/urandom&rdquo;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 <code>\0</code> 即可通过 memcmp 的验证；</p>
+<p>还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 <code>open(&quot;./flag&quot;, 0); read(0, addr, 0x100); puts(addr)</code> 的 ropchain 就可以得到 flag （因为 close(0)， open(&quot;./flag&rdquo;, 0) 返回的 fd 将为 0)。</p>
 <p>类似的题目还有 pwnable.kr - otp</p>
 <h2 id="level-2-whitehat2018---pwn3">level 2: Whitehat2018 - pwn3</h2>
 <p><a href="https://github.com/0x01f/pwn_repo/tree/master/WhiteHat2018_pwn03">binary &amp; exp here</a></p>
@@ -836,17 +835,17 @@ lsof    <span class="m">10598</span>  m4x    2u   CHR  136,3      0t0    <span c
 <p>说了半天，再回到这道题目，虽然这道题目关闭了 stdin, stdout 和 stderr，pty 还在，换句话说，如果我们能控制 /dev/pts/? 的 fd 为 1，那么 puts(flag) 时就会把输出传递给 /dev/pts/? ，也就是我们能在显示屏上看到 flag。</p>
 <p>总结一下思路：</p>
 <ol>
-<li>利用 open(&quot;/proc/self/fd/0&quot;, 0) 来构造 ropchain</li>
+<li>利用 open(&quot;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain</li>
 <li>ropchain 通过 open 和 read 把 flag 读到一个固定地址，同时控制 open(&quot;/dev/pty/?&quot;, 2) 返回的 fd 为 1</li>
 <li>puts(flag) 时，系统调用为 write(1, flag, len(flag))，也就是 flag 的内容将会输出到显示屏上</li>
 </ol>
 <p><a href="https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/ropchian.py">ropchian exploit here</a></p>
 <h3 id="reverse-shell">reverse shell</h3>
 <p>或者我们可以使用 reverse shell 来 get shell，这需要用到一些 procfs 的知识，不准备细讲，只需要知道可以通过往 /proc/self/mem 写数据更改 binary 内容即可（类似的题目有赛博地球杯的 <a href="https://github.com/0x01f/pwn_repo/tree/master/Cyber2017_fileManager">fileManager</a> 这道题目）。</p>
-<p>通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&quot;/proc/self/mem&quot;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。</p>
+<p>通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&quot;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。</p>
 <p>总结一下思路：</p>
 <ol>
-<li>利用 open(&quot;/proc/self/fd/0&quot;, 0) 来构造 ropchain，ropchain 实现 open(&quot;/proc/self/mem&quot;, 2) 返回的 fd 为 1</li>
+<li>利用 open(&quot;/proc/self/fd/0&rdquo;, 0) 来构造 ropchain，ropchain 实现 open(&quot;/proc/self/mem&rdquo;, 2) 返回的 fd 为 1</li>
 <li>通过 puts(shellcode) 将 shellcode 写到具有可执行权限的代码段，可以用 lseek 控制 puts 写的位置</li>
 <li>控制 rip 为 shellcode 建立 reverse shell</li>
 <li>可以使用 /dev/stdin 代替 /proc/self/fd/0，效果一样，可以给 shellcode 留下更多空间</li>

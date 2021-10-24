@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/linux-kernel-pwn-abc-1/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -67,14 +67,13 @@
 <meta property="article:modified_time" content="2018-10-03T19:50:41+08:00" />
 <meta itemprop="name" content="Linux Kernel Pwn ABC(Ⅰ)">
 <meta itemprop="description" content="记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。">
-<meta itemprop="datePublished" content="2018-10-03T19:50:41+08:00" />
-<meta itemprop="dateModified" content="2018-10-03T19:50:41+08:00" />
+<meta itemprop="datePublished" content="2018-10-03T19:50:41&#43;08:00" />
+<meta itemprop="dateModified" content="2018-10-03T19:50:41&#43;08:00" />
 <meta itemprop="wordCount" content="12045">
 
 
 
-<meta itemprop="keywords" content="kernel,pwn,os," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="kernel,pwn,os," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Linux Kernel Pwn ABC(Ⅰ)"/>
 <meta name="twitter:description" content="记录一下最近学到的 linux kernel pwn 知识，第一篇主要是一些基础知识和简单漏洞利用，比较基础。"/>
 
@@ -1396,7 +1395,7 @@ exploit
 <span class="o">[</span>+<span class="o">]</span> root now.
 / <span class="c1"># id</span>
 <span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1000<span class="o">(</span>ctf<span class="o">)</span>
-/ <span class="c1">#</span>
+/ #
 
 </code></pre></td></tr></table>
 </div>
@@ -1880,7 +1879,7 @@ give_to_player <span class="o">[</span>master●●<span class="o">]</span> chec
 <li>通过 core_write() 向 name 写，构造 ropchain</li>
 <li>通过 core_copy_func() 从 name 向局部变量上写，通过设置合理的长度和 canary 进行 rop</li>
 <li>通过 rop 执行 <code>commit_creds(prepare_kernel_cred(0))</code></li>
-<li>返回用户态，通过 system(&quot;/bin/sh&quot;) 等起 shell</li>
+<li>返回用户态，通过 system(&quot;/bin/sh&rdquo;) 等起 shell</li>
 </ol>
 <p>解释一下：</p>
 <ul>
@@ -2184,7 +2183,7 @@ setsid /bin/cttyhack setuidgid <span class="m">0</span> /bin/sh
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">// qemu 内
-/ <span class="c1"># cat /sys/module/core/sections/.text </span>
+/ <span class="c1"># cat /sys/module/core/sections/.text</span> 
 0xffffffffc018b000
 ......
 ......

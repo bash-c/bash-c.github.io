@@ -7,7 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Mon, 03 Dec 2018 20:04:42 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/escaping/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 03 Dec 2018 20:04:42 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/escaping/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>QEMU escape part Ⅰ: qemu 的安装和使用</title>
       <link>https://bash-c.github.io/post/escaping-the-matrix-1/</link>

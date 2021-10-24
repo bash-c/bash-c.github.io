@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/hitcon-training-writeup/" />
@@ -52,7 +52,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -66,14 +66,13 @@
 <meta property="article:modified_time" content="2018-07-02T12:05:10+08:00" />
 <meta itemprop="name" content="HITCON-Training-Writeup">
 <meta itemprop="description" content="HITCON-Training-Writeup 项目地址M4x&rsquo;s github，欢迎 star~ 复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.co">
-<meta itemprop="datePublished" content="2018-07-02T12:05:10+08:00" />
-<meta itemprop="dateModified" content="2018-07-02T12:05:10+08:00" />
+<meta itemprop="datePublished" content="2018-07-02T12:05:10&#43;08:00" />
+<meta itemprop="dateModified" content="2018-07-02T12:05:10&#43;08:00" />
 <meta itemprop="wordCount" content="9733">
 
 
 
-<meta itemprop="keywords" content="HITCON-Training,pwn,reverse," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="HITCON-Training,pwn,reverse," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HITCON-Training-Writeup"/>
 <meta name="twitter:description" content="HITCON-Training-Writeup 项目地址M4x&rsquo;s github，欢迎 star~ 复习一下二进制基础，写写 HITCON-Training 的 writeup，题目地址：https://github.co"/>
 
@@ -683,7 +682,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span>
 <p><img src="http://ww1.sinaimg.cn/large/006AWYXBly1fpcpljuki5j30g702wdfy.jpg" alt=""></p>
 <p>也可以通过 peda 的 pattern_offset/pattern_search , pwntools 的 cyclic/cyclic -l 等工具来找 offset</p>
 <h3 id="lab4-ret2lib">lab4-ret2lib</h3>
-<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&quot;/bin/sh&quot;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
+<p>ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&quot;/bin/sh&rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -827,7 +826,7 @@ lab1 <span class="o">[</span>master●●<span class="o">]</span>
 <span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">rop</span> <span class="n">chain</span> <span class="n">generated</span><span class="err">!</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&quot;/bin/sh&quot;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a></p>
+</div><p>简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&gt; /bin/sh， ecx = edx = 0，然后通过 <code>int 0x80</code> 实现系统调用，执行 execve(&quot;/bin/sh&rdquo;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目<a href="http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3"><strong>ROP2</strong></a></p>
 <blockquote>
 <p>ret2syscall 的更多细节可以参考 <a href="https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/basic_rop/#ret2syscall">ctf-wiki</a></p>
 </blockquote>

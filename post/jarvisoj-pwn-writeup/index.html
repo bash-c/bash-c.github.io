@@ -31,7 +31,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/jarvisoj-pwn-writeup/" />
@@ -52,7 +52,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -66,14 +66,13 @@
 <meta property="article:modified_time" content="2018-09-16T22:09:27+08:00" />
 <meta itemprop="name" content="JarvisOJ Pwn Writeup">
 <meta itemprop="description" content="JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的">
-<meta itemprop="datePublished" content="2018-09-16T22:09:27+08:00" />
-<meta itemprop="dateModified" content="2018-09-16T22:09:27+08:00" />
+<meta itemprop="datePublished" content="2018-09-16T22:09:27&#43;08:00" />
+<meta itemprop="dateModified" content="2018-09-16T22:09:27&#43;08:00" />
 <meta itemprop="wordCount" content="10234">
 
 
 
-<meta itemprop="keywords" content="JarvisOJ,pwn," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="JarvisOJ,pwn," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="JarvisOJ Pwn Writeup"/>
 <meta name="twitter:description" content="JarvisOJ-all-pwn-Writeup 解决了 jarvisOJ 至今 （2018.9.19）的所有 pwn 题目，分享一下 writeup。做题目的过程中参考了很多师傅的 writeup，在 Reference 中贴出了师傅们的"/>
 
@@ -482,7 +481,7 @@
 </div>
 </div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level1/solve.py">exploit here</a></p>
 <h2 id="xmanlevel2-150">[XMAN]level2 (150)</h2>
-<p>存在栈溢出，程序中有 <strong>system</strong> 函数 和 <strong>/bin/sh</strong> 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 <strong>system(&quot;/bin/sh&quot;)</strong> 的栈结构来 get shell</p>
+<p>存在栈溢出，程序中有 <strong>system</strong> 函数 和 <strong>/bin/sh</strong> 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 <strong>system(&quot;/bin/sh&rdquo;)</strong> 的栈结构来 get shell</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -582,7 +581,7 @@
 </div>
 </div><p><a href="https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2_x64/solve.py">exploit here</a></p>
 <h2 id="xmanlevel3-200">[XMAN]level3 (200)</h2>
-<p>标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 <strong>system(&quot;/bin/sh&quot;)</strong> 的函数调用栈即可</p>
+<p>标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 <strong>system(&quot;/bin/sh&rdquo;)</strong> 的函数调用栈即可</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -956,7 +955,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><h2 id="xmanlevel3x64-250">[XMAN]level3(x64) (250)</h2>
-<p>与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&quot;/bin/sh&quot;) 即可。</p>
+<p>与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&quot;/bin/sh&rdquo;) 即可。</p>
 <p>值得注意的是，这道题目中没有 puts，因此 leak libc 只能通过 <code>write(1, elf.got['write'], 8)</code>，但 ROPgadget 等工具只能找到控制 rdi 和 rsi 的 gadget，也就是我们不能控制 write 输出的长度，这时候有两种方法：</p>
 <p>一是使用 64 位 elf 的 <a href="https://www.cnblogs.com/Ox9A82/p/5487725.html">通用 gadget</a>；</p>
 <p>二是通过调试发现 write 时 rdx 是大于 8 的（实际上大于 6 即可），因此可以完全不用考虑控制 rdx。</p>

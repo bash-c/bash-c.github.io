@@ -1657,14 +1657,14 @@ perf version 5.0.21
 
  Performance counter stats &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;id&amp;#39;&lt;/span&gt;:
 
-              1.71 msec task-clock                &lt;span class=&#34;c1&#34;&gt;#    0.710 CPUs utilized          &lt;/span&gt;
-                 &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;      context-switches          &lt;span class=&#34;c1&#34;&gt;#    0.584 K/sec                  &lt;/span&gt;
-                 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;      cpu-migrations            &lt;span class=&#34;c1&#34;&gt;#    0.000 K/sec                  &lt;/span&gt;
-               &lt;span class=&#34;m&#34;&gt;122&lt;/span&gt;      page-faults               &lt;span class=&#34;c1&#34;&gt;#    0.071 M/sec                  &lt;/span&gt;
-         6,244,401      cycles                    &lt;span class=&#34;c1&#34;&gt;#    3.647 GHz                    &lt;/span&gt;
-         2,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle         &lt;/span&gt;
-           459,910      branches                  &lt;span class=&#34;c1&#34;&gt;#  268.614 M/sec                  &lt;/span&gt;
-            18,201      branch-misses             &lt;span class=&#34;c1&#34;&gt;#    3.96% of all branches        &lt;/span&gt;
+              1.71 msec task-clock                &lt;span class=&#34;c1&#34;&gt;#    0.710 CPUs utilized&lt;/span&gt;          
+                 &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;      context-switches          &lt;span class=&#34;c1&#34;&gt;#    0.584 K/sec&lt;/span&gt;                  
+                 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;      cpu-migrations            &lt;span class=&#34;c1&#34;&gt;#    0.000 K/sec&lt;/span&gt;                  
+               &lt;span class=&#34;m&#34;&gt;122&lt;/span&gt;      page-faults               &lt;span class=&#34;c1&#34;&gt;#    0.071 M/sec&lt;/span&gt;                  
+         6,244,401      cycles                    &lt;span class=&#34;c1&#34;&gt;#    3.647 GHz&lt;/span&gt;                    
+         2,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle&lt;/span&gt;         
+           459,910      branches                  &lt;span class=&#34;c1&#34;&gt;#  268.614 M/sec&lt;/span&gt;                  
+            18,201      branch-misses             &lt;span class=&#34;c1&#34;&gt;#    3.96% of all branches&lt;/span&gt;        
 
        0.002412965 seconds &lt;span class=&#34;nb&#34;&gt;time&lt;/span&gt; elapsed
 
@@ -1684,7 +1684,7 @@ perf version 5.0.21
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;...
-         2,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle         &lt;/span&gt;
+         2,353,996      instructions              &lt;span class=&#34;c1&#34;&gt;#    0.38  insn per cycle&lt;/span&gt;         
 ...
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -6719,7 +6719,7 @@ exploit
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;+&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; root now.
 / &lt;span class=&#34;c1&#34;&gt;# id&lt;/span&gt;
 &lt;span class=&#34;nv&#34;&gt;uid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;gid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;root&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;groups&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;1000&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ctf&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-/ &lt;span class=&#34;c1&#34;&gt;#&lt;/span&gt;
+/ #
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
@@ -7203,7 +7203,7 @@ give_to_player &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span 
 &lt;li&gt;通过 core_write() 向 name 写，构造 ropchain&lt;/li&gt;
 &lt;li&gt;通过 core_copy_func() 从 name 向局部变量上写，通过设置合理的长度和 canary 进行 rop&lt;/li&gt;
 &lt;li&gt;通过 rop 执行 &lt;code&gt;commit_creds(prepare_kernel_cred(0))&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;返回用户态，通过 system(&amp;quot;/bin/sh&amp;quot;) 等起 shell&lt;/li&gt;
+&lt;li&gt;返回用户态，通过 system(&amp;quot;/bin/sh&amp;rdquo;) 等起 shell&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;解释一下：&lt;/p&gt;
 &lt;ul&gt;
@@ -7507,7 +7507,7 @@ setsid /bin/cttyhack setuidgid &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; /bin
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;// qemu 内
-/ &lt;span class=&#34;c1&#34;&gt;# cat /sys/module/core/sections/.text &lt;/span&gt;
+/ &lt;span class=&#34;c1&#34;&gt;# cat /sys/module/core/sections/.text&lt;/span&gt; 
 0xffffffffc018b000
 ......
 ......
@@ -8240,7 +8240,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level1/solve.py&#34;&gt;exploit here&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;xmanlevel2-150&#34;&gt;[XMAN]level2 (150)&lt;/h2&gt;
-&lt;p&gt;存在栈溢出，程序中有 &lt;strong&gt;system&lt;/strong&gt; 函数 和 &lt;strong&gt;/bin/sh&lt;/strong&gt; 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 &lt;strong&gt;system(&amp;quot;/bin/sh&amp;quot;)&lt;/strong&gt; 的栈结构来 get shell&lt;/p&gt;
+&lt;p&gt;存在栈溢出，程序中有 &lt;strong&gt;system&lt;/strong&gt; 函数 和 &lt;strong&gt;/bin/sh&lt;/strong&gt; 字符串，根据函数调用约定，32 位程序函数的参数是放在栈上的，因此可以通过伪造一个调用 &lt;strong&gt;system(&amp;quot;/bin/sh&amp;rdquo;)&lt;/strong&gt; 的栈结构来 get shell&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -8340,7 +8340,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/bash-c/pwn_repo/blob/master/jarvisOJ_level2_x64/solve.py&#34;&gt;exploit here&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;xmanlevel3-200&#34;&gt;[XMAN]level3 (200)&lt;/h2&gt;
-&lt;p&gt;标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 &lt;strong&gt;system(&amp;quot;/bin/sh&amp;quot;)&lt;/strong&gt; 的函数调用栈即可&lt;/p&gt;
+&lt;p&gt;标准的 ret2libc，先通过 rop 控制 puts 出某个 GOT 中的地址以找到 libc 的基址（elf 的延迟绑定网上也有很多分析的文章，这里也不介绍了），有了 libc 的基地址后，libc 中的所有函数和字符串的地址就知道了，构造一个 &lt;strong&gt;system(&amp;quot;/bin/sh&amp;rdquo;)&lt;/strong&gt; 的函数调用栈即可&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -8714,7 +8714,7 @@ prepare_kernel_cred addr: 0xffffffffbd09cce0
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id=&#34;xmanlevel3x64-250&#34;&gt;[XMAN]level3(x64) (250)&lt;/h2&gt;
-&lt;p&gt;与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&amp;quot;/bin/sh&amp;quot;) 即可。&lt;/p&gt;
+&lt;p&gt;与 level3 相比，只在函数传参上有区别，按照 x64 的函数调用约定 leak 出 libc，然后 rop 执行 system(&amp;quot;/bin/sh&amp;rdquo;) 即可。&lt;/p&gt;
 &lt;p&gt;值得注意的是，这道题目中没有 puts，因此 leak libc 只能通过 &lt;code&gt;write(1, elf.got[&#39;write&#39;], 8)&lt;/code&gt;，但 ROPgadget 等工具只能找到控制 rdi 和 rsi 的 gadget，也就是我们不能控制 write 输出的长度，这时候有两种方法：&lt;/p&gt;
 &lt;p&gt;一是使用 64 位 elf 的 &lt;a href=&#34;https://www.cnblogs.com/Ox9A82/p/5487725.html&#34;&gt;通用 gadget&lt;/a&gt;；&lt;/p&gt;
 &lt;p&gt;二是通过调试发现 write 时 rdx 是大于 8 的（实际上大于 6 即可），因此可以完全不用考虑控制 rdx。&lt;/p&gt;
@@ -10578,9 +10578,9 @@ id
   &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;仔细看这段代码，open(&amp;quot;/dev/urandom&amp;quot;, 0); 后并没有对应的 close 操作。
-因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 &lt;code&gt;ulimit -a&lt;/code&gt; 查看），下一次 open(&amp;quot;/dev/urandom&amp;quot;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 &lt;code&gt;\0&lt;/code&gt; 即可通过 memcmp 的验证；&lt;/p&gt;
-&lt;p&gt;还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 &lt;code&gt;open(&amp;quot;./flag&amp;quot;, 0); read(0, addr, 0x100); puts(addr)&lt;/code&gt; 的 ropchain 就可以得到 flag （因为 close(0)， open(&amp;quot;./flag&amp;quot;, 0) 返回的 fd 将为 0)。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;仔细看这段代码，open(&amp;quot;/dev/urandom&amp;rdquo;, 0); 后并没有对应的 close 操作。
+因此如果重复运行这段代码，fd 会一直增加，到达该用户所能承受的最大量后（可以使用 &lt;code&gt;ulimit -a&lt;/code&gt; 查看），下一次 open(&amp;quot;/dev/urandom&amp;rdquo;, 0); 就会失败，导致 read(fd, secret_random, 8uLL); 读了空数据，我们只需要输入 &lt;code&gt;\0&lt;/code&gt; 即可通过 memcmp 的验证；&lt;/p&gt;
+&lt;p&gt;还有一点需要注意，这道题目随后关闭了 stdin (close(0))，因此即使我们能 get shell，我们的输入也不会被接受。但幸运的是题目只关闭了 stdin，stdout 和 stderr 还是可以用的，因此思路就有很多了，比如直接构造一段 &lt;code&gt;open(&amp;quot;./flag&amp;quot;, 0); read(0, addr, 0x100); puts(addr)&lt;/code&gt; 的 ropchain 就可以得到 flag （因为 close(0)， open(&amp;quot;./flag&amp;rdquo;, 0) 返回的 fd 将为 0)。&lt;/p&gt;
 &lt;p&gt;类似的题目还有 pwnable.kr - otp&lt;/p&gt;
 &lt;h2 id=&#34;level-2-whitehat2018---pwn3&#34;&gt;level 2: Whitehat2018 - pwn3&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://github.com/0x01f/pwn_repo/tree/master/WhiteHat2018_pwn03&#34;&gt;binary &amp;amp; exp here&lt;/a&gt;&lt;/p&gt;
@@ -10956,17 +10956,17 @@ lsof    &lt;span class=&#34;m&#34;&gt;10598&lt;/span&gt;  m4x    2u   CHR  136,3
 &lt;p&gt;说了半天，再回到这道题目，虽然这道题目关闭了 stdin, stdout 和 stderr，pty 还在，换句话说，如果我们能控制 /dev/pts/? 的 fd 为 1，那么 puts(flag) 时就会把输出传递给 /dev/pts/? ，也就是我们能在显示屏上看到 flag。&lt;/p&gt;
 &lt;p&gt;总结一下思路：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;利用 open(&amp;quot;/proc/self/fd/0&amp;quot;, 0) 来构造 ropchain&lt;/li&gt;
+&lt;li&gt;利用 open(&amp;quot;/proc/self/fd/0&amp;rdquo;, 0) 来构造 ropchain&lt;/li&gt;
 &lt;li&gt;ropchain 通过 open 和 read 把 flag 读到一个固定地址，同时控制 open(&amp;quot;/dev/pty/?&amp;quot;, 2) 返回的 fd 为 1&lt;/li&gt;
 &lt;li&gt;puts(flag) 时，系统调用为 write(1, flag, len(flag))，也就是 flag 的内容将会输出到显示屏上&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;a href=&#34;https://github.com/0x01f/pwn_repo/blob/master/TokyoWesterns2018_load/ropchian.py&#34;&gt;ropchian exploit here&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;reverse-shell&#34;&gt;reverse shell&lt;/h3&gt;
 &lt;p&gt;或者我们可以使用 reverse shell 来 get shell，这需要用到一些 procfs 的知识，不准备细讲，只需要知道可以通过往 /proc/self/mem 写数据更改 binary 内容即可（类似的题目有赛博地球杯的 &lt;a href=&#34;https://github.com/0x01f/pwn_repo/tree/master/Cyber2017_fileManager&#34;&gt;fileManager&lt;/a&gt; 这道题目）。&lt;/p&gt;
-&lt;p&gt;通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&amp;quot;/proc/self/mem&amp;quot;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。&lt;/p&gt;
+&lt;p&gt;通过 vmmap 可以看出 0x400000 - 0x401000 段具有可以行权限，且地址是固定的，因此我们可以控制 open(&amp;quot;/proc/self/mem&amp;rdquo;, 2) 返回的 fd 为 1，然后通过 puts(shellcode) 既可以将 shellcode 写到这段地址上，再控制 rip 到 shellcode 就可以建立一个 reverse shell（reverse shell 的经典题目有 pwnable.tw 的 kidding 等）。&lt;/p&gt;
 &lt;p&gt;总结一下思路：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;利用 open(&amp;quot;/proc/self/fd/0&amp;quot;, 0) 来构造 ropchain，ropchain 实现 open(&amp;quot;/proc/self/mem&amp;quot;, 2) 返回的 fd 为 1&lt;/li&gt;
+&lt;li&gt;利用 open(&amp;quot;/proc/self/fd/0&amp;rdquo;, 0) 来构造 ropchain，ropchain 实现 open(&amp;quot;/proc/self/mem&amp;rdquo;, 2) 返回的 fd 为 1&lt;/li&gt;
 &lt;li&gt;通过 puts(shellcode) 将 shellcode 写到具有可执行权限的代码段，可以用 lseek 控制 puts 写的位置&lt;/li&gt;
 &lt;li&gt;控制 rip 为 shellcode 建立 reverse shell&lt;/li&gt;
 &lt;li&gt;可以使用 /dev/stdin 代替 /proc/self/fd/0，效果一样，可以给 shellcode 留下更多空间&lt;/li&gt;
@@ -12932,7 +12932,7 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id=&#34;思路&#34;&gt;思路&lt;/h3&gt;
-&lt;p&gt;运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&amp;quot;/bin/sh&amp;quot;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了&lt;/p&gt;
+&lt;p&gt;运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&amp;quot;/bin/sh&amp;rdquo;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了&lt;/p&gt;
 &lt;p&gt;binary 去除了符号表信息, 并不是太容易看出来函数功能, 幸运的是通过在 IDA 中查看 /bin/sh 的交叉引用, 我们能找到调用 system 的函数(sub_10BA8 函数中出现了 /bin/sh, 读过 system 源码的同学可以发现该函数与 system 的流程类似, 于是大胆猜测 sun_10BA8 即为 system, 后来事实证明确实是)&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -13017,7 +13017,7 @@ Strings &lt;span class=&#34;nv&#34;&gt;information&lt;/span&gt;
 +------------+
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;这样在程序返回时, 经过 rop 就会实现 r0 -&amp;gt; &amp;ldquo;/bin/sh&amp;rdquo;, r4 -&amp;gt; junk_data, pc = system_addr 的效果, 进而执行 system(&amp;quot;/bin/sh&amp;quot;) 来 get shell&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;这样在程序返回时, 经过 rop 就会实现 r0 -&amp;gt; &amp;ldquo;/bin/sh&amp;rdquo;, r4 -&amp;gt; junk_data, pc = system_addr 的效果, 进而执行 system(&amp;quot;/bin/sh&amp;rdquo;) 来 get shell&lt;/p&gt;
 &lt;p&gt;此时还有一个问题, 不知道 padding 的长度, 可以通过 pwntools 的 cyclic/cyclic -l 来找长度&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -13239,7 +13239,7 @@ pwndbg&amp;gt; cyclic -l 0x62616164
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id=&#34;思路分析&#34;&gt;思路分析&lt;/h3&gt;
-&lt;p&gt;程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&amp;quot;/bin/sh&amp;quot;) 即可&lt;/p&gt;
+&lt;p&gt;程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&amp;quot;/bin/sh&amp;rdquo;) 即可&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;比赛时这道题目并没有给 libc 文件, 为了简化演示过程, 我直接用了我本地的 libc&lt;/strong&gt;&lt;/p&gt;
 &lt;h3 id=&#34;exp&#34;&gt;exp&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -14931,7 +14931,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;&lt;strong&gt;payload&lt;/strong&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq26rjlowj30a603yglr.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;0x03-rop2&#34;&gt;0x03 ROP2&lt;/h3&gt;
-&lt;p&gt;本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在&lt;strong&gt;syscall&lt;/strong&gt;这个可以实现系统调用的函数，如&lt;strong&gt;syscall(4, 1, &amp;amp;v4, 42)&lt;strong&gt;即相当于&lt;/strong&gt;write(1, &amp;amp;v4, 42)&lt;/strong&gt;，&lt;strong&gt;syscall(3, 0, &amp;amp;v1, 1024)&lt;strong&gt;即相当于&lt;/strong&gt;read(0, &amp;amp;v1, 1024)&lt;/strong&gt;，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在**/usr/include/x86_64-linux-gnu/asm/unistd_32.h**中，可以看到execve的调用号为11，因此如果我们构造**syscall(11, &amp;ldquo;/bin/sh&amp;rdquo;, 0, 0)**就相当于执行了**execve(&amp;quot;/bin/sh&amp;quot;, 0, 0)**即可get shell&lt;/p&gt;
+&lt;p&gt;本来根据提示以为这道题需要自己拼凑出ropchain，但后来发现这一题中存在&lt;strong&gt;syscall&lt;/strong&gt;这个可以实现系统调用的函数，如&lt;strong&gt;syscall(4, 1, &amp;amp;v4, 42)&lt;strong&gt;即相当于&lt;/strong&gt;write(1, &amp;amp;v4, 42)&lt;/strong&gt;，&lt;strong&gt;syscall(3, 0, &amp;amp;v1, 1024)&lt;strong&gt;即相当于&lt;/strong&gt;read(0, &amp;amp;v1, 1024)&lt;/strong&gt;，syscall的第一个参数是系统函数的系统调用号，之后的参数依次为对应函数的参数，32位的系统调用号定义在**/usr/include/x86_64-linux-gnu/asm/unistd_32.h**中，可以看到execve的调用号为11，因此如果我们构造**syscall(11, &amp;ldquo;/bin/sh&amp;rdquo;, 0, 0)**就相当于执行了**execve(&amp;quot;/bin/sh&amp;rdquo;, 0, 0)**即可get shell&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;介绍一个小trick，如下图，可以看出v4是提示字符串的开头，但因为IDA没有正确识别变量的类型，把提示字符串分成了v4~v15多个变量，v4的地址为bp-0x33，v15为bp-0x9，因此字符串长度为0x33 - 0x9 = 42&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq2myq7umj308706za9w.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
@@ -14944,7 +14944,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;&lt;strong&gt;payload2:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;利用ROPgadget找到了一个pop4ret的gadget，利用pop4ret平衡堆栈，用一个ropchain实现getshell&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq2t89z2ij30rl06zmy7.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;需要注意，对于execve的第一个参数&amp;quot;/bin/sh&amp;quot;，我们可以用先写入一个固定地址（如bss段）的方式迂回传参。&lt;/p&gt;
+&lt;p&gt;需要注意，对于execve的第一个参数&amp;rdquo;/bin/sh&amp;rdquo;，我们可以用先写入一个固定地址（如bss段）的方式迂回传参。&lt;/p&gt;
 &lt;h3 id=&#34;0x04-toooomuch&#34;&gt;0x04 toooomuch&lt;/h3&gt;
 &lt;p&gt;放松心情的题，用IDA很容易可以得到通过验证的passcode，然后用 二分/XJB猜 猜对数字后，就可以拿到flag&lt;/p&gt;
 &lt;h3 id=&#34;0x05-toooomuch-2&#34;&gt;0x05 toooomuch-2&lt;/h3&gt;
@@ -14956,7 +14956,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;h3 id=&#34;0x06-echo&#34;&gt;0x06 echo&lt;/h3&gt;
 &lt;p&gt;看到echo，第一反应就是格式化字符串的题，分析文件后果然发现了很明显的格式化字符串漏洞&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq3sgwpojj30d6038743.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;并且可以通过while循环多次利用，很经典的利用方式，先泄露出system_got中的system函数真实地址，再覆写printf_got为system_addr，之后通过fgets读入&amp;quot;/bin/sh&amp;quot;时，printf(&amp;quot;/bin/sh&amp;quot;)已经相当于system(&amp;quot;/bin/sh&amp;quot;)，即可get shell&lt;/p&gt;
+&lt;p&gt;并且可以通过while循环多次利用，很经典的利用方式，先泄露出system_got中的system函数真实地址，再覆写printf_got为system_addr，之后通过fgets读入&amp;rdquo;/bin/sh&amp;quot;时，printf(&amp;quot;/bin/sh&amp;rdquo;)已经相当于system(&amp;quot;/bin/sh&amp;rdquo;)，即可get shell&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;payload:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq3w63laqj30gi070js5.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;blockquote&gt;
@@ -15111,7 +15111,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;&lt;strong&gt;payload:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fkq4vt2qwfj30so0800ty.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;0x0c-rsbo-2&#34;&gt;0x0C rsbo-2&lt;/h3&gt;
-&lt;p&gt;和 rsbo-1 完全一样, 这次要 get shell 了, 也很简单, binary 中有 write@plt, 因此可以通过 rop 来 leak write@got 等函数, 进而确定 libc.address, 然后再来一次 rop 执行 system(&amp;quot;/bin/sh&amp;quot;) 就行了
+&lt;p&gt;和 rsbo-1 完全一样, 这次要 get shell 了, 也很简单, binary 中有 write@plt, 因此可以通过 rop 来 leak write@got 等函数, 进而确定 libc.address, 然后再来一次 rop 执行 system(&amp;quot;/bin/sh&amp;rdquo;) 就行了
 因为远程端口也是一样的, 因此直接做 rsbo-2 即可&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;这道题是回头又看的, 以前居然因为这种难度的题卡了那么久= =&lt;/p&gt;
@@ -15291,7 +15291,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fnziz8gnhoj309j02iaag.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fnziyk9lebj30qj0eqtio.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;0x0f-very_overflow&#34;&gt;0x0F very_overflow&lt;/h3&gt;
-&lt;p&gt;这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为 128 * (sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&amp;quot;/bin/sh&amp;quot;)或者one_gadget都可以求解&lt;/p&gt;
+&lt;p&gt;这个题目给了源码，分析起来方便了不少。这个题的漏洞也很容易发现，虽然申请了长度为 128 * (sizeof(buffer))的缓冲区，但可以无限的add_note，这就意味着我们可以先重复add_note耗尽缓冲区，然后继续add_note和show_note时，就可以leak类似__libc_start_main这些信息来确定libc装载基址了，有了libc装载基址后，通过rop构造system(&amp;quot;/bin/sh&amp;rdquo;)或者one_gadget都可以求解&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://ws1.sinaimg.cn/large/006AWYXBly1fnzjfuveuaj30ti0bh0zy.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;至于add_note多少次，通过调试可以很清楚的算出来&lt;/p&gt;
 &lt;p&gt;另外就是刚开始本地可以get shell，但远程连接很容易超时，后来把context.log_level换成了info，减少了打印花费的时间，又把io.sendlineafter换成了直接io.sendline，就不容易超时了&lt;/p&gt;
@@ -15376,7 +15376,7 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;gets读入 $0\0/sh\0&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;执行 system(&amp;quot;$0&amp;quot;)&lt;/p&gt;
+&lt;p&gt;执行 system(&amp;ldquo;$0&amp;rdquo;)&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;0x11-mailer&#34;&gt;0x11 mailer&lt;/h3&gt;
@@ -15637,8 +15637,8 @@ Count: &lt;span class=&#34;m&#34;&gt;582401&lt;/span&gt;
 &lt;p&gt;但逻辑简单并不意味着容易解决,仔细分析代码可以看出解题的关键在求出num的值,num经过32次右移一位后等于0,因此取值范围为**[2 ^ 31, 2 ^ 32)**, 在该范围内找到满足32轮验证的值即可,但在找到该值时遇到了问题,如果单纯爆破的话,2 ^ 32 - 2 ^ 31次爆破远远超出了能接受的范围,因此考虑用z3来解决这个多约束问题.&lt;/p&gt;
 &lt;p&gt;该题的约束条件有如下几个:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;0~5位为&amp;quot;FLAG{&amp;quot;&lt;/li&gt;
-&lt;li&gt;最后一位(31)为&amp;quot;}&amp;quot;&lt;/li&gt;
+&lt;li&gt;0~5位为&amp;quot;FLAG{&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;最后一位(31)为&amp;rdquo;}&amp;rdquo;&lt;/li&gt;
 &lt;li&gt;6~30位需在&amp;quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ{} &amp;ldquo;内&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;因此可以写出z3的代码如下:&lt;/p&gt;
@@ -17268,7 +17268,7 @@ lab1 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34
 &lt;p&gt;&lt;img src=&#34;http://ww1.sinaimg.cn/large/006AWYXBly1fpcpljuki5j30g702wdfy.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;也可以通过 peda 的 pattern_offset/pattern_search , pwntools 的 cyclic/cyclic -l 等工具来找 offset&lt;/p&gt;
 &lt;h3 id=&#34;lab4-ret2lib&#34;&gt;lab4-ret2lib&lt;/h3&gt;
-&lt;p&gt;ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&amp;quot;/bin/sh&amp;quot;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串&lt;/p&gt;
+&lt;p&gt;ret2libc，并且程序中已经有了一个可以查看 got 表中值的函数 See_something，直接 leak 出 libc 基址，通过 one_gadget 或者 system(&amp;quot;/bin/sh&amp;rdquo;) 都可以 get shell，/bin/sh 可以使用 libc 中的字符串，可以通过 read 读入到内存中，也可以使用 binary 中的字符串&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -17412,7 +17412,7 @@ lab1 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;master●●&lt;span class=&#34
 &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;INFO&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rop&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;chain&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;generated&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;!&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&amp;gt; /bin/sh， ecx = edx = 0，然后通过 &lt;code&gt;int 0x80&lt;/code&gt; 实现系统调用，执行 execve(&amp;quot;/bin/sh&amp;quot;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3&#34;&gt;&lt;strong&gt;ROP2&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;简单介绍一下原理，通过一系列 pop|ret 等gadget，使得 eax = 0xb（execve 32 位下的系统调用号），ebx -&amp;gt; /bin/sh， ecx = edx = 0，然后通过 &lt;code&gt;int 0x80&lt;/code&gt; 实现系统调用，执行 execve(&amp;quot;/bin/sh&amp;rdquo;, 0, 0)，实际上构造了一个 ret2syscall 的rop chain, hackme.inndy 上也有一道类似的题目&lt;a href=&#34;http://www.cnblogs.com/WangAoBo/p/7706719.html#_label3&#34;&gt;&lt;strong&gt;ROP2&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;ret2syscall 的更多细节可以参考 &lt;a href=&#34;https://ctf-wiki.github.io/ctf-wiki/pwn/stackoverflow/basic_rop/#ret2syscall&#34;&gt;ctf-wiki&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -19439,7 +19439,8 @@ unsorted bin attack 的结果是向任一地址写一个不可控的大数(unsor
 &lt;ul&gt;
 &lt;li&gt;Github link: &lt;a href=&#34;https://github.com/bash-c&#34;&gt;bash-c&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://gist.github.com/bash-c/eaf1aaa0e21fde5b6a9d0671317cebfa&#34;&gt;bug list&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Speaker of &lt;a href=&#34;https://hitcon.org/2020/slides/Exploit%20(Almost)%20All%20Xiaomi%20Routers%20Using%20Logical%20Bugs.pdf&#34;&gt;HITCON&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.tianfucup.com/&#34;&gt;Tianfu Cup&lt;/a&gt; 2021 Docker-CE winner&lt;/li&gt;
+&lt;li&gt;Speaker of &lt;a href=&#34;https://hitcon.org/2020/slides/Exploit%20(Almost)%20All%20Xiaomi%20Routers%20Using%20Logical%20Bugs.pdf&#34;&gt;HITCON 2020&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
       

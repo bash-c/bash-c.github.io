@@ -32,7 +32,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/how-2-pwn-an-arm-binary/" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -67,14 +67,13 @@
 <meta property="article:modified_time" content="2018-07-31T20:00:54+08:00" />
 <meta itemprop="name" content="如何 pwn 掉一个 arm 的binary">
 <meta itemprop="description" content="这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0">
-<meta itemprop="datePublished" content="2018-07-31T20:00:54+08:00" />
-<meta itemprop="dateModified" content="2018-07-31T20:00:54+08:00" />
+<meta itemprop="datePublished" content="2018-07-31T20:00:54&#43;08:00" />
+<meta itemprop="dateModified" content="2018-07-31T20:00:54&#43;08:00" />
 <meta itemprop="wordCount" content="5940">
 
 
 
-<meta itemprop="keywords" content="arm,pwn," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="arm,pwn," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="如何 pwn 掉一个 arm 的binary"/>
 <meta name="twitter:description" content="这篇文章将以几道 CTF 题目为例讲解 pwn arm binary的一些问题 环境搭建 环境的搭建过程我之前写过, 这里偷个懒直接全文粘贴过来 原文链接M4x@10.0"/>
 
@@ -650,7 +649,7 @@ qemu-arm: /build/qemu-c9y6mQ/qemu-2.8+dfsg/translate-all.c:175: tb_lock: Asserti
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="思路">思路</h3>
-<p>运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&quot;/bin/sh&quot;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了</p>
+<p>运行一下发现是一个打字游戏, 很容易就找到了溢出点, 利用 rop chain 构造 system(&quot;/bin/sh&rdquo;) 即可, /bin/sh 的地址比较好找, 只要找到 system 的地址, 这个题目就很容易解决了</p>
 <p>binary 去除了符号表信息, 并不是太容易看出来函数功能, 幸运的是通过在 IDA 中查看 /bin/sh 的交叉引用, 我们能找到调用 system 的函数(sub_10BA8 函数中出现了 /bin/sh, 读过 system 源码的同学可以发现该函数与 system 的流程类似, 于是大胆猜测 sun_10BA8 即为 system, 后来事实证明确实是)</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -735,7 +734,7 @@ Strings <span class="nv">information</span>
 +------------+
 </code></pre></td></tr></table>
 </div>
-</div><p>这样在程序返回时, 经过 rop 就会实现 r0 -&gt; &ldquo;/bin/sh&rdquo;, r4 -&gt; junk_data, pc = system_addr 的效果, 进而执行 system(&quot;/bin/sh&quot;) 来 get shell</p>
+</div><p>这样在程序返回时, 经过 rop 就会实现 r0 -&gt; &ldquo;/bin/sh&rdquo;, r4 -&gt; junk_data, pc = system_addr 的效果, 进而执行 system(&quot;/bin/sh&rdquo;) 来 get shell</p>
 <p>此时还有一个问题, 不知道 padding 的长度, 可以通过 pwntools 的 cyclic/cyclic -l 来找长度</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -957,7 +956,7 @@ pwndbg&gt; cyclic -l 0x62616164
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="思路分析">思路分析</h3>
-<p>程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&quot;/bin/sh&quot;) 即可</p>
+<p>程序逻辑很简单, 就不写分析过程了, 漏洞很好找, write_diary 中 read 的长度是由我们输入的, 可以栈溢出, 先进入 PT 函数, 输入 -1, 再进入 write_diary, 就可以实现 arbitrary overflow 了, 因此思路同 x64 下的 rop 相同, 先 leak 出 libc 基址, 然后控制执行 system(&quot;/bin/sh&rdquo;) 即可</p>
 <p><strong>比赛时这道题目并没有给 libc 文件, 为了简化演示过程, 我直接用了我本地的 libc</strong></p>
 <h3 id="exp">exp</h3>
 <div class="highlight"><div class="chroma">

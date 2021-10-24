@@ -7,7 +7,11 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>M4x</copyright>
-    <lastBuildDate>Tue, 03 Jul 2018 12:01:48 +0800</lastBuildDate><atom:link href="https://bash-c.github.io/tags/hackme.inndy/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 Jul 2018 12:01:48 +0800</lastBuildDate>
+    
+	<atom:link href="https://bash-c.github.io/tags/hackme.inndy/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Hackme.Inndy 的部分 writeup</title>
       <link>https://bash-c.github.io/post/hackme.inndy-writeup/</link>

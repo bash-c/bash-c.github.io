@@ -33,7 +33,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.75.1" />
+<meta name="generator" content="Hugo 0.68.3" />
 
 
 <link rel="canonical" href="https://bash-c.github.io/post/perf-in-ctf/" />
@@ -54,7 +54,7 @@
 
 
 
-<link rel="stylesheet" href="/sass/jane.min.b3a8813c06e6d785beba22bf8264e174fa2cb3a396b22f9ba24e2c00c18aaf7f.css" integrity="sha256-s6iBPAbm14W&#43;uiK/gmThdPoss6OWsi&#43;bok4sAMGKr38=" media="screen" crossorigin="anonymous">
+<link rel="stylesheet" href="/sass/jane.min.f1e506a781bf25d33ffc18aa6b4e972a965c58049d27d4f92b7db2e9bf28e4bf.css" integrity="sha256-8eUGp4G/JdM//Biqa06XKpZcWASdJ9T5K32y6b8o5L8=" media="screen" crossorigin="anonymous">
 
 
 
@@ -70,14 +70,13 @@
 <meta itemprop="name" content="Pin in CTF? No, Perf in CTF!">
 <meta itemprop="description" content="pin-in-CTF
 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。">
-<meta itemprop="datePublished" content="2019-11-18T00:22:17+08:00" />
-<meta itemprop="dateModified" content="2019-11-18T00:22:17+08:00" />
+<meta itemprop="datePublished" content="2019-11-18T00:22:17&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-18T00:22:17&#43;08:00" />
 <meta itemprop="wordCount" content="2054">
 
 
 
-<meta itemprop="keywords" content="perf," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="keywords" content="perf," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pin in CTF? No, Perf in CTF!"/>
 <meta name="twitter:description" content="pin-in-CTF
 十几个月前，在学习 fuzz 时，我接触了 intel-pin 这个动态插桩工具，当时发现对于一些 CTF reverse 题目，尤其是代码混淆比较严重的题目，可以编写 pintool 统计指令数等信息，多快好省的通过侧信道的方法逐位爆破出 flag，详见 pin-in-ctf: blog, pin-in-ctf: repo。"/>
@@ -454,14 +453,14 @@ perf version 5.0.21
 
  Performance counter stats <span class="k">for</span> <span class="s1">&#39;id&#39;</span>:
 
-              1.71 msec task-clock                <span class="c1">#    0.710 CPUs utilized          </span>
-                 <span class="m">1</span>      context-switches          <span class="c1">#    0.584 K/sec                  </span>
-                 <span class="m">0</span>      cpu-migrations            <span class="c1">#    0.000 K/sec                  </span>
-               <span class="m">122</span>      page-faults               <span class="c1">#    0.071 M/sec                  </span>
-         6,244,401      cycles                    <span class="c1">#    3.647 GHz                    </span>
-         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle         </span>
-           459,910      branches                  <span class="c1">#  268.614 M/sec                  </span>
-            18,201      branch-misses             <span class="c1">#    3.96% of all branches        </span>
+              1.71 msec task-clock                <span class="c1">#    0.710 CPUs utilized</span>          
+                 <span class="m">1</span>      context-switches          <span class="c1">#    0.584 K/sec</span>                  
+                 <span class="m">0</span>      cpu-migrations            <span class="c1">#    0.000 K/sec</span>                  
+               <span class="m">122</span>      page-faults               <span class="c1">#    0.071 M/sec</span>                  
+         6,244,401      cycles                    <span class="c1">#    3.647 GHz</span>                    
+         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
+           459,910      branches                  <span class="c1">#  268.614 M/sec</span>                  
+            18,201      branch-misses             <span class="c1">#    3.96% of all branches</span>        
 
        0.002412965 seconds <span class="nb">time</span> elapsed
 
@@ -481,7 +480,7 @@ perf version 5.0.21
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-bash" data-lang="bash">...
-         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle         </span>
+         2,353,996      instructions              <span class="c1">#    0.38  insn per cycle</span>         
 ...
 </code></pre></td></tr></table>
 </div>
